@@ -9,7 +9,7 @@ const LoginPage = () => {
           
           <div className="p-8 w-1/2 flex flex-col justify-center">
             <div className="mb-6 flex items-center gap-2">
-              <div  className="text-xs font-black  text-zinc-800 uppercase">Digital Classroom</div>
+              <div  className="text-xs  font-extrabold text-zinc-800">Digital<span className='text-blue-700'>Classroom</span></div>
             </div>
             
             <h1 className="text-3xl font-extrabold text-zinc-900">Welcome Back!</h1>
