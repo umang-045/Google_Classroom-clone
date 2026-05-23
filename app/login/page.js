@@ -1,76 +1,118 @@
 "use client"
 import React from 'react'
 import { signIn } from 'next-auth/react'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 
 const LoginPage = () => {
-    return (
-      <div className="min-h-screen bg-linear-to-br from-zinc-950 to-zinc-800 flex items-center justify-center p-4 ">
-        <div className="w-full max-w-4xl rounded-3xl  flex flex-col md:flex-row overflow-hidden justify-center bg-white shadow-2xl">
-          
-          <div className="p-8 w-1/2 flex flex-col justify-center">
-            <div className="mb-6 flex items-center gap-2">
-              <div  className="text-xs  font-extrabold text-zinc-800">Digital<span className='text-blue-700'>Classroom</span></div>
-            </div>
-            
-            <h1 className="text-3xl font-extrabold text-zinc-900">Welcome Back!</h1>
-            <p className="text-sm text-gray-500 mt-1 mb-8">Please enter log in details below.</p>
-            
-            <div className="flex flex-col gap-4">
-              <input 
-                className="bg-gray-100 border border-gray-200 p-3 rounded-xl " 
-                type="email" 
-                placeholder="Email" 
+  const router=useRouter()
+  const [form, setform] = useState({ email: "", password: "" });
+  const [loading, setloading] = useState(false);
+  const [error, seterror] = useState("");
+
+  const handleChange = (e) => setform({ ...form, [e.target.name]: e.target.value })
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setloading(true);
+    seterror("");
+
+    const res = await signIn("credentials", {
+      email: form.email,
+      password: form.password,
+      redirect: false,
+    })
+    setloading(false)
+    if (res?.error) {
+      return seterror(res.error)
+    }
+    router.push("/")
+  }
+
+
+  return (
+    <div className="min-h-screen bg-linear-to-br from-zinc-950 to-zinc-800 flex items-center justify-center p-4 ">
+      <div className="w-full max-w-4xl rounded-3xl  flex flex-col md:flex-row overflow-hidden justify-center bg-white shadow-2xl">
+
+        <div className="p-8 w-1/2 flex flex-col justify-center">
+          <div className="mb-6 flex items-center gap-2">
+            <div className="text-xs  font-extrabold text-zinc-800">Digital<span className='text-blue-700'>Classroom</span></div>
+          </div>
+
+          <h1 className="text-3xl font-extrabold text-zinc-900">Welcome Back!</h1>
+          <p className="text-sm text-gray-500 mt-1 mb-8">Please enter log in details below.</p>
+
+          {error && (
+            <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-xl">{error}</p>
+          )}
+
+          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+            <input
+              className="bg-gray-100 border border-gray-200 p-3 rounded-xl"
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+            <div className="flex flex-col gap-1">
+              <input
+                className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900"
+                type="password"
+                name="password"
+                placeholder="Password"
+                value={form.password}
+                onChange={handleChange}
+                required
               />
-              <div className="flex flex-col gap-1">
-                <input 
-                  className="bg-gray-100 border border-gray-200  p-3 rounded-xl  text-zinc-900" 
-                  type="password" 
-                  placeholder="Password" 
-                />
-                <p className="text-xs text-purple-600 font-medium cursor-pointer text-right hover:underline mt-1">
-                  Forgot password?
-                </p>
-              </div>
-
-              <button className="bg-zinc-900 hover:bg-gray-800 text-white py-3 rounded-xl font-medium">
-                Sign in
-              </button>
-              
-              <div className="relative flex py-2 items-center">
-                <div className="grow border-t border-gray-200"></div>
-                <span className="shrink mx-4 text-xs text-gray-400 ">OR CONTINUE WITH</span>
-                <div className="grow border-t border-gray-200"></div>
-              </div>
-
-              <button className="bg-white  border border-gray-200 text-gray-700 py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-all hover:-translate-y-1 hover:shadow-black/50 shadow-sm" onClick={()=>{signIn("google",{callbackUrl:"/"})}}>
-                <img className='w-5 h-5' src='/google.png' alt="Google logo" />
-                Log in with Google
-              </button>
-
-              <p className="text-sm text-gray-500 text-center mt-4">
-                Don't have an account? <span className="text-purple-600 font-medium cursor-pointer hover:underline">Sign up</span>
+              <p className="text-xs text-purple-600 font-medium cursor-pointer text-right hover:underline mt-1">
+                Forgot password?
               </p>
             </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-zinc-900 hover:bg-gray-800 text-white py-3 rounded-xl font-medium disabled:opacity-60"
+            >
+              {loading ? "Please wait..." : "Sign in"}
+            </button>
+          </form>
+
+          <div className="relative flex py-2 items-center">
+            <div className="grow border-t border-gray-200"></div>
+            <span className="shrink mx-4 text-xs text-gray-400 ">OR CONTINUE WITH</span>
+            <div className="grow border-t border-gray-200"></div>
           </div>
 
+          <button className="bg-white  border border-gray-200 text-gray-700 py-3 rounded-xl font-medium flex items-center justify-center gap-2 transition-all hover:-translate-y-1 hover:shadow-black/50 shadow-sm" onClick={() => { signIn("google", { callbackUrl: "/" }) }}>
+            <img className='w-5 h-5' src='/google.png' alt="Google logo" />
+            Log in with Google
+          </button>
 
-          <div className="md:flex relative md:w-1/2 min-h-125 flex-col " >
+          <p className="text-sm text-gray-500 text-center mt-4">
+            Don't have an account? <span className="text-purple-600 font-medium cursor-pointer hover:underline"><Link href='/signup'>Contact</Link></span>
+          </p>
+        </div>
 
-            <img 
-              className="w-full h-full object-cover"
-              src="/poster.png" 
-              alt="Classroom Illustration" 
-    
-            />
 
-            <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-black/30 flex flex-col justify-end p-12 text-center">
-              <h3 className="text-xl font-bold text-white mb-2">Manage your Learning Anywhere</h3>
-              <p className="text-xs text-gray-300 max-w-xs mx-auto">Access assignments, dynamic streams, and code sandboxes directly.</p>
-            </div>
-          </div>
+      <div className="relative md:w-1/2 min-h-125 flex-col " >
 
+        <img
+          className="w-full h-full object-cover"
+          src="/poster.png"
+          alt="Classroom Illustration"
+
+        />
+
+        <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/20 to-black/30 flex flex-col justify-end p-12 text-center">
+          <h3 className="text-xl font-bold text-white mb-2">Manage your Learning Anywhere</h3>
+          <p className="text-xs text-gray-300 max-w-xs mx-auto">Access assignments, dynamic streams, and code sandboxes directly.</p>
         </div>
       </div>
+    </div>
+    </div>
     )
 }
 

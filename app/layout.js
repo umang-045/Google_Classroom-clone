@@ -10,7 +10,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className="min-h-full flex flex-col">
-      <SessionWrapper>{children}</SessionWrapper>
+      <SessionWrapper>
+        {children}
+      </SessionWrapper>
       </body>
     </html>
   );
