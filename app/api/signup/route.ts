@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import pool from "@/lib/db"
 import bcrypt from "bcryptjs"
 
-async function signupHandler(req) {
+async function signupHandler(req:Request) {
   try {
     const { name, email, password } = await req.json()
 
@@ -31,7 +31,7 @@ async function signupHandler(req) {
       )
     }
 
-    const hashedPassword = await bcrypt.hash(password, 12)
+    const hashedPassword : string = await bcrypt.hash(password, 12)
 
     const result = await pool.query(
       "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",

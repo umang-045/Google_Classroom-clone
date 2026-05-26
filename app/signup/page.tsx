@@ -3,15 +3,21 @@ import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
+interface SignUpForm{
+    name:string;
+    email:string;
+    password:string;
+}
+
 const SignUpPage = () => {
     const router = useRouter()
-    const [form, setForm] = useState({ name: "", email: "", password: "" })
-    const [error, setError] = useState("")
-    const [loading, setLoading] = useState(false) 
+    const [form, setForm] = useState<SignUpForm>({ name: "", email: "", password: "" })
+    const [error, setError] = useState<string>("")
+    const [loading, setLoading] = useState<boolean>(false) 
 
-    const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [e.target.name]: e.target.value })
 
-    const handleSignup = async (e) => {
+    const handleSignup = async (e:React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
         setError("")
@@ -20,7 +26,7 @@ const SignUpPage = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form),
         })
-        const data = await res.json()
+        const data : {error?:string} = await res.json()
         setLoading(false)
         if (!res.ok) {
             return setError(data.error)
@@ -49,13 +55,7 @@ const SignUpPage = () => {
 
                     <form onSubmit={handleSignup} className="flex flex-col gap-4">
                         <input
-                            className="bg-gray-100 border border-gray-200 p-3 rounded-xl"
-                            type="text"
-                            name="name"
-                            placeholder="Full Name"
-                            value={form.name}
-                            onChange={handleChange}
-                            required
+                            className="bg-gray-100 border border-gray-200 p-3 rounded-xl"type="text"name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required
                         />
                         <input
                             className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required

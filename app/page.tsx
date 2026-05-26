@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
 
-const LandingPage = () => {
+const LandingPage = ()=> {
   const router = useRouter()
   return (
     <>
-      <div className='min-h-screen bg-zinc-950' >
-        <div className='min-h-screen w-[90%] m-auto my-2 bg-linear-to-b from-zinc-800 to-zinc-950 border border-zinc-700/50 '>
+      <div className='min-h-screen bg-linear-to-b from-zinc-800 to-zinc-950' >
+        <div className='min-h-screen w-[90%] m-auto my-2 bg-linear-to-l from-zinc-800 to-zinc-950 border border-zinc-700/50 '>
           <div className='sticky top-0 z-100 flex justify-around bg-zinc-900 px-2 py-4 items-center border-b border-b-gray-400  '>
             <div className="text-xl  text-gray-300 font-extrabold">Digital<span className='text-blue-700'>Classroom</span></div>
             <div>
@@ -24,9 +24,9 @@ const LandingPage = () => {
 
                 router.push('/login')
               }}>Sign In</button>
-              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointerbg-gray-400 p-1.5 transition-all hover:-translate-y-1' onClick={() => {
+              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer  p-1.5 transition-all hover:-translate-y-1' onClick={() => {
 
-                router.push('/login')
+                router.push('/signup')
               }}>Get Started</button>
             </div>
           </div>
@@ -43,7 +43,7 @@ const LandingPage = () => {
             <h1 className='text-5xl text-gray-300 px-10 mb-5'>Features</h1>
             <div className='grid grid-cols-3'>
               <div className='bg-neutral-800 rounded-2xl m-5 p-5'>
-                <h1 className=' text-xl text-zinc-200 font-bold p-4 w-fit rounded-2xl my-5 text-center'>
+                <h1 className=' text-xl text-zinc-200 hover:underline font-bold p-4 w-fit rounded-2xl my-5 text-center'>
                   🎓  Role-Based Classroom Management
                 </h1>
                 <ul className='text-zinc-400 my-1 list-disc pl-5 space-y-2 text-lg'>
@@ -54,7 +54,7 @@ const LandingPage = () => {
               </div>
 
               <div className='bg-neutral-800 rounded-2xl m-5 p-5 text-lg'>
-                <h1 className='text-zinc-200 font-bold p-4 w-fit rounded-2xl my-5 text-center'>
+                <h1 className='text-zinc-200 hover:underline font-bold p-4 w-fit rounded-2xl my-5 text-center'>
                   📝Assignments, Quizzes & Grading System
                 </h1>
                 <ul className='text-zinc-400 my-1 list-disc pl-5 space-y-2'>
@@ -65,7 +65,7 @@ const LandingPage = () => {
               </div>
 
               <div className='bg-neutral-800 rounded-2xl m-5 p-5'>
-                <h1 className='text-zinc-200 font-bold p-4 w-fit rounded-2xl my-5 text-center text-lg'>
+                <h1 className='text-zinc-200  hover:underline font-bold p-4 w-fit rounded-2xl my-5 text-center text-lg'>
                   🎥 Realtime Communication & Virtual Meetings
                 </h1>
                 <ul className='text-zinc-400 my-1 list-disc pl-5 space-y-2'>
@@ -76,7 +76,7 @@ const LandingPage = () => {
               </div>
 
               <div className='bg-neutral-800 rounded-2xl m-5 p-5'>
-                <h1 className='text-zinc-200 font-bold p-4 w-fit rounded-2xl my-5 text-lg'>
+                <h1 className='text-zinc-200 hover:underline font-bold p-4 w-fit rounded-2xl my-5 text-lg'>
                   ☁ Cloud-Based File Upload & Study Material Sharing
                 </h1>
                 <ul className='text-zinc-400 my-1 list-disc pl-5 space-y-2'>
@@ -87,7 +87,7 @@ const LandingPage = () => {
               </div>
 
               <div className='bg-neutral-800 rounded-2xl m-5 p-5'>
-                <h1 className='text-zinc-200 font-bold p-4 w-fit rounded-2xl my-5 text-center text-lg'>
+                <h1 className='text-zinc-200 hover:underline font-bold p-4 w-fit rounded-2xl my-5 text-center text-lg'>
                   📢  Smart Notifications & Deadline Tracking
                 </h1>
                 <ul className='text-zinc-400 my-1 list-disc pl-5 space-y-2'>
@@ -98,7 +98,7 @@ const LandingPage = () => {
               </div>
 
               <div className='bg-neutral-800 rounded-2xl m-5 p-5'>
-                <h1 className='text-zinc-200 font-bold p-4 w-fit rounded-2xl my-5 text-center text-lg'>
+                <h1 className='text-zinc-200 hover:underline font-bold p-4 w-fit rounded-2xl my-5 text-center text-lg'>
                   💬 AI-Powered Chat & Meeting Summarization
                 </h1>
                 <ul className='text-zinc-400 my-1 list-disc pl-5 space-y-2'>
