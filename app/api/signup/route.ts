@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import pool from "@/lib/db"
+import { prisma } from "../../../lib/db"
 import bcrypt from "bcryptjs"
 
 async function signupHandler(req:Request) {
@@ -20,11 +20,8 @@ async function signupHandler(req:Request) {
       )
     }
 
-    const existing = await pool.query(
-      "SELECT id FROM users WHERE email = $1",
-      [email]
-    )
-    if (existing.rows.length > 0) {
+    const existing = await prisma.users.findUnique({where:{email:email},select:{id:true}})
+    if (existing!=null) {
       return NextResponse.json(
         { error: "Email already registered" },
         { status: 409 }
@@ -33,13 +30,10 @@ async function signupHandler(req:Request) {
 
     const hashedPassword : string = await bcrypt.hash(password, 12)
 
-    const result = await pool.query(
-      "INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email",
-      [name, email, hashedPassword]
-    )
+    const result = await prisma.users.create({data:{name:name,email:email,password:hashedPassword}})
 
     return NextResponse.json(
-      { user: result.rows[0] },
+      { user: result },
       { status: 201 }
     )
 

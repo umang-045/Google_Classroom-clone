@@ -1,46 +1,49 @@
-import NextAuth,{AuthOptions} from "next-auth"
+import NextAuth, { AuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from 'next-auth/providers/credentials'
-import pool from "@/lib/db"
+import { prisma } from "../../../../lib/db"
 import bcrypt from "bcryptjs"
 
-interface credentialsType{
-    email?:string;
-    password?:string;
+interface credentialsType {
+    email?: string;
+    password?: string;
 }
-interface Users{
-    id:string;
-    name?:string;
-    email?:string;
-    password?:string;
+interface UsersData {
+    id: string | number;
+    name?: string;
+    email?: string;
+    password?: string;
 }
 export const authOptions: AuthOptions = {
     providers: [
         GoogleProvider({
-            clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
         }),
         CredentialsProvider({
             name: "Credentials",
-            credentials:  {
+            credentials: {
                 email: { label: "Email", type: "email" },
                 password: { label: "Password", type: "password" },
 
             },
-            async authorize(credentials:credentialsType) {
-                const result = await pool.query("SELECT * FROM users WHERE email =$1", [credentials.email])
-                const user :Users = result.rows[0]
+            async authorize(credentials: credentialsType) {
+                const result = await prisma.users.findMany({ where: { email: credentials.email }, select: { id: true, name: true, email: true, password: true } });
+                const user: UsersData = result[0]
                 if (!user) {
                     throw new Error("Account Not Registered")
                 }
                 if (!user.password) {
                     throw new Error("Incorrect/Invalid Password")
                 }
+                if (!credentials.password) {
+                    throw new Error("Password is required")
+                }
                 const isMatch = await bcrypt.compare(credentials.password, user.password)
                 if (!isMatch) {
                     throw new Error("Incorrect password")
                 }
-                return { id: user.id, name: user.name, email: user.email }
+                return { id: user.id.toString(), name: user.name, email: user.email }
             }
 
         })
@@ -50,12 +53,12 @@ export const authOptions: AuthOptions = {
     },
     callbacks: {
         async signIn({ user, account }) {
-            if (account.provider == "google") {
+            if (account?.provider == "google") {
                 try {
-                    const existing = await pool.query("SELECT * FROM users WHERE email=$1", [user.email])
+                    const existing = await prisma.users.findMany({ where: { email: user.email }, select: { id: true, name: true, email: true, password: true } })
 
-                    if (existing.rows.length == 0) {
-                        await pool.query("INSERT INTO users(name,email,password) VALUES($1,$2, NULL)", [user.name, user.email]);
+                    if (existing.length == 0) {
+                        await prisma.users.create({ data: { name: user.name, email: user.email } });
                     }
                     return true;
                 } catch (err) {
@@ -72,12 +75,12 @@ export const authOptions: AuthOptions = {
             };
 
             if (!token.id) {
-                const result = await pool.query("SELECT id FROM users WHERE email=$1", [token.email]);
-                token.id = result.rows[0].id;
+                const result = await prisma.users.findUnique({ where: { email: token.email }, select: { id: true } });
+                token.id = result?.id;
             }
             return token;
         },
-        async session({ session, token }:{session:any,token:any}) {
+        async session({ session, token }: { session: any, token: any }) {
             if (token) session.user.id = token.id
             return session
         }
