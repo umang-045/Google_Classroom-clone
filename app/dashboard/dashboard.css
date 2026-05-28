@@ -1,0 +1,119 @@
+body {
+  background-color: rgb(30, 24, 24);
+  margin: 0;
+}
+
+.DashboardContainer {
+  display: flex;
+  background: linear-gradient(to bottom, #27272a, #151519);
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  min-height: 100vh;
+ background: linear-gradient(to right, #27272a, #151519);
+  padding-bottom: 20px;
+}
+
+.sidebar h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: white;
+  padding: 34px 20px;
+  border-bottom: 1px solid rgb(201, 196, 196);
+  margin-bottom: 4px;
+}
+
+.Classroom {
+  color: #4d8ef0;
+  font-weight: bold;
+}
+
+.sidebarComp {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 10px;
+  border-bottom: 1px solid rgb(67, 63, 63);
+  margin-bottom: 4px;
+}
+
+.sidebarComp h2 {
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: underline;
+  color: rgb(235, 219, 219);
+  padding: 8px 6px 6px;
+  margin-bottom: 2px;
+}
+
+.sidebar button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 9px 12px;
+  background-color: transparent;
+  border: none;
+  color: rgb(198, 179, 179);
+  font-size: 16px;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+  margin-bottom: 1px;
+}
+
+.sidebar button:hover {
+  background-color: rgb(110, 162, 240);
+  color: rgb(21, 21, 236);
+}
+
+.sidebar button.active {
+  background-color: rgb(110, 162, 240);
+  color: blue;
+  font-weight: 500;
+}
+
+.Topbar {
+  background: linear-gradient(to top, #27272a, #151519);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 22px;
+  font-weight: bold;
+  color: white;
+  padding: 20px 16px;
+  border-bottom: 1px solid rgb(79, 77, 77);
+  height: fit-content;
+}
+
+.TopbarButton {
+  display: flex;
+  gap: 50px;
+
+}
+.Greeting p{
+  font-size: small;
+  margin-top: 5px;
+  letter-spacing: 1px;
+  color:rgb(129, 121, 121)  ;
+}
+
+.Topbar button {
+  background-color: #222325;
+  color: white;
+  border-radius: 24px;
+  font-size: medium;
+  padding: 16px 24px;
+  margin: 4px;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.Topbar button:hover{
+  text-decoration: underline;
+  color: blue;
+}
