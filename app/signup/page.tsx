@@ -2,22 +2,25 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import './signup.css'
 
-interface SignUpForm{
-    name:string;
-    email:string;
-    password:string;
+interface SignUpForm {
+    name: string;
+    email: string;
+    password: string;
 }
 
 const SignUpPage = () => {
     const router = useRouter()
     const [form, setForm] = useState<SignUpForm>({ name: "", email: "", password: "" })
+    const [verify, setVerify] = useState<boolean>(false)
+    const [otp, setOtp] = useState<string>("")
     const [error, setError] = useState<string>("")
-    const [loading, setLoading] = useState<boolean>(false) 
+    const [loading, setLoading] = useState<boolean>(false)
 
-    const handleChange = (e:React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [e.target.name]: e.target.value })
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [e.target.name]: e.target.value })
 
-    const handleSignup = async (e:React.SyntheticEvent<HTMLFormElement>) => {
+    const handleSignup = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
         setError("")
@@ -26,57 +29,85 @@ const SignUpPage = () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form),
         })
-        const data : {error?:string} = await res.json()
+        const data: { error?: string } = await res.json()
         setLoading(false)
         if (!res.ok) {
-            return setError(data.error)
+            return setError(data.error || "Try Again")
         }
-        router.push("/login")
+        setVerify(true)
+    }
+    const verifyOtp = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoading(true)
+        setError("")
+        const res = await fetch("/api/verifyotp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: form.email, otp })
+        })
+        const data: { error?: string } = await res.json()
+        setLoading(false)
+        if (!res.ok) {
+            return setError(data.error || "Invalid Otp")
+        }
+        router.push('/login')
     }
 
     return (
         <div className="min-h-screen bg-linear-to-br from-zinc-950 to-zinc-800 flex items-center justify-center p-4">
             <div className="w-full max-w-4xl rounded-3xl flex flex-col md:flex-row overflow-hidden justify-center bg-white shadow-2xl">
-
-           
                 <div className="p-8 w-1/2 flex flex-col justify-center">
                     <div className="mb-6 flex items-center gap-2">
                         <div className="text-xs font-extrabold text-zinc-800">
                             Digital<span className='text-blue-700'>Classroom</span>
                         </div>
                     </div>
-
-                    <h1 className="text-3xl font-extrabold text-zinc-900">Welcome!</h1>
-                    <p className="text-sm text-gray-500 mt-1 mb-8">Please enter your details below.</p>
-
                     {error && (
                         <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-xl">{error}</p>
                     )}
+                    {!verify && (<>
 
-                    <form onSubmit={handleSignup} className="flex flex-col gap-4">
-                        <input
-                            className="bg-gray-100 border border-gray-200 p-3 rounded-xl"type="text"name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required
-                        />
-                        <input
-                            className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required
-                        />
-                        <input
-                            className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900" type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required
-                        />
-                        <button type="submit" disabled={loading} className="bg-zinc-900 hover:bg-gray-800 text-white py-3 rounded-xl font-medium disabled:opacity-60">
-                            {loading ? "Please wait..." : "Sign up"}
-                        </button>
-                    </form>
 
-                    <p className="text-sm text-gray-500 text-center mt-4">
-                        Already have an account?{" "}
-                        <Link href="/login" className="text-purple-600 font-medium hover:underline">
-                            Sign In
-                        </Link>
-                    </p>
+                        <h1 className="text-3xl font-extrabold text-zinc-900">Welcome!</h1>
+                        <p className="text-sm text-gray-500 mt-1 mb-8">Please enter your details below.</p>
+
+
+                        <form onSubmit={handleSignup} className="flex flex-col gap-4">
+                            <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="text" name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required />
+                            <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
+                            <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900" type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required />
+                            <button type="submit" disabled={loading} className="bg-zinc-900 hover:bg-gray-800 text-white py-3 rounded-xl font-medium disabled:opacity-60">
+                                {loading ? "Please wait..." : "Sign up"}
+                            </button>
+                        </form>
+
+                        <p className="text-sm text-gray-500 text-center mt-4">
+                            Already have an account?{" "}
+                            <Link href="/login" className="text-purple-600 font-medium hover:underline">
+                                Sign In
+                            </Link>
+                        </p>
+                    </>)}
+                    {verify && (
+                        <div className='otpBox'>
+                            <h1>Check your email</h1>
+                            <p >
+                                We sent a 6-digit OTP to <span className="emailName">{form.email}</span>
+                            </p>
+
+                            <form onSubmit={verifyOtp} >
+                                <input className="inputbox" type="text" placeholder="_ _ _ _ _ _" maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value)} required
+                                />
+                                <button type="submit" disabled={loading} className="button" id="verifyButton">
+                                    {loading ? "Verifying..." : "Verify OTP ➜ "}
+                                </button>
+                                <button type="button" onClick={() => { setVerify(false); setError("") }} className="backButton">
+                                    ⬅Go back
+                                </button>
+                            </form>
+                        </div>
+                    )}
                 </div>
-
-          
                 <div className="md:flex relative md:w-1/2 min-h-125 flex-col">
                     <img
                         className="w-full h-full object-cover"
@@ -91,7 +122,7 @@ const SignUpPage = () => {
                     </div>
                 </div>
 
-            </div> 
+            </div>
         </div>
     )
 }

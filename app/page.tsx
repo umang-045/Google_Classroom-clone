@@ -17,6 +17,7 @@ const LandingPage = ()=> {
                 <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#about'>About</Link></li>
                 <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#features'>Features</Link></li>
                 <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#contact'>Contact</Link></li>
+                <li className='transition-all hover:underline hover:text-zinc-200'><Link href='/dashboard'>Dashboard</Link></li>
               </ul>
             </div>
             <div >
@@ -32,7 +33,7 @@ const LandingPage = ()=> {
           </div>
           <div className='flex justify-around items-center my-20'>
             <div id='about' >
-              <p className='bg-neutral-800  text-zinc-200 font-bold p-4 w-fit rounded-2xl my-10 text-center'> 󠁯•󠁏 Built For modern classroom</p>
+              <button onClick={()=>router.push('/dashboard')}  className='bg-blue-200 text-blue-600 font-bold py-4 px-8 w-fit rounded-2xl my-10 text-center transition-all  cursor-pointer hover:underline'> 󠁯•View Dashboard</button>
               <h1 className='text-5xl text-gray-300 '>Manage your learning,<br />anywhere</h1>
               <p className='text-gray-300  my-10'>Create classrooms, share assignments, run live <br /> sessions, and track student progress - all in one place. </p>
 

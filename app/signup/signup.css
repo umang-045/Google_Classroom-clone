@@ -1,0 +1,73 @@
+.otpBox h1 {
+    font-weight: bold;
+    font-size: 32px;
+}
+
+.otpBox p {
+    color: gray;
+    margin-bottom: 40px;
+}
+
+.otpBox form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.inputbox {
+    background-color: #f3f4f6;
+    border: 1px solid #e5e7eb;
+    border-bottom: 2px solid #131a27; 
+    padding: 12px;
+    max-width:280px;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    text-align: center;
+    font-size:26px ;
+    letter-spacing: 10px;
+}
+
+.inputbox::placeholder {
+    font-weight: bolder;
+    font-size: 26px;
+    letter-spacing: 10px;
+    text-align: center;
+}
+
+.button {
+    background-color: #131a27;
+    color: white;
+    border-radius: 24px;
+    font-size: medium;
+    padding: 16px 24px;
+    margin: 4px;
+    font-weight: bolder;
+    cursor: pointer;
+}
+
+.button:hover {
+    transform: translateY(-3px);
+    text-decoration: underline;
+}
+
+.backButton {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.backButton:hover {
+    color: blue;
+}
+
+.emailName {
+    color: #131a27;
+    font-size: medium;
+}
+
+.button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}

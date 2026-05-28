@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { prisma } from "../../../lib/db"
 import bcrypt from "bcryptjs"
+import { generateOTP,sendOTPEmail } from "../../../lib/otp"
 
 async function signupHandler(req:Request) {
   try {
@@ -29,11 +30,19 @@ async function signupHandler(req:Request) {
     }
 
     const hashedPassword : string = await bcrypt.hash(password, 12)
+    const OTP=generateOTP();
+    const expires_at=new Date(Date.now()+600000);
+    
+    await prisma.verificationTable.upsert({
+      where: { email },
+      update: { otp:OTP, expires_at, password: hashedPassword },
+      create: { email, otp:OTP, expires_at, name, password: hashedPassword }
+    })
 
-    const result = await prisma.users.create({data:{name:name,email:email,password:hashedPassword}})
+    await sendOTPEmail(email, OTP);
 
     return NextResponse.json(
-      { user: result },
+      { message:"OTP SENT SUCCESSFULLY" },
       { status: 201 }
     )
 
