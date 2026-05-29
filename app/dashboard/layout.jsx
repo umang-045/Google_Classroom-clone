@@ -2,10 +2,12 @@
 import { useSession } from 'next-auth/react'
 import './dashboard.css'
 import React, { useState } from 'react'
+import { signOut } from 'next-auth/react'
 
 const Dashboardlayout = () => {
   const [active, setActive] = useState('Dashboard')
-  const {data:session} =useSession();
+  const result=useSession()
+  const session =result.data;
   return (
    <>
    <div className='DashboardContainer'>
@@ -54,9 +56,14 @@ const Dashboardlayout = () => {
       <div className='TopbarButton'>
       <button>🔗Join Class</button>
       <button>➕Create Class</button>
+       <button onClick={()=>{
+        const ans=confirm("DO YOU WANT TO SignOut?");
+        if(ans){
+          signOut()
+        }}}>🔓Sign Out</button>
       </div>      
     </div>
-   </div>
+   </div> 
    </>
   )
 }

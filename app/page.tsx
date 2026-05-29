@@ -2,9 +2,13 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useSession } from 'next-auth/react'
+import { signOut } from 'next-auth/react'
 
 
-const LandingPage = ()=> {
+const LandingPage = () => {
+  const result = useSession()
+  const session = result.data;
   const router = useRouter()
   return (
     <>
@@ -22,25 +26,34 @@ const LandingPage = ()=> {
             </div>
             <div >
               <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer transition-all hover:-translate-y-1' onClick={() => {
+              if(session){
+                const ans=confirm("⚠️DO YOU WANT TO SignOUT ?");
+                if(ans){ 
+                  signOut() 
+                }
+              }
+              else{ 
+                  router.push('/login')
+              }
+              }}>
+              {session ? 'Sign Out' : 'Sign In'}
+              </button>
+              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer  p-1.5 transition-all hover:-translate-y-1 ' onClick={() => {
 
-                router.push('/login')
-              }}>Sign In</button>
-              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer  p-1.5 transition-all hover:-translate-y-1' onClick={() => {
-
-                router.push('/signup')
+                router.push(session ? '/dashboard' : '/signup')
               }}>Get Started</button>
             </div>
           </div>
           <div className='flex justify-around items-center my-20'>
             <div id='about' >
-              <button onClick={()=>router.push('/dashboard')}  className='bg-blue-200 text-blue-600 font-bold py-4 px-8 w-fit rounded-2xl my-10 text-center transition-all  cursor-pointer hover:underline'> 󠁯•View Dashboard</button>
+              <button onClick={() => router.push('/dashboard')} className='bg-blue-200 text-blue-600 font-bold py-4 px-8 w-fit rounded-2xl my-10 text-center transition-all  cursor-pointer hover:underline'> 󠁯•View Dashboard</button>
               <h1 className='text-5xl text-gray-300 '>Manage your learning,<br />anywhere</h1>
               <p className='text-gray-300  my-10'>Create classrooms, share assignments, run live <br /> sessions, and track student progress - all in one place. </p>
 
             </div>
             <img src='/ad.png'></img>
           </div>
-          <div id ='features' className='flex flex-col justify-around px-12 my-30 ml-16'>
+          <div id='features' className='flex flex-col justify-around px-12 my-30 ml-16'>
             <h1 className='text-5xl text-gray-300 px-10 mb-5'>Features</h1>
             <div className='grid grid-cols-3'>
               <div className='bg-neutral-800 rounded-2xl m-5 p-5'>
@@ -110,54 +123,54 @@ const LandingPage = ()=> {
               </div>
             </div>
           </div>
-        <footer id='contact' className='border border-t-neutral-800'></footer>
-        <div className='ml-24 p-10 '>
-          <div className='grid grid-cols-3 mb-10 pl-4 gap-10'>
-            <div >
-              <div className="text-3xl  text-gray-300 font-extrabold">Digital<span className='text-blue-700'>Classroom</span></div>
-              <p className='text-gray-300 text-xl my-10'>DigitalClassroom is a full-featured<br/> learning management platform <br/> built for modern education.</p>
+          <footer id='contact' className='border border-t-neutral-800'></footer>
+          <div className='ml-24 p-10 '>
+            <div className='grid grid-cols-3 mb-10 pl-4 gap-10'>
+              <div >
+                <div className="text-3xl  text-gray-300 font-extrabold">Digital<span className='text-blue-700'>Classroom</span></div>
+                <p className='text-gray-300 text-xl my-10'>DigitalClassroom is a full-featured<br /> learning management platform <br /> built for modern education.</p>
 
-              <div className='flex gap-4 items-center  w-fit'>
+                <div className='flex gap-4 items-center  w-fit'>
 
-                <Link href='https://github.com' target='_blank'>
-                  <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1  hover:bg-neutral-600' >
-                    <img src='/github-sign.png' className='w-6 h-6 '></img>
-                  </button>
-                </Link>
+                  <Link href='https://github.com' target='_blank'>
+                    <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1  hover:bg-neutral-600' >
+                      <img src='/github-sign.png' className='w-6 h-6 '></img>
+                    </button>
+                  </Link>
 
-                <Link href='https://linkedin.com' target='_blank'>
-                  <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1  hover:bg-neutral-600' >
-                    <img src='/linkedin.png' className='w-6 h-6 '></img>
-                  </button>
-                </Link>
+                  <Link href='https://linkedin.com' target='_blank'>
+                    <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1  hover:bg-neutral-600' >
+                      <img src='/linkedin.png' className='w-6 h-6 '></img>
+                    </button>
+                  </Link>
 
-                <Link href='https://x.com' target='_blank'>
-                  <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1  hover:bg-neutral-600' >
-                    <img src='/twitter.png' className='w-6 h-6'></img>
-                  </button>
-                </Link>
+                  <Link href='https://x.com' target='_blank'>
+                    <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1  hover:bg-neutral-600' >
+                      <img src='/twitter.png' className='w-6 h-6'></img>
+                    </button>
+                  </Link>
+                </div>
+              </div>
+              <div>
+                <h1 className='text-zinc-200 font-semibold mb-4'>Navigation</h1>
+                <ul className='flex flex-col gap-3 text-gray-400'>
+                  <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#about'>About</Link></li>
+                  <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#features'>Features</Link></li>
+                  <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#contact'>Contact</Link></li>
+                  <li className='transition-all hover:underline hover:text-zinc-200'><Link href='/login'>Sign in</Link></li>
+                  <li className='transition-all hover:underline hover:text-zinc-200'><Link href='/login'>Get started</Link></li>
+                </ul>
+              </div>
+              <div>
+                <h3 className='text-zinc-200 font-semibold mb-4'>Contact</h3>
+                <ul className='flex flex-col gap-3 text-gray-400'>
+                  <li className='transition-all hover:underline hover:text-zinc-200'>🌐digitalclassroom.com</li>
+                  <li className='transition-all hover:underline hover:text-zinc-200'>📍Durgapur, India</li>
+                  <li className='transition-all hover:underline hover:text-zinc-200'>📞+91 8080808080</li>
+                  <li className='transition-all hover:underline hover:text-zinc-200'>✉️digitalclassroom@gmail.com</li>
+                </ul>
               </div>
             </div>
-            <div>
-              <h1 className='text-zinc-200 font-semibold mb-4'>Navigation</h1>
-              <ul className='flex flex-col gap-3 text-gray-400'>
-                <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#about'>About</Link></li>
-                <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#features'>Features</Link></li>
-                <li className='transition-all hover:underline hover:text-zinc-200'><Link href='#contact'>Contact</Link></li>
-                <li className='transition-all hover:underline hover:text-zinc-200'><Link href='/login'>Sign in</Link></li>
-                <li className='transition-all hover:underline hover:text-zinc-200'><Link href='/login'>Get started</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className='text-zinc-200 font-semibold mb-4'>Contact</h3>
-              <ul className='flex flex-col gap-3 text-gray-400'>
-                <li className='transition-all hover:underline hover:text-zinc-200'>🌐digitalclassroom.com</li>
-                <li className='transition-all hover:underline hover:text-zinc-200'>📍Durgapur, India</li>
-                <li className='transition-all hover:underline hover:text-zinc-200'>📞+91 8080808080</li>
-                <li className='transition-all hover:underline hover:text-zinc-200'>✉️digitalclassroom@gmail.com</li>
-              </ul>
-            </div>
-          </div>
           </div>
         </div>
       </div>

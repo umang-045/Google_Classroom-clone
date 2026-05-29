@@ -1,7 +1,7 @@
 "use client"
 import React from 'react'
-import { signIn } from 'next-auth/react'
-import { useState } from 'react'
+import { signIn, useSession } from 'next-auth/react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -15,6 +15,14 @@ const LoginPage = () => {
   const [form, setform] = useState<LoginForm>({ email: "", password: "" });
   const [loading, setloading] = useState<boolean>(false);
   const [error, seterror] = useState<string>("");
+  const result=useSession();
+  const session=result.data;
+  useEffect(()=>{
+    if(session){
+      router.push('/dashboard')
+       alert("YOU ARE LOGGED IN ✅")
+    }
+  },[session])
 
   const handleChange = (e:React.ChangeEvent<HTMLInputElement>):void => setform({ ...form, [e.target.name]: e.target.value })
   const handleLogin = async (e:React.SyntheticEvent<HTMLFormElement>) => {

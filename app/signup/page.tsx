@@ -1,8 +1,9 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import './signup.css'
+import { useSession } from 'next-auth/react'
 
 interface SignUpForm {
     name: string;
@@ -17,6 +18,14 @@ const SignUpPage = () => {
     const [otp, setOtp] = useState<string>("")
     const [error, setError] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
+      const result=useSession();
+      const session=result.data;
+      useEffect(()=>{
+        if(session){
+          router.push('/dashboard')
+          alert("YOU ARE ALREADY LOGGED IN ✅")
+        }
+      },[session])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [e.target.name]: e.target.value })
 
