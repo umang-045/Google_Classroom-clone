@@ -13,9 +13,10 @@ async function createClass(req:NextRequest){
             return NextResponse.json({ message: "Unauthorized, please login again" }, { status: 401 });
         }
         const joinCode=Math.random().toString(36).substring(2,10);
-        await prisma.classroom.create({data:{className:className,semester:semester,section:section,description:description ||" ",joinCode:joinCode,teacher:{connect:{id:token.id as number}}}})
+        await prisma.classroom.create({data:{className:className,semester:semester,section:section,description:description ||" ",joinCode:joinCode,teacher:{connect:{id:parseInt(token.id as string)}}}})
         return NextResponse.json({message:"Classroom Created Successfully"},{status:201})
-    }catch{
+    }catch(err){
+        console.error("Create class error:", err)
         return NextResponse.json({message:"Internal Error,Try again later"},{status:500})
     }
 

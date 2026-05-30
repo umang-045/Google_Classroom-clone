@@ -65,13 +65,13 @@ body {
 }
 
 .sidebar button:hover {
-  background-color: rgb(110, 162, 240);
-  color: rgb(21, 21, 236);
+  background-color: #a3a5a9;
+  color: black;
 }
 
 .sidebar button.active {
-  background-color: rgb(110, 162, 240);
-  color: blue;
+  background-color: #a3a5a9;
+  color: rgb(8, 8, 14);
   font-weight: 500;
 }
 
@@ -93,7 +93,6 @@ body {
 .TopbarButton {
   display: flex;
   gap: 50px;
-
 }
 .Greeting p{
   font-size: small;
@@ -115,5 +114,10 @@ body {
 
 .Topbar button:hover{
   text-decoration: underline;
-  color: blue;
+  color: #a3a5a9;
+}
+.mainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
