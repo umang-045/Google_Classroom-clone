@@ -1,4 +1,4 @@
-import {prisma} from '../../../../lib/db'
+import prisma from '../../../../lib/db'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 

@@ -5,16 +5,24 @@ import React, { useState } from 'react'
 import { signOut } from 'next-auth/react'
 import CreateClass from '../components/CreateClass'
 import JoinClass from '../components/JoinClass'
-import { useRouter } from 'next/navigation'
+import { useRouter, usePathname } from 'next/navigation'
 
-
-const Dashboardlayout = ({children}) => {
-  const router=useRouter()
-  const [active, setActive] = useState<string>('Dashboard')
+const Dashboardlayout = ({ children }) => {
+  const router = useRouter()
   const [createclassbox, setcreateclassBox] = useState<boolean>(false)
   const [joinclassbox, setjoinclassBox] = useState<boolean>(false)
   const result = useSession()
-  const session = result.data;
+  const session = result.data
+  const pathname = usePathname()
+
+  const getActive = () => {
+    if (pathname === '/dashboard') return 'Dashboard'
+    if (pathname.includes('allclasses')) return 'AllClasses'
+    if (pathname.includes('enrolled/myclassroom')) return 'EMyClassroom'
+    if (pathname.includes('teaching/myclassroom')) return 'TMyClassroom'
+    return ''
+  }
+
   return (
     <>
       <div className='DashboardContainer'>
@@ -23,30 +31,30 @@ const Dashboardlayout = ({children}) => {
 
           <div className='General sidebarComp'>
             <h2>GENERAL</h2>
-            <button className={active === 'Dashboard' ? 'active' : ''} onClick={() => {setActive('Dashboard') ;router.push('/dashboard') }}>🏠 Dashboard</button>
-            <button className={active === 'Notifications' ? 'active' : ''} onClick={() => setActive('Notifications')}>🔔 Notifications</button>
-            <button className={active === 'AllClasses' ? 'active' : ''} onClick={() => {setActive('AllClasses');router.push("/dashboard/allclasses")}}>📚 All Classes</button>
+            <button className={getActive() === 'Dashboard' ? 'active' : ''} onClick={() => router.push('/dashboard')}>🏠 Dashboard</button>
+            <button>🔔 Notifications</button>
+            <button className={getActive() === 'AllClasses' ? 'active' : ''} onClick={() => router.push("/dashboard/allclasses")}>📚 All Classes</button>
           </div>
 
           <div className='Enrolled sidebarComp'>
             <h2>ENROLLED</h2>
-            <button className={active === 'EMyClassroom' ? 'active' : ''} onClick={() => {setActive('EMyClassroom');router.push('/dashboard/enrolled/myclassroom')}}>🎓 My Classroom</button>
-            <button className={active === 'EAssignments' ? 'active' : ''} onClick={() => setActive('EAssignments')}>📝 Assignments</button>
-            <button className={active === 'EAnnouncements' ? 'active' : ''} onClick={() => setActive('EAnnouncements')}>📢 Announcements</button>
-            <button className={active === 'EChat' ? 'active' : ''} onClick={() => setActive('EChat')}>💬 Classroom Chat</button>
+            <button className={getActive() === 'EMyClassroom' ? 'active' : ''} onClick={() => router.push('/dashboard/enrolled/myclassroom')}>🎓 My Classroom</button>
+            <button>📝 Assignments</button>
+            <button>📢 Announcements</button>
+            <button>💬 Classroom Chat</button>
           </div>
 
           <div className='Teaching sidebarComp'>
             <h2>TEACHING</h2>
-            <button className={active === 'TMyClassroom' ? 'active' : ''} onClick={() => {setActive('TMyClassroom');router.push('/dashboard/teaching/myclassroom')}}>📖 My Classroom</button>
-            <button className={active === 'TAssignments' ? 'active' : ''} onClick={() => setActive('TAssignments')}>📋 Assignments</button>
-            <button className={active === 'TAnnouncements' ? 'active' : ''} onClick={() => setActive('TAnnouncements')}>📣 Announcements</button>
-            <button className={active === 'TChat' ? 'active' : ''} onClick={() => setActive('TChat')}>💬 Classroom Chat</button>
+            <button className={getActive() === 'TMyClassroom' ? 'active' : ''} onClick={() => router.push('/dashboard/teaching/myclassroom')}>📖 My Classroom</button>
+            <button>📋 Assignments</button>
+            <button>📣 Announcements</button>
+            <button>💬 Classroom Chat</button>
           </div>
 
           <div className='Tools sidebarComp'>
             <h2>TOOLS</h2>
-            <button className={active === 'Settings' ? 'active' : ''} onClick={() => setActive('Settings')}>⚙️ Settings</button>
+            <button>⚙️ Settings</button>
           </div>
 
           <div className='Profile'>
@@ -56,28 +64,26 @@ const Dashboardlayout = ({children}) => {
             </div>
           </div>
         </div>
-                  <div className='mainContent'> 
-        <div className='Topbar'>
-          <div className='Greeting'>
-            <h1>Hi 👋, {session?.user?.name ?? "there"}   ! </h1>
-            <p>{new Date().toDateString()}</p>
-          </div>
-          <div className='TopbarButton'>
-            <button onClick={() => setjoinclassBox(true)}>🔗 Join Class</button>
-            <button onClick={() => setcreateclassBox(true)}>➕ Create Class</button>
-            <button onClick={() => {
-              const ans = confirm("DO YOU WANT TO SignOut?");
-              if (ans) {
-                signOut()
-              }
-            }}>🔓Sign Out</button>
-          </div>
+        <div className='mainContent'>
+          <div className='Topbar'>
+            <div className='Greeting'>
+              <h1>Hi 👋, {session?.user?.name ?? "there"}   ! </h1>
+              <p>{new Date().toDateString()}</p>
+            </div>
+            <div className='TopbarButton'>
+              <button onClick={() => setjoinclassBox(true)}>🔗 Join Class</button>
+              <button onClick={() => setcreateclassBox(true)}>➕ Create Class</button>
+              <button onClick={() => {
+                const ans = confirm("DO YOU WANT TO SignOut?");
+                if (ans) { signOut() }
+              }}>🔓Sign Out</button>
+            </div>
           </div>
           {children}
         </div>
       </div>
       {createclassbox && <CreateClass setcreateclassBox={setcreateclassBox} />}
-      {joinclassbox && <JoinClass setjoinclassBox={setjoinclassBox}/>}
+      {joinclassbox && <JoinClass setjoinclassBox={setjoinclassBox} />}
     </>
   )
 }

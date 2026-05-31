@@ -31,7 +31,7 @@ const createClass = ({ setcreateclassBox }) => {
       return setError(data.message || "Try again")
     }
     setcreateclassBox(false)
-    router.push('/dashboard')
+    router.push('/dashboard/allclasses')
   }
 
   return (

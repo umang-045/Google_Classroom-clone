@@ -29,7 +29,7 @@ const joinClass = ({ setjoinclassBox }) => {
       return setError(data.message || "Try again")
     }
     setjoinclassBox(false)
-    router.push('/dashboard')
+    router.push('/dashboard/allclasses')
   }
   return (
     <>

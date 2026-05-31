@@ -1,12 +1,15 @@
 "use client"
 import React, { useState, useEffect } from 'react'
 import './allclasses.css'
+import { useRouter,useSearchParams } from 'next/navigation'
 
 
-const allClasses = () => {
+const AllClasses = () => {
   const [teachingClassroom, setTeachingClassroom] = useState([])
   const [enrolledClassroom, setEnrolledClassroom] = useState([])
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
+  const searchParams=useSearchParams()
   useEffect(() => {
     const fetchClassrooms = async () => {
       const res = await fetch("/api/user/classrooms")
@@ -16,7 +19,7 @@ const allClasses = () => {
       setLoading(false)
     }
     fetchClassrooms()
-  }, [])
+  }, [searchParams])
 
   if (loading) return <p>Loading...</p>
   return (
@@ -71,5 +74,5 @@ const allClasses = () => {
   )
 }
 
-export default allClasses
+export default AllClasses
 

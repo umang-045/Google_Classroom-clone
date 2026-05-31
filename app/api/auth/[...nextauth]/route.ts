@@ -1,7 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth"
 import GoogleProvider from "next-auth/providers/google"
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { prisma } from "../../../../lib/db"
+import  prisma  from "../../../../lib/db"
 import bcrypt from "bcryptjs"
 
 interface credentialsType {

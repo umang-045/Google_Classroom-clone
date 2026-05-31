@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "../../../../lib/db";
+import  prisma  from "../../../../lib/db";
 import { getToken } from "next-auth/jwt";
 
 async function joinclass(req: NextRequest) {
