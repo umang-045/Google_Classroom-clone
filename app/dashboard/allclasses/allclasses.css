@@ -1,0 +1,66 @@
+.heading{
+    color:rgb(201, 186, 186);
+    border-bottom: 1px solid #494a4b;
+    padding:15px;
+    font-size: 20px;
+    font-weight: bold;
+}
+.classContainer{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    margin-bottom: 15px;
+}
+.teaching .enrolled{
+    min-height: 250px;
+}
+.classCard{
+    background:linear-gradient();
+    background:linear-gradient(to left, #494a4b , #525252);
+    width:375px;
+    height:250px;
+    padding: 25px ;
+    margin:8px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+.classCard h3{
+    font-size: 20px;
+    font-weight: bolder;
+    color:#1d1d1f;
+    border-bottom:1px solid #818589 ;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+}
+.smallbox{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.classcardphoto{
+    border:1px solid rgb(72, 70, 70);
+    background-color:#494a4b;
+    border-radius: 200px;
+    width: 120px;
+}
+.info {
+    display: flex;
+    flex-direction: column;
+}
+.info p{
+    margin-bottom: 2px;
+    color: #030507;
+    font-weight: 500;
+}
+.joinCode{
+    background-color:#5b5b5b;
+    width: fit-content;
+    padding:5px 10px;
+    margin-top: 18px;
+    color: #030507;
+    border-radius: 10px;
+
+}
+.noClass{
+        color: rgb(96, 101, 105);
+        margin: 20px;
+}

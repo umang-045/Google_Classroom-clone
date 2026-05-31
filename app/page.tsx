@@ -25,7 +25,7 @@ const LandingPage = () => {
               </ul>
             </div>
             <div >
-              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer transition-all hover:-translate-y-1' onClick={() => {
+              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer transition-all hover:underline' onClick={() => {
               if(session){
                 const ans=confirm("⚠️DO YOU WANT TO SignOUT ?");
                 if(ans){ 
@@ -36,9 +36,9 @@ const LandingPage = () => {
                   router.push('/login')
               }
               }}>
-              {session ? 'Sign Out' : 'Sign In'}
+              {session ? '🔓Sign Out' : '🔑Sign In'}
               </button>
-              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer  p-1.5 transition-all hover:-translate-y-1 ' onClick={() => {
+              <button className='bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer  p-1.5 transition-all hover:underline ' onClick={() => {
 
                 router.push(session ? '/dashboard' : '/signup')
               }}>Get Started</button>
@@ -46,7 +46,7 @@ const LandingPage = () => {
           </div>
           <div className='flex justify-around items-center my-20'>
             <div id='about' >
-              <button onClick={() => router.push('/dashboard')} className='bg-blue-200 text-blue-600 font-bold py-4 px-8 w-fit rounded-2xl my-10 text-center transition-all  cursor-pointer hover:underline'> 󠁯•View Dashboard</button>
+              <button onClick={() => router.push('/dashboard')} className='bg-zinc-600 text-zinc-200 font-bold py-4 px-8 w-fit rounded-2xl my-10 text-center transition-all  cursor-pointer hover:underline'> 󠁯🏠View Dashboard</button>
               <h1 className='text-5xl text-gray-300 '>Manage your learning,<br />anywhere</h1>
               <p className='text-gray-300  my-10'>Create classrooms, share assignments, run live <br /> sessions, and track student progress - all in one place. </p>
 

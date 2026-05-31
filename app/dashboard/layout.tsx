@@ -30,7 +30,7 @@ const Dashboardlayout = ({children}) => {
 
           <div className='Enrolled sidebarComp'>
             <h2>ENROLLED</h2>
-            <button className={active === 'EMyClassroom' ? 'active' : ''} onClick={() => setActive('EMyClassroom')}>🎓 My Classroom</button>
+            <button className={active === 'EMyClassroom' ? 'active' : ''} onClick={() => {setActive('EMyClassroom');router.push('/dashboard/enrolled/myclassroom')}}>🎓 My Classroom</button>
             <button className={active === 'EAssignments' ? 'active' : ''} onClick={() => setActive('EAssignments')}>📝 Assignments</button>
             <button className={active === 'EAnnouncements' ? 'active' : ''} onClick={() => setActive('EAnnouncements')}>📢 Announcements</button>
             <button className={active === 'EChat' ? 'active' : ''} onClick={() => setActive('EChat')}>💬 Classroom Chat</button>
@@ -38,9 +38,10 @@ const Dashboardlayout = ({children}) => {
 
           <div className='Teaching sidebarComp'>
             <h2>TEACHING</h2>
-            <button className={active === 'TMyClassroom' ? 'active' : ''} onClick={() => setActive('TMyClassroom')}>📖 My Classroom</button>
+            <button className={active === 'TMyClassroom' ? 'active' : ''} onClick={() => {setActive('TMyClassroom');router.push('/dashboard/teaching/myclassroom')}}>📖 My Classroom</button>
             <button className={active === 'TAssignments' ? 'active' : ''} onClick={() => setActive('TAssignments')}>📋 Assignments</button>
             <button className={active === 'TAnnouncements' ? 'active' : ''} onClick={() => setActive('TAnnouncements')}>📣 Announcements</button>
+            <button className={active === 'TChat' ? 'active' : ''} onClick={() => setActive('TChat')}>💬 Classroom Chat</button>
           </div>
 
           <div className='Tools sidebarComp'>
