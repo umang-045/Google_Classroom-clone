@@ -29,7 +29,7 @@ const AllClasses = () => {
         <div className='classContainer'>
           {teachingClassroom.length === 0 ? <p className='noClass'>No classrooms created yet!</p> : teachingClassroom.map((classroom) => (
 
-            <div key={classroom.id} className='classCard'>
+            <div key={classroom.id} className='classCard' onClick={()=>{router.push(`/dashboard/classroom/${classroom.id}`)}}>
               <h3>{classroom.className}</h3>
               <div className="smallbox">
                 <div className="info">
@@ -52,7 +52,7 @@ const AllClasses = () => {
         <h2 className='heading'>Enrolled As Student 🧑‍🎓</h2>
         <div className='classContainer'>
           {enrolledClassroom.length === 0 ? <p className='noClass'>No classrooms joined yet!</p> : enrolledClassroom.map((item) => (
-            <div key={item.id} className='classCard'>
+            <div key={item.id} className='classCard' onClick={() => router.push(`/dashboard/classroom/${item.classroom.id}`)}>
                                 <h3>{item.classroom.className}</h3>
               <div className="smallbox">
                 <div className='info'>

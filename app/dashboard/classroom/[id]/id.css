@@ -1,0 +1,53 @@
+.cardContainer{
+    margin: 10px;
+    background:linear-gradient(to bottom,rgb(103, 99, 99),rgb(39, 37, 37));
+    border-radius: 25px;
+    min-height: 100vh;
+}
+.NameBox{
+    height: 150px;
+    background:linear-gradient(to bottom,rgb(103, 99, 99),rgb(39, 37, 37));
+    border-bottom:2px solid rgb(7, 8, 9);
+    display: flex;
+    justify-content: space-between;
+    padding-left: 25px;
+    align-items: center;
+    border-radius: 25px;
+}
+.NameBox h1{
+    font-size: 30px;    
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+.NameBox ol{
+    padding: 25px;
+    color: rgb(172, 160, 160);
+    font-weight: 600;
+}
+.descBox{
+    padding-left: 25px;
+}
+.TabCollection{
+    background:linear-gradient(to top,rgb(134, 132, 132),rgb(68, 59, 59));
+    margin: 10px ;
+    border-radius: 25px;
+}
+.buttons{
+    display: flex;
+    justify-content: space-around;
+}
+.buttons button{
+background:linear-gradient(to top,rgb(134, 132, 132),rgb(68, 59, 59));
+  color: white;
+  border-radius: 24px;
+  font-size: medium;
+  padding: 16px 24px;
+  margin: 4px;
+  font-weight: bolder;
+  cursor: pointer;
+}
+.buttons button:hover{
+    text-decoration: underline;
+}
+
+
