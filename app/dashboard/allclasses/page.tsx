@@ -75,4 +75,3 @@ const AllClasses = () => {
 }
 
 export default AllClasses
-

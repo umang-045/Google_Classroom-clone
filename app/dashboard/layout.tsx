@@ -6,6 +6,8 @@ import { signOut } from 'next-auth/react'
 import CreateClass from '../components/CreateClass'
 import JoinClass from '../components/JoinClass'
 import { useRouter, usePathname } from 'next/navigation'
+import { AppSidebar } from '@/components/app-sidebar'
+import { SidebarProvider } from '@/components/ui/sidebar'
 
 const Dashboardlayout = ({ children }) => {
   const router = useRouter()
@@ -26,44 +28,9 @@ const Dashboardlayout = ({ children }) => {
   return (
     <>
       <div className='DashboardContainer'>
-        <div className="sidebar">
-          <h1>Digital<span className='Classroom'>Classroom</span></h1>
-
-          <div className='General sidebarComp'>
-            <h2>GENERAL</h2>
-            <button className={getActive() === 'Dashboard' ? 'active' : ''} onClick={() => router.push('/dashboard')}>🏠 Dashboard</button>
-            <button>🔔 Notifications</button>
-            <button className={getActive() === 'AllClasses' ? 'active' : ''} onClick={() => router.push("/dashboard/allclasses")}>📚 All Classes</button>
-          </div>
-
-          <div className='Enrolled sidebarComp'>
-            <h2>ENROLLED</h2>
-            <button className={getActive() === 'EMyClassroom' ? 'active' : ''} onClick={() => router.push('/dashboard/enrolled/myclassroom')}>🎓 My Classroom</button>
-            <button>📝 Assignments</button>
-            <button>📢 Announcements</button>
-            <button>💬 Classroom Chat</button>
-          </div>
-
-          <div className='Teaching sidebarComp'>
-            <h2>TEACHING</h2>
-            <button className={getActive() === 'TMyClassroom' ? 'active' : ''} onClick={() => router.push('/dashboard/teaching/myclassroom')}>📖 My Classroom</button>
-            <button>📋 Assignments</button>
-            <button>📣 Announcements</button>
-            <button>💬 Classroom Chat</button>
-          </div>
-
-          <div className='Tools sidebarComp'>
-            <h2>TOOLS</h2>
-            <button>⚙️ Settings</button>
-          </div>
-
-          <div className='Profile'>
-            <div className=''>UM</div>
-            <div>
-              <div>Umang</div>
-            </div>
-          </div>
-        </div>
+        <SidebarProvider>
+        <AppSidebar />
+        
         <div className='mainContent'>
           <div className='Topbar'>
             <div className='Greeting'>
@@ -81,6 +48,7 @@ const Dashboardlayout = ({ children }) => {
           </div>
           {children}
         </div>
+        </SidebarProvider>
       </div>
       {createclassbox && <CreateClass setcreateclassBox={setcreateclassBox} />}
       {joinclassbox && <JoinClass setjoinclassBox={setjoinclassBox} />}
