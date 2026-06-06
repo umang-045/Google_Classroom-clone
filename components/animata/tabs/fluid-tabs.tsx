@@ -122,7 +122,7 @@ function FluidTabsList({
   return (
     <nav
       aria-label={ariaLabel}
-      className={cn("relative overflow-visible rounded-full bg-muted p-1 shadow-sm", className)}
+      className={cn("relative overflow-visible   p-1 shadow-sm", className)}
       {...props}
     >
       <div
@@ -208,13 +208,16 @@ function FluidTabsTab({
       {isSelected ? (
         <motion.span
           layoutId={indicatorLayoutId}
-          className="absolute inset-0 block rounded-full bg-background shadow-sm"
+          className="absolute inset-0 block rounded-full bg-sidebar-accent shadow-sm"
           transition={INDICATOR_SPRING}
           aria-hidden
         />
       ) : null}
       <motion.span
-        className="relative z-10 inline-flex items-center justify-center gap-2"
+        className={cn(
+          "relative z-10 inline-flex items-center justify-center gap-2",
+          isSelected ? "text-black" : "text-white/60"
+        )}
         animate={{ scale: isSelected ? 1 : 0.98 }}
         transition={LABEL_TRANSITION}
       >
