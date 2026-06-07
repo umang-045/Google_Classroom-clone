@@ -91,7 +91,7 @@ const LandingPage = () => {
             </DoubleUnderline>
           </div>
             <div className='relative w-[750px] h-[500px] rounded-3xl overflow-hidden shadow-2xl shadow-[0_0_60px_rgba(255,255,255,0.08)] object-cover flex-shrink-0 '>
-          <TrailingImage images={customImages} className='w-[650px] h-[500px] rounded-4xl'/>
+          <TrailingImage images={customImages} className='wfull h-[500px] rounded-4xl'/>
           <h1 className='text-gray-500  absolute top-1/2 left-1/2  '>Hover me </h1>
           </div>
         </div>

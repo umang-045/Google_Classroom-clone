@@ -1,9 +1,11 @@
 "use client"
-import { useParams, useSearchParams } from 'next/navigation'
+import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 import './id.css'
-import { GRADIENTS, AVATAR_COLORS, classphoto } from '../../allclasses/page'
+import { GRADIENTS, AVATAR_COLORS, classphoto } from '@/app/components/ClassroomCard'
 import FluidTabs from '@/components/animata/tabs/fluid-tabs'
+import ClassroomMenu from '@/app/components/ClassroomMenu'
+import { useSession } from 'next-auth/react'
 
 const ClassroomPage = () => {
   const [classroomDetails, setClassroomDetails] = useState(null)
@@ -14,19 +16,28 @@ const ClassroomPage = () => {
   const colorIndex = parseInt(SearchParams.get('colorIndex'))
   const tabs = ['Stream', 'Assignment', 'Materials', 'Members', 'Chat']
   const [activeTab, setActiveTab] = useState('Stream')
-
+  const session = useSession()
+  const [role, setrole] = useState<string>("")
+  const router = useRouter()
   useEffect(() => {
     const details = async () => {
       const res = await fetch(`/api/classroom/${id}`)
       const data = await res.json()
+      if (!res.ok) {
+        router.push('/dashboard/allclasses')  
+        return
+      }
       setClassroomDetails(data.classroom)
+      setrole(data.role)
       setLoading(false)
 
+      
     }
     details()
   }, [])
   if (loading) return <p>Loading...</p>
   if (!classroomDetails) return <p>Classroom not found</p>
+
 
   return (
     <>
@@ -34,7 +45,10 @@ const ClassroomPage = () => {
         <div className='NameBox' style={{ background: GRADIENTS[colorIndex] }}>
 
           <div className='descBox'>
-            <h1 className='text-white font-bold text-2xl mb-1 '>{classroomDetails.className}</h1>
+            <div className='flex'>
+              <h1 className='text-white font-bold text-2xl mb-1 '>{classroomDetails.className}</h1>
+              <ClassroomMenu role={role} joinCode={classroomDetails.joinCode} id={classroomDetails.id} />
+            </div>
             <ol className='flex list-disc gap-5 ml-2 '>
               <li className='text-xs text-white/70'>Semester: {classroomDetails.semester}</li>
               <li className='text-xs text-white/70'>Section: {classroomDetails.section}</li>
@@ -52,7 +66,7 @@ const ClassroomPage = () => {
 
         </div>
         <FluidTabs
-          className='w-full  max-w-full  bg-black/50' 
+          className='w-full  max-w-full  bg-black/50'
           defaultActiveIndex={0}
           onActiveIndexChange={(index) => setActiveTab(tabs[index])}
         >
