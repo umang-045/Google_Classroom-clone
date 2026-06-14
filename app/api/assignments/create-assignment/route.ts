@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
                 title: data.title,
                 description: data.description,
                 fileUrl: data.fileUrl,
-                due_at: data.due_at,
+                due_at: new Date(data.due_at).toISOString(),
                 teacherId: Number(teacherId.teacherId),
                 classId: data.classroomId,
             }

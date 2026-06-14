@@ -8,9 +8,9 @@ export async function GET(req: NextRequest, { params }) {
         return NextResponse.json({ message: "Login and Try Again" }, { status: 400 })
     }
     try {
-        const { id } = await params;
-        const classroomId = Number(id)
-        const existing = await prisma.classroom.findUnique({ where: { id: classroomId } })
+        const { classroomId } = await params;
+        const classId = Number(classroomId)
+        const existing = await prisma.classroom.findUnique({ where: { id: classId } })
         if (!existing) {
             return NextResponse.json({ message: "classroom not found" }, { status: 404 })
         }
@@ -19,14 +19,14 @@ export async function GET(req: NextRequest, { params }) {
             where: {
                 userId_classroomId: {
                     userId: Number(token.id),
-                    classroomId: classroomId
+                    classroomId: classId
                 }
             }
         })
         if(teacherId!=Number(token.id) && !studentId){
             return NextResponse.json({message:"Unauthorized"},{status:403})
         }
-        const assignments = await prisma.assignment.findMany({ where: { classId: classroomId } })
+        const assignments = await prisma.assignment.findMany({ where: { classId: classId } })
         return NextResponse.json({ assignments }, { status: 200 })
 
     } catch (err) {

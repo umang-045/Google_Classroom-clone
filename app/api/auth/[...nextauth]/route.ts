@@ -67,34 +67,34 @@ export const authOptions = {
 },
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === "google") {
+    if (account?.provider === "google") {
         if (!user.email) return false
-
         try {
-          const existing = await prisma.users.findUnique({
-            where: { email: user.email },
-            select: { id: true },
-          })
-
-          if (!existing) {
-            await prisma.users.create({
-              data: {
-                name: user.name,
-                email: user.email,
-              },
+            const existing = await prisma.users.findUnique({
+                where: { email: user.email },
+                select: { id: true },
             })
-          }
 
-          return true
+            if (existing) {
+                user.id = existing.id.toString() 
+            } else {
+                const created = await prisma.users.create({
+                    data: {
+                        name: user.name,
+                        email: user.email,
+                    },
+                    select: { id: true }
+                })
+                user.id = created.id.toString() 
+            }
+            return true
         } catch (err) {
-          console.error("Google sign-in sync error:", err)
-          return false
+            console.error("Google sign-in sync error:", err)
+            return false
         }
-      }
-
-      return true
-    },
-
+    }
+    return true
+},
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id

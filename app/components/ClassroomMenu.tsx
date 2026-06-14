@@ -52,10 +52,10 @@ const ClassroomMenu = ({ joinCode, id, role }: ClassroomMenuProp) => {
         router.push('/dashboard/allclasses')
 
     }
-    const handleCopyJoinCode = (e: React.MouseEvent) => { 
+    const handleCopyJoinCode = (e: React.MouseEvent) => {
         e.stopPropagation()
-        navigator.clipboard.writeText(joinCode) 
-        alert("Join Code Copied ")    
+        navigator.clipboard.writeText(joinCode)
+        alert("Join Code Copied ")
     }
 
     return (

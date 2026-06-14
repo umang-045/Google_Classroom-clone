@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import prisma from "../../../lib/db"
+import prisma from "@/lib/db"
 import { generateOTP,sendOTPEmail } from "../../../lib/otp"
 
 export async function POST(req: Request) {
