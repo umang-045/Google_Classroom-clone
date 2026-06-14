@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import './signup.css'
 import { useSession } from 'next-auth/react'
-import { RefreshCwIcon } from "lucide-react"
+import Image from 'next/image'
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card"
@@ -57,7 +57,7 @@ const SignUpPage = () => {
         e.preventDefault()
         setLoading(true)
         setError("")
-        const res = await fetch("/api/verifyotp", {
+        const res = await fetch("/api/forgotverify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: form.email, otp })
@@ -67,20 +67,19 @@ const SignUpPage = () => {
         if (!res.ok) {
             return setError(data.error || "Invalid Otp")
         }
-        router.push('/login')
+        router.push('/resetpassword')
     }
 
     return (
         <div className="relative overflow-hidden min-h-screen bg-linear-to-br from-zinc-950 to-zinc-800 flex items-center justify-center p-4">
-            <video
-                src='/hero.mp4'
-                autoPlay
-                muted
-                loop
-                playsInline
-                className='absolute inset-0 w-full h-full object-cover'
-            />
-            <div className='absolute inset-0 bg-black/60' />
+             <Image
+                            src="/bg3.jpg"
+                            alt=""
+                            fill
+                            className="object-cover"
+                            priority
+                          />
+                    <div className='absolute inset-0 bg-black/30' />
 
             <div className="relative z-10 w-full max-w-4xl rounded-3xl flex flex-col md:flex-row overflow-hidden justify-center bg-white/80 shadow-2xl">
                 <div className="p-8 w-1/2 flex flex-col justify-center">

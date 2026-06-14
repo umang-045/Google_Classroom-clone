@@ -4,6 +4,7 @@ import { signIn, useSession } from 'next-auth/react'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
 interface LoginForm {
   email: string;
@@ -46,15 +47,14 @@ const LoginPage = () => {
   return (
     <>
       <div className="relative overflow-hidden min-h-screen bg-linear-to-br from-zinc-950 to-zinc-800 flex items-center justify-center p-4">
-        <video
-          src='/hero.mp4'
-          autoPlay
-          muted
-          loop
-          playsInline
-          className='absolute inset-0 w-full h-full object-cover'
-        />
-        <div className='absolute inset-0 bg-black/60' />
+              <Image
+                src="/bg3.jpg"
+                alt=""
+                fill
+                className="object-cover"
+                priority
+              />
+        <div className='absolute inset-0 bg-black/30' />
 
         <div className="relative z-10 w-full max-w-4xl rounded-3xl flex flex-row overflow-hidden justify-center bg-white/80 backdrop-blur-sm shadow-2xl">
           <div className="p-8 w-1/2 flex flex-col justify-center">
@@ -73,7 +73,7 @@ const LoginPage = () => {
               <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
               <div className="flex flex-col gap-1">
                 <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900" type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required />
-                <p className="text-xs text-purple-600 font-medium cursor-pointer text-right hover:underline mt-1">
+                <p className="text-xs text-purple-600 font-medium cursor-pointer text-right hover:underline mt-1" onClick={()=>router.push('./forgetpassword')}>
                   Forgot password?
                 </p>
               </div>

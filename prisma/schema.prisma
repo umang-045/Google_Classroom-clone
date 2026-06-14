@@ -14,6 +14,8 @@ model Users {
   created_at DateTime @default(now())
   teachingClassrooms Classroom[] @relation("TeacherClassroom")
   enrolledClassrooms ClassroomStudent[] @relation("ClassroomStudent")
+  assignments Assignment[] @relation("Teacher")
+  submissions Submission[] @relation("StudentAssignment")
 
 }
 
@@ -38,6 +40,7 @@ model Classroom{
   teacher Users @relation("TeacherClassroom",fields:[teacherId],references:[id])
   teacherId Int
   students  ClassroomStudent[]
+  assignments Assignment[] @relation("Assignment")
 }
 
 model ClassroomStudent{
@@ -48,4 +51,29 @@ model ClassroomStudent{
   classroom   Classroom @relation(fields: [classroomId], references: [id])
   classroomId Int
   @@unique([userId, classroomId]) 
+}
+
+model Assignment{
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  fileUrl String
+  created_at DateTime @default(now())
+  due_at DateTime 
+  classroom Classroom @relation("Assignment",fields:[classId],references:[id])
+  classId    Int
+  teacher    Users @relation("Teacher",fields:[teacherId],references: [id])
+  teacherId  Int
+  submissions Submission[] @relation("SubmitAssignment")
+}
+
+model Submission{
+  id Int @id @default(autoincrement())
+  fileUrl String
+  submitted_at DateTime @default(now())
+  assignment Assignment @relation("SubmitAssignment",fields:[assignmentId],references: [id])
+  assignmentId Int
+  student Users @relation("StudentAssignment",fields:[studentId],references: [id])
+  studentId Int
+  @@unique([studentId, assignmentId])
 }

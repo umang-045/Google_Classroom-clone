@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
-import  prisma  from "../../../lib/db"
+import prisma from "../../../lib/db"
 import bcrypt from "bcryptjs"
-import { generateOTP,sendOTPEmail } from "../../../lib/otp"
+import { generateOTP, sendOTPEmail } from "../../../lib/otp"
 
-async function signupHandler(req:Request) {
+async function signupHandler(req: Request) {
   try {
     const { name, email, password } = await req.json()
 
@@ -20,29 +20,37 @@ async function signupHandler(req:Request) {
         { status: 400 }
       )
     }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      return NextResponse.json(
+        { error: "Invalid email address" },
+        { status: 400 }
+      )
+    }
 
-    const existing = await prisma.users.findUnique({where:{email:email},select:{id:true}})
-    if (existing!=null) {
+
+    const existing = await prisma.users.findUnique({ where: { email: email }, select: { id: true } })
+    if (existing) {
       return NextResponse.json(
         { error: "Email already registered" },
         { status: 409 }
       )
     }
 
-    const hashedPassword : string = await bcrypt.hash(password, 12)
-    const OTP=generateOTP();
-    const expires_at=new Date(Date.now()+600000);
-    
+    const hashedPassword: string = await bcrypt.hash(password, 12)
+    const OTP = generateOTP();
+    const expires_at = new Date(Date.now() + 600000);
+
     await prisma.verificationTable.upsert({
       where: { email },
-      update: { otp:OTP, expires_at, password: hashedPassword },
-      create: { email, otp:OTP, expires_at, name, password: hashedPassword }
+      update: { otp: OTP, expires_at, password: hashedPassword },
+      create: { email, otp: OTP, expires_at, name, password: hashedPassword }
     })
 
     await sendOTPEmail(email, OTP);
 
     return NextResponse.json(
-      { message:"OTP SENT SUCCESSFULLY" },
+      { message: "OTP SENT SUCCESSFULLY" },
       { status: 201 }
     )
 

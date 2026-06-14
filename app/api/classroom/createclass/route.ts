@@ -22,3 +22,4 @@ async function createClass(req:NextRequest){
 
 }
 export {createClass as POST}
+

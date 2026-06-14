@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import '../../allclasses/allclasses.css'
 import ClassroomCard from '@/app/components/ClassroomCard'
 import { useRouter } from 'next/navigation'
+import TopBar from '@/app/components/TopBar'
 
 
 const enrolledClassroompage = () => {
@@ -26,6 +27,7 @@ const enrolledClassroompage = () => {
 
   return (
     <>
+    <TopBar />
       <div className='enrolled'>
         <h2 className='heading'>Enrolled As Student 🧑‍🎓</h2>
         <div className='classContainer'>

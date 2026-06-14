@@ -18,7 +18,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
         link: "text-primary underline-offset-4 hover:underline",
-        navbar:"bg-gray-400 px-10 py-3 mx-6 rounded-2xl cursor-pointer transition-all hover:underline"
+        navbar:"bg-gray-400  py-4 mx-6 rounded-2xl cursor-pointer transition-all hover:underline"
       },
       size: {
         default:

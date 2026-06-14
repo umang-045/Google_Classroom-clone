@@ -1,79 +1,182 @@
 "use client"
 import * as React from "react"
-import { NavMain } from "@/components/nav-main"
+import { usePathname } from "next/navigation"
+import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
+import { useSession } from "next-auth/react"
 import {
   Sidebar,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarRail,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarGroupContent,
+  SidebarSeparator,
 } from "@/components/ui/sidebar"
+import {
+  LayoutDashboard,
+  Bell,
+  Library,
+  School,
+  ClipboardList,
+  Megaphone,
+  MessageCircle,
+  BookOpen,
+  ClipboardCheck,
+  Radio,
+  Settings2 as Settings2Icon,
+  CircleHelp as CircleHelpIcon,
+  Search as SearchIcon,
+} from "lucide-react"
+
+import { classphoto } from "@/app/components/ClassroomCard"
+
+
 
 const data = {
   user: {
-    name: "Umang",
-    email: "umang@example.com",
-    avatar: "",
+    name: "shadcn",
+    email: "m@example.com",
+    avatar: "/avatars/shadcn.jpg",
   },
-  navMain: [
-    {
-      title: "General",
-      url: "#",
-      icon: <span>🏠</span>,
-      isActive: true,
-      items: [
-        { title: "Dashboard",     url: "/dashboard" },
-        { title: "Notifications", url: "/dashboard/notifications" },
-        { title: "All Classes",   url: "/dashboard/allclasses" },
-      ],
-    },
-    {
-      title: "Enrolled",
-      url: "#",
-      icon: <span>🎓</span>,
-      items: [
-        { title: "My Classroom",   url: "/dashboard/enrolled/myclassroom" },
-        { title: "Assignments",    url: "/dashboard/enrolled/assignments" },
-        { title: "Announcements",  url: "/dashboard/enrolled/announcements" },
-        { title: "Classroom Chat", url: "/dashboard/enrolled/classroomchat" },
-      ],
-    },
-    {
-      title: "Teaching",
-      url: "#",
-      icon: <span>📖</span>,
-      items: [
-        { title: "My Classroom",   url: "/dashboard/teaching/myclassroom" },
-        { title: "Assignments",    url: "/dashboard/teaching/assignments" },
-        { title: "Announcements",  url: "/dashboard/teaching/announcements" },
-        { title: "Classroom Chat", url: "/dashboard/teaching/classroomchat" },
-      ],
-    },
-    {
-      title: "Tools",
-      url: "#",
-      icon: <span>⚙️</span>,
-      items: [
-        { title: "Settings", url: "/dashboard/tools/settings" },
-      ],
-    },
+  general: [
+    { title: "Dashboard",     icon: LayoutDashboard, url: "/dashboard" },
+    { title: "Notifications", icon: Bell,            url: "/dashboard/notifications" },
+    { title: "All Classes",   icon: Library,         url: "/dashboard/allclasses" },
+  ],
+  enrolled: [
+    { title: "My Classroom",   icon: School,          url: "/dashboard/enrolled/myclassroom" },
+    { title: "Assignments",    icon: ClipboardList,   url: "/dashboard/enrolled/assignments" },
+    { title: "Announcements",  icon: Megaphone,       url: "/dashboard/enrolled/announcements" },
+    { title: "Classroom Chat", icon: MessageCircle,   url: "/dashboard/enrolled/classroomchat" },
+  ],
+  teaching: [
+    { title: "My Classroom",   icon: BookOpen,        url: "/dashboard/teaching/myclassroom" },
+    { title: "Assignments",    icon: ClipboardCheck,  url: "/dashboard/teaching/assignments" },
+    { title: "Announcements",  icon: Radio,           url: "/dashboard/teaching/announcements" },
+    { title: "Classroom Chat", icon: MessageCircle,   url: "/dashboard/teaching/classroomchat" },
+  ],
+  navSecondary: [
+    { title: "Settings", url: "/dashboard/settings", icon: <Settings2Icon /> },
+    { title: "Get Help", url: "/dashboard/help",     icon: <CircleHelpIcon /> },
+    { title: "Search",   url: "/dashboard/search",   icon: <SearchIcon /> },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname()
+
+const isActive = (url: string) =>
+  url === "/dashboard"
+    ? pathname === url
+    : pathname === url || pathname.startsWith(url + "/")
+
+const session = useSession();
+const userInfo = session.data;
+
+data.user = {
+    name: userInfo?.user?.name ?? "",
+    email: userInfo?.user?.email ?? "",
+    avatar: classphoto(userInfo?.user?.name ?? "")
+} 
+
   return (
-  <Sidebar collapsible="icon" {...props} >
-      <SidebarHeader className=" border-b-2 px-4 py-9">
-        <h1 className="font-bold text-2xl">Digital<span className="text-blue-800 font-bold text-2xl">Classroom</span></h1>
+    <Sidebar collapsible="icon" variant="inset" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              className="data-[slot=sidebar-menu-button]:p-1.5!"
+              render={<a href="/dashboard" />}
+            >
+              <span className="text-base font-bold mt-2">
+                <span className="text-white text-2xl">Digital</span>
+                <span className="text-blue-500 text-2xl">Classroom</span>
+              </span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent className="" >
-        <NavMain  items={data.navMain} />
+
+      <SidebarContent className="mt-5">
+
+        {/* GENERAL */}
+        <SidebarGroup>
+          <SidebarGroupLabel>General</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {data.general.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActive(item.url)}
+                    render={<a href={item.url} />}
+                  >
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        {/* ENROLLED */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Enrolled</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {data.enrolled.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActive(item.url)}
+                    render={<a href={item.url} />}
+                  >
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        {/* TEACHING */}
+        <SidebarGroup>
+          <SidebarGroupLabel>Teaching</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {data.teaching.map((item) => (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton
+                    isActive={isActive(item.url)}
+                    render={<a href={item.url} />}
+                  >
+                    <item.icon />
+                    <span>{item.title}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+
+        <SidebarSeparator />
+
+        {/* NavSecondary */}
+        <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
+
+      <SidebarFooter >
+        <NavUser user={data.user}  />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   )
 }

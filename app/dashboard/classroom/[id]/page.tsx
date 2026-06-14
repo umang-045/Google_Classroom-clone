@@ -6,9 +6,17 @@ import { GRADIENTS, AVATAR_COLORS, classphoto } from '@/app/components/Classroom
 import FluidTabs from '@/components/animata/tabs/fluid-tabs'
 import ClassroomMenu from '@/app/components/ClassroomMenu'
 import { useSession } from 'next-auth/react'
+import { classroomProp } from '@/app/api/classroom/[id]/route'
+import Members from '@/app/components/Members'
+import Assignments from '@/app/components/Assignments'
+
+interface data {
+  classroom: classroomProp
+  role: string
+}
 
 const ClassroomPage = () => {
-  const [classroomDetails, setClassroomDetails] = useState(null)
+  const [classroomDetails, setClassroomDetails] = useState<classroomProp | null>(null)
   const [loading, setLoading] = useState(true)
   const params = useParams()
   const id = params.id
@@ -22,16 +30,16 @@ const ClassroomPage = () => {
   useEffect(() => {
     const details = async () => {
       const res = await fetch(`/api/classroom/${id}`)
-      const data = await res.json()
+      const data: data | null = await res.json()
       if (!res.ok) {
-        router.push('/dashboard/allclasses')  
+        router.push('/dashboard/allclasses')
         return
       }
       setClassroomDetails(data.classroom)
       setrole(data.role)
       setLoading(false)
 
-      
+
     }
     details()
   }, [])
@@ -74,10 +82,15 @@ const ClassroomPage = () => {
             <FluidTabs.Tab >Stream</FluidTabs.Tab>
             <FluidTabs.Tab>Assignment</FluidTabs.Tab>
             <FluidTabs.Tab>Materials</FluidTabs.Tab>
-            <FluidTabs.Tab>Members</FluidTabs.Tab>
+            <FluidTabs.Tab onClick={() => setActiveTab('Members')}>Members</FluidTabs.Tab>
             <FluidTabs.Tab>Chat</FluidTabs.Tab>
           </FluidTabs.List>
         </FluidTabs>
+        {activeTab === 'Stream' && <div>Stream content</div>}
+        {activeTab === 'Assignment' && <div><Assignments classroomId={classroomDetails.id} role={role} /></div>}
+        {activeTab === 'Materials' && <div>Materials content</div>}
+        {activeTab === 'Members' && <Members classroomDetails={classroomDetails} />}
+        {activeTab === 'Chat' && <div>Chat content</div>}
       </div >
     </>
   )

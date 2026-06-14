@@ -1,7 +1,7 @@
 "use client"
 import { useSession } from 'next-auth/react'
-import './dashboard.css'
 import React, { useState } from 'react'
+import './dashboard.css'
 import { signOut } from 'next-auth/react'
 import CreateClass from '../components/CreateClass'
 import JoinClass from '../components/JoinClass'
@@ -32,20 +32,7 @@ const Dashboardlayout = ({ children }) => {
         <AppSidebar />
         
         <div className='mainContent'>
-          <div className='Topbar'>
-            <div className='Greeting'>
-              <h1>Hi 👋, {session?.user?.name ?? "there"}   ! </h1>
-              <p>{new Date().toDateString()}</p>
-            </div>
-            <div className='TopbarButton'>
-              <button onClick={() => setjoinclassBox(true)}>🔗 Join Class</button>
-              <button onClick={() => setcreateclassBox(true)}>➕ Create Class</button>
-              <button onClick={() => {
-                const ans = confirm("DO YOU WANT TO SignOut?");
-                if (ans) { signOut() }
-              }}>🔓Sign Out</button>
-            </div>
-          </div>
+        
           {children}
         </div>
         </SidebarProvider>

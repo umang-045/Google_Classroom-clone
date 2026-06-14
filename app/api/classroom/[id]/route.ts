@@ -1,7 +1,25 @@
 import { NextResponse, NextRequest } from "next/server"
-import prisma from "../../../../lib/db"
+import prisma from "@/lib/db"
 import { getToken } from "next-auth/jwt"
 
+export interface classroomProp {
+  id: number;
+  teacherId: number;
+  className: string;   
+  joinCode: string;    
+  semester: string;    
+  section: string;     
+  teacher: {
+    name: string;
+    email: string;
+  };
+  students: {
+    user: {
+      name: string;
+      email: string;
+    };
+  }[];
+}
 async function individualPage(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
@@ -12,7 +30,7 @@ async function individualPage(req: NextRequest, { params }: { params: Promise<{ 
         const { id } = await params
         const classroomId = parseInt(id)
 
-        const classroom = await prisma.classroom.findUnique({ where: { id: classroomId }, include: { teacher: { select: { name: true, email: true } }, students: { select: { user: { select: { name: true, email: true } } } } } })
+        const classroom:classroomProp | null = await prisma.classroom.findUnique({ where: { id: classroomId }, include: { teacher: { select: { name: true, email: true } }, students: { select: { user: { select: { name: true, email: true } } } } } })
 
         if (!classroom) {
             return NextResponse.json({ message: "Classroom Not Found" }, { status: 404 })

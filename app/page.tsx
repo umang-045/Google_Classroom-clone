@@ -1,212 +1,220 @@
 "use client"
-import React from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
 import { signOut } from 'next-auth/react'
-import PerCharRise from '@/components/animata/text/per-character-rise'
+import CircularGallery from '@/components/CircularGallery'
+import GradientText from '@/components/GradientText'
 import SiblingFocusNav from '@/components/animata/container/sibling-focus-nav'
-import TrailingImage from '@/components/animata/image/trailing-image'
-import DoubleUnderline from '@/components/animata/text/double-underline'
-import GlowingCard from '@/components/animata/card/glowing-card'
-import { Button } from '@/components/ui/button'
+import DashboardMockup from '@/components/DashboardMockup'
 
+const NAV_ITEMS = [
+  { label: 'Home', href: '#about' },
+  { label: 'Features', href: '#features' },
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Pricing', href: '#contact' },
+]
 
-const LandingPage = () => {
-  const result = useSession()
-  const session = result.data;
+const GALLERY_ITEMS = [
+  { image: './students/student3.webp', text: 'Live Classes' },
+  { image: './students/GroupProject.webp', text: 'Group Projects' },
+  { image: './students/student1.webp', text: 'Smart Assignments' },
+  { image: './students/AISummarize.webp', text: 'AI Summaries' },
+  { image: './students/CloudStorage.webp', text: 'Cloud Storage' },
+  { image: './students/Chat.webp', text: 'Instant Chat' },
+  { image: './students/ProgressTracker.webp', text: 'Progress Tracking' },
+  { image: './students/VideoMeet.webp', text: 'Video Meetings' },
+]
+
+const BULLET_POINTS = [
+  { text: 'Curated assignments designed for a better learning experience.' },
+  { text: 'Detailed video lectures and editorials to help you master every topic.' },
+  { text: 'Stay consistent with streaks and classroom leaderboards.' },
+  { text: 'AI-powered instant doubt support for faster learning.' },
+]
+
+export default function LandingPage() {
+  const { data: session } = useSession()
   const router = useRouter()
-  const customImages = [
-    "trailingphoto1.jpg",
-    "/trailingphoto2.jpeg",
-    "/tarilingphoto3.jpg",
-    "/tarilingphoto.jpg","/trailingphoto4.jpeg",
-  ];
+
   return (
     <>
-      <div className='relative  min-h-screen bg-zinc-950 z-10'>
-           <video
-            src='/hero2.mp4'
-            autoPlay
-            muted
-            loop
-            playsInline
-            className=' -z-10 fixed w-full h-full rounded-3xl   object-cover'
-          />
-                      <div className='absolute inset-0  bg-black/40 -z-10' />
-        <div className='sticky top-0 z-50 flex justify-between items-center bg-zinc-950/80 backdrop-blur-md px-12 md:px-24 py-4 border-b border-white/10'>
-          <div className="text-xl text-gray-300 font-extrabold">
-            Digital<span className='text-blue-700'>Classroom</span>
+      <nav className="sticky top-0 z-50">
+        <div className="flex justify-between items-center bg-black/40 backdrop-blur-md px-12 md:px-24 py-4 border-b border-white/10">
+          <div className="text-xl text-white font-extrabold tracking-tight">
+            Digital<span className="text-blue-400">Classroom</span>
           </div>
 
-          <SiblingFocusNav className="gap-8 text-gray-300">
+          <SiblingFocusNav className="gap-8 text-gray-300 text-sm font-medium">
             <SiblingFocusNav.Link href="#about">About</SiblingFocusNav.Link>
             <SiblingFocusNav.Link href="#features">Features</SiblingFocusNav.Link>
             <SiblingFocusNav.Link href="#contact">Contact</SiblingFocusNav.Link>
             <SiblingFocusNav.Link href="/dashboard">Dashboard</SiblingFocusNav.Link>
           </SiblingFocusNav>
 
-          <div className='flex items-center gap-3'>
-            <Button variant='navbar'
+          <div className="flex items-center gap-3 cursor-pointer">
+            <button
               onClick={() => {
                 if (session) {
-                  const ans = confirm("⚠️DO YOU WANT TO SignOUT ?")
+                  const ans = confirm('Do you want to sign out?')
                   if (ans) signOut()
                 } else {
                   router.push('/login')
                 }
               }}
+              className="border border-white/30 text-white text-sm font-medium px-5 py-2 rounded-lg cursor-pointer hover:bg-white/10 transition-all"
             >
-              {session ? '🔓Sign Out' : 'Sign In'}
-            </Button>
-            <Button variant='navbar'
-              onClick={() => router.push(session ? '/dashboard' : '/signup')}
-            >Get Started </Button>
-          </div>
-        </div>
-
-        <div id='about' className='relative  mx-auto px-24  my-0 min-h-[85vh] flex justify-between items-center'>
-          <div className='flex flex-col gap-2 '>
-            <button onClick={() => router.push('/dashboard')} className='bg-zinc-800 text-zinc-200 font-bold py-3 px-6 rounded-full w-fit transition hover:bg-zinc-700'>
-               View Dashboard →
+              {session ? 'Sign Out' : 'Sign In'}
             </button>
 
-            <h1 className='my-2 font-bold text-gray-200 text-7xl leading-tight'>
-              Manage your<br />
-              <span className='bg-linear-to-r from-gray-400 to-blue-200 bg-clip-text text-transparent'>
-                learning,
-              </span>
-              <br />anywhere.
-            </h1>
-
-            <div className='h-8 my-10 p-2 overflow-hidden'>
-              <PerCharRise
-                text={["AI that takes notes", "Live classes at home", "Assignment submission online"]}
-                className='text-2xl text-white'
-              />
-            </div>
-            <DoubleUnderline className='text-gray-400 leading-relaxed text-2xl'>
-              Create classrooms, share assignments, run live sessions,<br />
-              and track student progress, all in one place.
-            </DoubleUnderline>
-          </div>
-            <div className='relative w-[750px] h-[500px] rounded-3xl overflow-hidden shadow-2xl shadow-[0_0_60px_rgba(255,255,255,0.08)] object-cover flex-shrink-0 '>
-          <TrailingImage images={customImages} className='wfull h-[500px] rounded-4xl'/>
-          <h1 className='text-gray-500  absolute top-1/2 left-1/2  '>Hover me </h1>
+            <button
+              onClick={() => router.push(session ? '/dashboard' : '/signup')}
+              className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-5 py-2 rounded-lg shadow-md shadow-blue-900/40 transition-all cursor-pointer"
+            >
+              Get Started
+            </button>
           </div>
         </div>
-        
+      </nav>
 
-     
-<div id='features' className='flex flex-col px-12 my-30 ml-16'>
- <DoubleUnderline className='my-2 font-bold text-gray-200 text-6xl w-fit '>Features</DoubleUnderline>
-  <div className='grid grid-cols-3 m-2 p-4'>
+      <div className="relative z-10 min-h-screen text-white overflow-x-hidden">
 
-    <GlowingCard className='m-10  p-10'>
-      <h1 className='text-xl text-zinc-200 font-bold my-5'>🎓 Role-Based Classroom Management</h1>
-      <ul className='text-zinc-400 list-disc pl-5 space-y-2'>
-        <li>Teachers can seamlessly create and manage virtual classrooms.</li>
-        <li>Students can quickly join using invite links or unique class codes.</li>
-        <li>Separate dashboards provide specific features and permissions for each role.</li>
-      </ul>
-    </GlowingCard>
+        <section id="about" className="relative min-h-[90vh] px-8 md:px-16 flex items-center overflow-x-hidden">
+          <div className="grid md:grid-cols-2 gap-12 items-center w-full py-20">
 
-    <GlowingCard  className='m-10   p-10 '>
-      <h1 className='text-xl text-zinc-200 font-bold my-5'>📝 Assignments, Quizzes & Grading System</h1>
-      <ul className='text-zinc-400 list-disc pl-5 space-y-2'>
-        <li>Teachers can build out assignments, quizzes, deadlines, and grading rubrics.</li>
-        <li>Students can submit their completed coursework cleanly online.</li>
-        <li>Users can track ongoing submissions, grades, and feedback directly through the platform.</li>
-      </ul>
-    </GlowingCard>
+            <div className="flex flex-col">
+              <div className="mb-6 w-fit">
+                <span className="inline-flex items-center border border-blue-500/30 bg-blue-500/10 text-blue-300 text-xs font-medium px-4 py-1.5 rounded-full">
+                  Next Generation Classroom Management
+                </span>
+              </div>
 
-    <GlowingCard className='m-10   p-10 '>
-      <h1 className='text-xl text-zinc-200 font-bold my-5'>🎥 Realtime Communication & Virtual Meetings</h1>
-      <ul className='text-zinc-400 list-disc pl-5 space-y-2'>
-        <li>Integrated classroom chat infrastructure is handled instantly using Socket.io.</li>
-        <li>Live virtual sessions run reliably with real-time WebRTC support.</li>
-        <li>The setup enables instant messaging, video/audio meetings, and live screen sharing.</li>
-      </ul>
-    </GlowingCard>
+              <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight">
+                <span className="text-white block mb-2">Modern Digital</span>
+                <GradientText
+                  colors={['#818cf8', '#60a5fa', '#93c5fd', '#818cf8']}
+                  animationSpeed={4}
+                  className="block text-5xl md:text-7xl font-black"
+                >
+                  Learning Platform
+                </GradientText>
+                <span className="text-white block mt-2">For Your Classroom</span>
+              </h1>
 
-    <GlowingCard className='m-10   p-10 '>
-      <h1 className='text-xl text-zinc-200 font-bold my-5'>☁ Cloud-Based File Upload & Study Material Sharing</h1>
-      <ul className='text-zinc-400 list-disc pl-5 space-y-2'>
-        <li>Teachers can upload heavy files like notes, PDFs, and presentations effortlessly.</li>
-        <li>Assets are stored securely utilizing Cloudinary or AWS S3 cloud buckets.</li>
-        <li>Students get the flexibility to access critical learning resources anytime, anywhere.</li>
-      </ul>
-    </GlowingCard>
+              <p className="text-zinc-300 text-base md:text-lg max-w-md mb-10">
+                Manage classrooms, share assignments, run live sessions, and track student progress, all in one place.
+              </p>
 
-    <GlowingCard className='m-10   p-10 '>
-      <h1 className='text-xl text-zinc-200 font-bold my-5'>📢 Smart Notifications & Deadline Tracking</h1>
-      <ul className='text-zinc-400 list-disc pl-5 space-y-2'>
-        <li>Automated notification alerts ping students about approaching assignment deadlines.</li>
-        <li>Real-time systems push out direct updates for general announcements and grading scores.</li>
-        <li>Users stay synchronized with all upcoming classroom activities instantly.</li>
-      </ul>
-    </GlowingCard>
+              <div className="flex gap-3 flex-wrap mb-12">
+                <button
+                  onClick={() => router.push(session ? '/dashboard' : '/signup')}
+                  className="border border-white/30 text-white font-medium text-sm px-7 py-3 rounded-lg transition-all hover:bg-white/10"
+                >
+                  Start Learning for Free
+                </button>
+                <button
+                  onClick={() => router.push(session ? '/dashboard' : '/signup')}
+                  className="bg-blue-600 hover:bg-blue-500 transition-all text-white font-medium text-sm px-7 py-3 rounded-lg shadow-lg shadow-blue-900/40"
+                >
+                  Explore Dashboard
+                </button>
+              </div>
 
-    <GlowingCard className='m-10   p-10 '>
-      <h1 className='text-xl text-zinc-200 font-bold my-5'>💬 AI-Powered Chat & Meeting Summarization</h1>
-      <ul className='text-zinc-400 list-disc pl-5 space-y-2'>
-        <li>Deep AI integration uses powerful models via Google AI Studio or Groq.</li>
-        <li>The system automatically compiles summaries of classroom discussions and active meeting chats.</li>
-        <li>Students can easily skim summaries to review core educational points quickly.</li>
-      </ul>
-    </GlowingCard>
+              <ul className="flex flex-col gap-3">
+                {BULLET_POINTS.map(({ text }) => (
+                  <li key={text} className="flex items-start gap-3 text-zinc-400 text-sm">
+                    <span className="mt-0.5 text-blue-400">-</span>
+                    {text}
+                  </li>
+                ))}
+              </ul>
+            </div>
 
-  </div>
-</div>
-        <footer id='contact' className='relative overflow-hidden border border-t-neutral-800'>
-          <div className='relative z-10 ml-24 p-10'>
-            <div className='grid grid-cols-3 mb-10 pl-4 gap-10'>
-              <div>
-                <div className="text-3xl text-gray-300 font-extrabold">Digital<span className='text-blue-700'>Classroom</span></div>
-                <p className='text-gray-300 text-xl my-10'>DigitalClassroom is a full-featured<br /> learning management platform <br /> built for modern education.</p>
-                <div className='flex gap-4 items-center w-fit'>
-                  <Link href='https://github.com' target='_blank'>
-                    <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1 hover:bg-neutral-600'>
-                      <img src='/github-sign.png' className='w-6 h-6' />
+            <DashboardMockup />
+
+          </div>
+        </section>
+
+        <section id="features" className="relative mt-2 px-16 flex flex-col">
+          <div>
+            <h1 className="text-5xl md:text-6xl font-black text-white">Features</h1>
+            <p className="mt-4 text-zinc-400 text-base max-w-xl">
+              Everything a modern classroom needs, built into one platform.
+            </p>
+          </div>
+
+          <div className="relative w-full h-[500px] mb-16">
+
+
+            <CircularGallery
+              items={GALLERY_ITEMS}
+              bend={1}
+              textColor="#ffffff"
+              borderRadius={0.05}
+              scrollEase={0.05}
+              font="bold 30px sans-serif"
+              scrollSpeed={2}
+
+            />
+          </div>
+        </section>
+
+        <footer id="contact" className="border-t border-white/10 px-8 md:px-16 mt-8 py-16 relative">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-10">
+            <div>
+              <div className="text-2xl font-extrabold text-white mb-4">
+                Digital<span className="text-blue-400">Classroom</span>
+              </div>
+              <p className="text-zinc-500 text-sm leading-relaxed mb-6">
+                A full-featured learning management platform built for modern education.
+              </p>
+              <div className="flex gap-3">
+                {[
+                  { href: 'https://github.com', src: '/github-sign.png' },
+                  { href: 'https://linkedin.com', src: '/linkedin.png' },
+                  { href: 'https://x.com', src: '/twitter.png' },
+                ].map(({ href, src }) => (
+                  <Link href={href} target="_blank" key={href}>
+                    <button className="bg-white/[0.06] p-2.5 rounded-xl hover:-translate-y-1 hover:bg-white/[0.12] transition-all">
+                      <img src={src} className="w-5 h-5" alt="" />
                     </button>
                   </Link>
-                  <Link href='https://linkedin.com' target='_blank'>
-                    <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1 hover:bg-neutral-600'>
-                      <img src='/linkedin.png' className='w-6 h-6' />
-                    </button>
-                  </Link>
-                  <Link href='https://x.com' target='_blank'>
-                    <button className='bg-neutral-800 p-2 cursor-pointer rounded-2xl transition-all hover:-translate-y-1 hover:bg-neutral-600'>
-                      <img src='/twitter.png' className='w-6 h-6' />
-                    </button>
-                  </Link>
-                </div>
-    
+                ))}
               </div>
-              <div className='flex justify-center items-center flex-col'>
-                <h1 className='text-zinc-200 font-semibold mb-4'>Navigation</h1>
-                <SiblingFocusNav className="flex flex-col gap-3 text-gray-400">
-                  <SiblingFocusNav.Link href="#about">About</SiblingFocusNav.Link>
-                  <SiblingFocusNav.Link href="#features">Features</SiblingFocusNav.Link>
-                  <SiblingFocusNav.Link href="#contact">Contact</SiblingFocusNav.Link>
-                  <SiblingFocusNav.Link href="/dashboard">Dashboard</SiblingFocusNav.Link>
-                </SiblingFocusNav>
-              </div>
-              <div>
-                <h3 className='text-zinc-200 font-semibold mb-4'>Contact</h3>
-                <ul className='flex flex-col gap-3 text-gray-400'>
-                  <li className='transition-all hover:underline hover:text-zinc-200'>🌐digitalclassroom.com</li>
-                  <li className='transition-all hover:underline hover:text-zinc-200'>📍Durgapur, India</li>
-                  <li className='transition-all hover:underline hover:text-zinc-200'>📞+91 8080808080</li>
-                  <li className='transition-all hover:underline hover:text-zinc-200'>✉️digitalclassroom@gmail.com</li>
-                </ul>
-              </div>
+            </div>
+
+            <div>
+              <h3 className="text-zinc-300 font-semibold text-sm uppercase tracking-widest mb-5">Navigation</h3>
+              <ul className="flex flex-col gap-3">
+                {NAV_ITEMS.map(({ label, href }) => (
+                  <li key={label}>
+                    <a href={href} className="text-zinc-500 text-sm hover:text-white transition">
+                      {label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="text-zinc-300 font-semibold text-sm uppercase tracking-widest mb-5">Contact</h3>
+              <ul className="flex flex-col gap-3 text-sm text-zinc-500">
+                {[
+                  'digitalclassroom.com',
+                  'Durgapur, India',
+                  '+91 8080808080',
+                  'digitalclassroom@gmail.com',
+                ].map((item) => (
+                  <li key={item} className="hover:text-white hover:underline underline-offset-4 cursor-pointer transition">
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
           </div>
         </footer>
+
       </div>
     </>
   )
 }
-
-export default LandingPage
