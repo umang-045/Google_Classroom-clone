@@ -5,65 +5,89 @@ import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-function CreateAssignment({ classroomId, setcreateAssignmentBox }) {
-    const [createform, setcreateform] = useState({ title: "", description: "", due_at: "" })
+interface AssignmentData {
+    id?: number
+    title: string
+    description: string
+    due_at: string
+    fileUrl?: string
+}
+
+function CreateAssignment({
+    classroomId,
+    setcreateAssignmentBox,
+    editData,
+}: {
+    classroomId: number
+    setcreateAssignmentBox: (val: boolean) => void
+    editData?: AssignmentData
+}) {
+    const isEditing = !!editData?.id
+
+    const [createform, setcreateform] = useState({
+        title: editData?.title ?? "",
+        description: editData?.description ?? "",
+        due_at: editData?.due_at
+            ? new Date(editData.due_at).toISOString().slice(0, 16)  // format for datetime-local
+            : "",
+    })
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const router = useRouter()
-    const [file, setfile] = useState(null)
-    const [upload, setupload] = useState(false)
+    const [file, setfile] = useState<File | null>(null)
     const [fileKey, setFileKey] = useState(0)
     const [loading, setLoading] = useState(false)
 
-    const handleCreate = async (e) => {
-        setLoading(true);
-        setError("");
-        setSuccess("");
-        let fileUrl = "";
+    const handleSubmit = async () => {
+        setLoading(true)
+        setError("")
+        setSuccess("")
+        let fileUrl = editData?.fileUrl ?? ""
 
         if (file) {
-            const formData = new FormData();
-            formData.append("file", file);
+            const formData = new FormData()
+            formData.append("file", file)
 
-            const res = await fetch("/api/fileupload", {
-                method: "POST",
-                body: formData,
-            });
-
-            const data = await res.json();
+            const res = await fetch("/api/fileupload", { method: "POST", body: formData })
+            const data = await res.json()
 
             if (!res.ok) {
-                setError(data.message || "Try again");
-                setLoading(false);
-                return;
+                setError(data.message || "Upload failed. Try again.")
+                setLoading(false)
+                return
             }
 
-            setupload(false);
-            fileUrl = data.result.secure_url;
+            fileUrl = data.result.secure_url
         }
 
-        const res = await fetch("/api/assignments/create-assignment", {
-            method: "POST",
+        const endpoint = isEditing
+            ? `/api/assignments/${classroomId}/${editData!.id}`
+            : "/api/assignments/create-assignment"
+
+        const method = isEditing ? "PATCH" : "POST"
+
+        const res = await fetch(endpoint, {
+            method,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ ...createform, fileUrl, classroomId }),
-        });
+        })
 
-        const data = await res.json();
+        const data = await res.json()
 
         if (!res.ok) {
-            setError(data.message || "Try again");
-            setLoading(false);
-            return;
+            setError(data.message || "Something went wrong. Try again.")
+            setLoading(false)
+            return
         }
 
-        setcreateform({ title: "", description: "", due_at: "" });
-        setfile(null);
-        setFileKey(k => k + 1);
-        setSuccess("Assignment created successfully!");
-        setLoading(false);
-        setcreateAssignmentBox(false);
-        router.refresh();
-    };
+        setSuccess(isEditing ? "Assignment updated!" : "Assignment created!")
+        setLoading(false)
+
+        setTimeout(() => {
+            setcreateAssignmentBox(false)
+            router.refresh()
+        }, 800)
+    }
 
     return (
         <div
@@ -75,9 +99,14 @@ function CreateAssignment({ classroomId, setcreateAssignmentBox }) {
                 onClick={(e) => e.stopPropagation()}
             >
                 <CardHeader>
-                    <CardTitle className='font-semibold'>Create Assignment</CardTitle>
-                    <CardDescription>Fill up essential details of Assignment</CardDescription>
+                    <CardTitle className='font-semibold'>
+                        {isEditing ? "Edit Assignment" : "Create Assignment"}
+                    </CardTitle>
+                    <CardDescription>
+                        {isEditing ? "Update the assignment details below." : "Fill up essential details of Assignment"}
+                    </CardDescription>
                 </CardHeader>
+
                 <CardContent className='space-y-4'>
                     <div className='w-full space-y-2'>
                         <Label htmlFor='title' className='gap-1'>
@@ -92,6 +121,7 @@ function CreateAssignment({ classroomId, setcreateAssignmentBox }) {
                             onChange={(e) => setcreateform({ ...createform, title: e.target.value })}
                         />
                     </div>
+
                     <div className='w-full space-y-2'>
                         <Label htmlFor='description' className='gap-1'>
                             Description <span className='text-destructive'>*</span>
@@ -105,6 +135,7 @@ function CreateAssignment({ classroomId, setcreateAssignmentBox }) {
                             onChange={(e) => setcreateform({ ...createform, description: e.target.value })}
                         />
                     </div>
+
                     <div className='w-full space-y-2'>
                         <Label htmlFor='due_at' className='gap-1'>
                             Due Date <span className='text-destructive'>*</span>
@@ -117,28 +148,59 @@ function CreateAssignment({ classroomId, setcreateAssignmentBox }) {
                             onChange={(e) => setcreateform({ ...createform, due_at: e.target.value })}
                         />
                     </div>
+
                     <div className='w-full space-y-2'>
                         <Label htmlFor='question-file' className='gap-1'>
-                            Upload File <span className='text-destructive'>*</span>
+                            {isEditing ? "Replace File" : "Upload File"}
                         </Label>
                         <Input
                             key={fileKey}
                             id='question-file'
                             type='file'
                             className='text-muted-foreground file:border-input file:text-foreground p-0 pr-3 italic file:mr-3 file:h-full file:border-0 file:border-r file:border-solid file:bg-transparent file:px-3 file:text-sm file:font-medium file:not-italic'
-                            onChange={(e) => setfile(e.target.files[0] || null)}
+                            onChange={(e) => setfile(e.target.files?.[0] || null)}
                         />
-                        <p className='text-muted-foreground text-xs'>You can upload a file here (Max-10MB).</p>
+                        <p className='text-muted-foreground text-xs'>
+                            {isEditing
+                                ? editData?.fileUrl
+                                    ? "Leave empty to keep the existing file. Max 10MB."
+                                    : "No file currently attached. Max 10MB."
+                                : "You can upload a file here (Max 10MB)."}
+                        </p>
+                        {isEditing && editData?.fileUrl && (
+                            <a
+                                href={editData.fileUrl}
+                                target='_blank'
+                                rel='noopener noreferrer'
+                                className='text-sm text-blue-600 underline hover:text-blue-800'
+                            >
+                                View current file
+                            </a>
+                        )}
                     </div>
+
                     {error && <p className='text-destructive text-sm'>{error}</p>}
                     {success && <p className='text-green-600 text-sm'>{success}</p>}
                 </CardContent>
+
                 <CardContent className='flex justify-end gap-2 max-sm:justify-center'>
-                    <Button className='max-sm:flex-1' variant='outline' onClick={() => setcreateAssignmentBox(false)}>
+                    <Button
+                        className='max-sm:flex-1'
+                        variant='outline'
+                        onClick={() => setcreateAssignmentBox(false)}
+                        disabled={loading}
+                    >
                         Cancel
                     </Button>
-                    <Button className='max-sm:flex-1' type='button' onClick={handleCreate} disabled={loading}>
-                        {loading ? "Creating..." : "Create"}
+                    <Button
+                        className='max-sm:flex-1'
+                        type='button'
+                        onClick={handleSubmit}
+                        disabled={loading}
+                    >
+                        {loading
+                            ? isEditing ? "Saving..." : "Creating..."
+                            : isEditing ? "Save Changes" : "Create"}
                     </Button>
                 </CardContent>
             </Card>

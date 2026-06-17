@@ -108,13 +108,13 @@ export default function LandingPage() {
               <div className="flex gap-3 flex-wrap mb-12">
                 <button
                   onClick={() => router.push(session ? '/dashboard' : '/signup')}
-                  className="border border-white/30 text-white font-medium text-sm px-7 py-3 rounded-lg transition-all hover:bg-white/10"
+                  className="border border-white/30 text-white font-medium text-sm px-7 py-3 rounded-lg  cursor-pointer ~transition-all hover:bg-white/10"
                 >
                   Start Learning for Free
                 </button>
                 <button
                   onClick={() => router.push(session ? '/dashboard' : '/signup')}
-                  className="bg-blue-600 hover:bg-blue-500 transition-all text-white font-medium text-sm px-7 py-3 rounded-lg shadow-lg shadow-blue-900/40"
+                  className="bg-blue-600 hover:bg-blue-500 transition-all text-white font-medium text-sm px-7 py-3 rounded-lg shadow-lg cursor-pointer shadow-blue-900/40"
                 >
                   Explore Dashboard
                 </button>
