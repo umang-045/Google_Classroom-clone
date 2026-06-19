@@ -23,11 +23,33 @@ export async function GET(req: NextRequest, { params }) {
                 }
             }
         })
-        if(teacherId!=Number(token.id) && !studentId){
-            return NextResponse.json({message:"Unauthorized"},{status:403})
+        if (teacherId != Number(token.id) && !studentId) {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
         }
-        const assignments = await prisma.assignment.findMany({ where: { classId: classId } })
-        return NextResponse.json({ assignments }, { status: 200 })
+        const assignments = await prisma.assignment.findMany({
+            where: { classId: classId }
+        })
+
+        const assignmentsWithStatus = await Promise.all(
+            assignments.map(async (assignment) => {
+                const submission = await prisma.submission.findFirst({
+                    where: {
+                        assignmentId: assignment.id,
+                        studentId: Number(token.id)
+                    }
+                })
+
+                return {
+                    ...assignment,
+                    submitted: !!submission
+                }
+            })
+        )
+
+        return NextResponse.json(
+            { assignments: assignmentsWithStatus },
+            { status: 200 }
+        )
 
     } catch (err) {
         console.log(err);

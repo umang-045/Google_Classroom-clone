@@ -2,15 +2,13 @@ import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/db"
 import { getToken } from "next-auth/jwt"
 
-
-export async function GET(req: NextRequest, { params }: { params:Promise< { classroomId: string; assignmentId: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ classroomId: string; assignmentId: string }> }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
     if (!token || !token.id) {
         return NextResponse.json({ message: "Login and Try Again" }, { status: 400 })
     }
-    const classroomid= (await params).classroomId
-    const assignmentid= (await params).assignmentId
-
+    
+    const { classroomId: classroomid, assignmentId: assignmentid } = await params
     const classroomId = Number(classroomid)
     const assignmentId = Number(assignmentid)
 
@@ -18,10 +16,11 @@ export async function GET(req: NextRequest, { params }: { params:Promise< { clas
         return NextResponse.json({ message: "Invalid IDs" }, { status: 400 })
     }
 
+ 
     const classroom = await prisma.classroom.findUnique({
         where: {
             id: classroomId,
-            teacherId:Number(token.id),
+            teacherId: Number(token.id),
         },
     })
 
@@ -29,40 +28,49 @@ export async function GET(req: NextRequest, { params }: { params:Promise< { clas
         return NextResponse.json({ message: "Forbidden" }, { status: 403 })
     }
 
-    const submissions = await prisma.submission.findMany({
-        where: { assignmentId },
+    const enrolledStudents = await prisma.classroomStudent.findMany({
+        where: { classroomId },
         include: {
-            student: {
-                select: { id: true, name: true, email: true },
-            },
-        },
-        orderBy: { submitted_at: "asc" },
+            user: {
+                select: { id: true, name: true, email: true }
+            }
+        }
     })
 
-    const formatted = submissions.map((s) => ({
-        id: s.id,
-        studentName: s.student.name,
-        studentEmail: s.student.email,
-        fileUrl: s.fileUrl,
-        submittedAt: s.submitted_at,
-    }))
+    const submissions = await prisma.submission.findMany({
+        where: { assignmentId },
+    })
+
+   
+    const formatted = enrolledStudents.map((enrolled) => {
+        const student = enrolled.user
+        const submission = submissions.find((s) => s.studentId === student.id)
+
+        return {
+            id: submission?.id || `unsubmitted-${student.id}`,
+            studentName: student.name || "Unknown Student",
+            studentEmail: student.email || "",
+            fileUrl: submission?.fileUrl || null,
+            submittedAt: submission?.submitted_at || null,
+            hasSubmitted: !!submission
+        }
+    })
+
+
+    formatted.sort((a, b) => (b.hasSubmitted ? 1 : 0) - (a.hasSubmitted ? 1 : 0))
 
     return NextResponse.json({ submissions: formatted })
 }
 
-
-export async function DELETE(req: NextRequest,{ params }: { params:Promise< { classroomId: string; assignmentId: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ classroomId: string; assignmentId: string }> }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
     if (!token || !token.id) {
         return NextResponse.json({ message: "Login and Try Again" }, { status: 400 })
     }
 
-    const classroomid= (await params).classroomId
-    const assignmentid= (await params).assignmentId
-
+    const { classroomId: classroomid, assignmentId: assignmentid } = await params
     const classroomId = Number(classroomid)
     const assignmentId = Number(assignmentid)
-
 
     if (isNaN(classroomId) || isNaN(assignmentId)) {
         return NextResponse.json({ message: "Invalid IDs" }, { status: 400 })
@@ -71,10 +79,9 @@ export async function DELETE(req: NextRequest,{ params }: { params:Promise< { cl
     const classroom = await prisma.classroom.findUnique({
         where: {
             id: classroomId,
-            teacherId:Number(token.id),
+            teacherId: Number(token.id),
         },
     })
-
 
     if (!classroom) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 })
@@ -86,31 +93,26 @@ export async function DELETE(req: NextRequest,{ params }: { params:Promise< { cl
     return NextResponse.json({ message: "Assignment deleted" })
 }
 
-export async function PATCH(req: NextRequest,{ params }: { params:Promise< { classroomId: string; assignmentId: string }> }) {
-   const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ classroomId: string; assignmentId: string }> }) {
+    const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
     if (!token || !token.id) {
         return NextResponse.json({ message: "Login and Try Again" }, { status: 400 })
     }
 
-
- const classroomid= (await params).classroomId
-    const assignmentid= (await params).assignmentId
-
+    const { classroomId: classroomid, assignmentId: assignmentid } = await params
     const classroomId = Number(classroomid)
     const assignmentId = Number(assignmentid)
-
 
     if (isNaN(classroomId) || isNaN(assignmentId)) {
         return NextResponse.json({ message: "Invalid IDs" }, { status: 400 })
     }
 
-   const classroom = await prisma.classroom.findUnique({
+    const classroom = await prisma.classroom.findUnique({
         where: {
             id: classroomId,
-            teacherId:Number(token.id),
+            teacherId: Number(token.id),
         },
     })
-
 
     if (!classroom) {
         return NextResponse.json({ message: "Forbidden" }, { status: 403 })

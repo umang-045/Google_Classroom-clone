@@ -1,0 +1,100 @@
+"use client"
+import React, { useState, useEffect } from 'react'
+import CreateAssignment from '@/app/components/Assignment/CreateAssignment'
+import { Button } from '@/components/ui/button'
+import { AssignmentCard } from '@/app/components/Assignment/AssignmentCard'
+import { useParams, useRouter } from 'next/navigation'
+
+interface Assignment {
+    id: number
+    title: string
+    description: string
+    due_at: string
+    fileUrl?: string
+    submitted?: boolean
+}
+
+const AssignmentsPage = () => {
+    const params = useParams()
+    const router = useRouter()
+    const classroomId = params.id
+    
+    const [role, setRole] = useState<string>("")
+    const [assignments, setAssignments] = useState<Assignment[]>([])
+    const [fetchError, setFetchError] = useState("")
+    const [submittedIds, setSubmittedIds] = useState<Set<number>>(new Set())
+    const [createAssignmentBox, setCreateAssignmentBox] = useState(false)
+
+    useEffect(() => {
+        const fetchRole = async () => {
+            const res = await fetch(`/api/classroom/${classroomId}`)
+            if (res.ok) {
+                const data = await res.json()
+                setRole(data.role)
+            }
+        }
+        fetchRole()
+    }, [classroomId])
+
+    const fetchAssignments = async () => {
+        const res = await fetch(`/api/assignments/${classroomId}`)
+        const data = await res.json()
+        if (!res.ok) {
+            setFetchError(data.message || "Failed to load assignments")
+            return
+        }
+        setAssignments(data.assignments)
+
+        const submitted = new Set<number>(
+            data.assignments.filter((a: Assignment) => a.submitted).map((a: Assignment) => a.id)
+        )
+        setSubmittedIds(submitted)
+    }
+
+    useEffect(() => {
+        if (classroomId) fetchAssignments()
+    }, [classroomId])
+
+    const handleOpenWorkspace = (assignmentId: number) => {
+    router.push(`/dashboard/classroom/${classroomId}/assignments/${assignmentId}`)
+}
+
+    return (
+        <div className='py-4 px-2 sm:px-4'>
+            {role === "teacher" && (
+                <div className='flex justify-end mb-6'>
+                    <Button onClick={() => setCreateAssignmentBox(true)}>+ Create Assignment</Button>
+                    {createAssignmentBox && (
+                        <CreateAssignment
+                            classroomId={Number(classroomId)}
+                            setcreateAssignmentBox={(val: boolean) => {
+                                setCreateAssignmentBox(val)
+                                if (!val) fetchAssignments()
+                            }}
+                        />
+                    )}
+                </div>
+            )}
+ 
+            {fetchError && <p className='text-center text-destructive mb-4'>{fetchError}</p>}
+ 
+            {assignments.length > 0 ? (
+                <div className='space-y-3'>
+                    {assignments.map((item) => (
+                        <AssignmentCard
+                            key={item.id}
+                            assignment={item}
+                            role={role}
+                            isSubmittedByStudent={submittedIds.has(item.id)}
+                            onOpenWorkspace={handleOpenWorkspace}
+                        />
+                    ))}
+                </div>
+            ) : (!fetchError && (
+                <p className='text-center text-white/50 py-12'>No assignments published here yet.</p>
+            ))}
+        </div>
+    )
+}
+ 
+export default AssignmentsPage

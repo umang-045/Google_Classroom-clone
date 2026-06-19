@@ -1,0 +1,13 @@
+{
+    "extends":"./tscpnfig.json",
+    "compilerOptions":{
+        "module":"commonjs",
+        "target":"es2017",
+        "out": "./dist",
+        "moduleResolution": "node",
+        "strict":true,
+        "noEmit":false,
+        "isolatedModules": false
+    },
+    "include": ["server.mts"]
+}

@@ -16,6 +16,7 @@ model Users {
   enrolledClassrooms ClassroomStudent[] @relation("ClassroomStudent")
   assignments Assignment[] @relation("Teacher")
   submissions Submission[] @relation("StudentAssignment")
+  messageSender Chat[] @relation("MessageSender")
 
 }
 
@@ -41,6 +42,7 @@ model Classroom{
   teacherId Int
   students  ClassroomStudent[]
   assignments Assignment[] @relation("Assignment")
+  classroomChat Chat[] @relation("ClassroomChat") 
 }
 
 model ClassroomStudent{
@@ -76,4 +78,14 @@ model Submission{
   student Users @relation("StudentAssignment",fields:[studentId],references: [id])
   studentId Int
   @@unique([studentId, assignmentId])
+}
+
+model Chat{
+  id Int @id @default(autoincrement())
+  message String
+  created_at DateTime @default(now())
+  sender Users @relation("MessageSender",fields:[senderId],references: [id])
+  senderId Int
+  classroom Classroom @relation("ClassroomChat",fields:[classId],references: [id])
+  classId Int
 }

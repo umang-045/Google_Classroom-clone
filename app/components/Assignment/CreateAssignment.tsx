@@ -13,23 +13,13 @@ interface AssignmentData {
     fileUrl?: string
 }
 
-function CreateAssignment({
-    classroomId,
-    setcreateAssignmentBox,
-    editData,
-}: {
-    classroomId: number
-    setcreateAssignmentBox: (val: boolean) => void
-    editData?: AssignmentData
-}) {
+function CreateAssignment({classroomId,setcreateAssignmentBox,editData}: {classroomId: number,setcreateAssignmentBox: (val: boolean) => void,editData?: AssignmentData})
+ {
     const isEditing = !!editData?.id
-
     const [createform, setcreateform] = useState({
         title: editData?.title ?? "",
         description: editData?.description ?? "",
-        due_at: editData?.due_at
-            ? new Date(editData.due_at).toISOString().slice(0, 16)  // format for datetime-local
-            : "",
+        due_at: editData?.due_at? new Date(editData.due_at).toISOString().slice(0, 16): "",
     })
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -60,8 +50,7 @@ function CreateAssignment({
             fileUrl = data.result.secure_url
         }
 
-        const endpoint = isEditing
-            ? `/api/assignments/${classroomId}/${editData!.id}`
+        const endpoint = isEditing? `/api/assignments/${classroomId}/${editData!.id}`
             : "/api/assignments/create-assignment"
 
         const method = isEditing ? "PATCH" : "POST"
@@ -90,14 +79,8 @@ function CreateAssignment({
     }
 
     return (
-        <div
-            className='fixed inset-0 z-50 flex items-center justify-center bg-black/50'
-            onClick={() => setcreateAssignmentBox(false)}
-        >
-            <Card
-                className='w-full max-w-lg bg-white'
-                onClick={(e) => e.stopPropagation()}
-            >
+        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50'onClick={() => setcreateAssignmentBox(false)}>
+            <Card className='w-full max-w-lg bg-white' onClick={(e) => e.stopPropagation()}>
                 <CardHeader>
                     <CardTitle className='font-semibold'>
                         {isEditing ? "Edit Assignment" : "Create Assignment"}
@@ -161,19 +144,12 @@ function CreateAssignment({
                             onChange={(e) => setfile(e.target.files?.[0] || null)}
                         />
                         <p className='text-muted-foreground text-xs'>
-                            {isEditing
-                                ? editData?.fileUrl
-                                    ? "Leave empty to keep the existing file. Max 10MB."
+                            {isEditing? editData?.fileUrl? "Leave empty to keep the existing file. Max 10MB."
                                     : "No file currently attached. Max 10MB."
                                 : "You can upload a file here (Max 10MB)."}
                         </p>
                         {isEditing && editData?.fileUrl && (
-                            <a
-                                href={editData.fileUrl}
-                                target='_blank'
-                                rel='noopener noreferrer'
-                                className='text-sm text-blue-600 underline hover:text-blue-800'
-                            >
+                            <a href={editData.fileUrl} target='_blank' rel='noopener noreferrer' className='text-sm text-blue-600 underline hover:text-blue-800'>
                                 View current file
                             </a>
                         )}
@@ -184,20 +160,10 @@ function CreateAssignment({
                 </CardContent>
 
                 <CardContent className='flex justify-end gap-2 max-sm:justify-center'>
-                    <Button
-                        className='max-sm:flex-1'
-                        variant='outline'
-                        onClick={() => setcreateAssignmentBox(false)}
-                        disabled={loading}
-                    >
+                    <Button className='max-sm:flex-1' variant='outline' onClick={() => setcreateAssignmentBox(false)} disabled={loading}>
                         Cancel
                     </Button>
-                    <Button
-                        className='max-sm:flex-1'
-                        type='button'
-                        onClick={handleSubmit}
-                        disabled={loading}
-                    >
+                    <Button className='max-sm:flex-1' type='button' onClick={handleSubmit} disabled={loading}>
                         {loading
                             ? isEditing ? "Saving..." : "Creating..."
                             : isEditing ? "Save Changes" : "Create"}
