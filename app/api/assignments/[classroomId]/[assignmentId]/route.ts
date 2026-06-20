@@ -7,7 +7,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
     if (!token || !token.id) {
         return NextResponse.json({ message: "Login and Try Again" }, { status: 400 })
     }
-    
+
     const { classroomId: classroomid, assignmentId: assignmentid } = await params
     const classroomId = Number(classroomid)
     const assignmentId = Number(assignmentid)
@@ -16,7 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
         return NextResponse.json({ message: "Invalid IDs" }, { status: 400 })
     }
 
- 
+
     const classroom = await prisma.classroom.findUnique({
         where: {
             id: classroomId,
@@ -41,18 +41,21 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
         where: { assignmentId },
     })
 
-   
+
     const formatted = enrolledStudents.map((enrolled) => {
         const student = enrolled.user
         const submission = submissions.find((s) => s.studentId === student.id)
 
         return {
             id: submission?.id || `unsubmitted-${student.id}`,
+            studentId: student.id,
             studentName: student.name || "Unknown Student",
             studentEmail: student.email || "",
             fileUrl: submission?.fileUrl || null,
             submittedAt: submission?.submitted_at || null,
-            hasSubmitted: !!submission
+            hasSubmitted: !!submission,
+            marks: submission?.marks ?? null,
+            feedback: submission?.feedback ?? null
         }
     })
 

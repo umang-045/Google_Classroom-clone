@@ -1,21 +1,36 @@
 "use client"
 
-import React from 'react'
+import React, { useState } from 'react'
 
 interface Submission {
     id: number | string
     studentName: string
+    studentId: number
     studentEmail: string
     fileUrl: string | null
     submittedAt: string | null
     hasSubmitted: boolean
+    marks: number | null,
+    feedback: string | null
 }
 
 interface TeacherWorkspaceProps {
     submissions: Submission[]
+    classroomId: number,
+    assignmentId: number,
+    onGraded: () => void
 }
 
-export const TeacherWorkspace = ({ submissions }: TeacherWorkspaceProps) => {
+export const TeacherWorkspace = ({ submissions, classroomId, assignmentId, onGraded }: TeacherWorkspaceProps) => {
+    const [selectedId, setSelectedId] = useState<number | null>(null)
+    const [marks, setMarks] = useState("")
+    const [feedback, setFeedback] = useState("")
+    const [saving, setSaving] = useState(false)
+    const handleGradeAssignment = (submissionsData: Submission) => {
+        setSelectedId(submissionsData.studentId)
+        setMarks(submissionsData.marks !== null ? String(submissionsData.marks) : "")
+        setFeedback(submissionsData.feedback ?? "")
+    }
     return (
         <>
             <div className='w-full overflow-x-auto'>
@@ -28,6 +43,7 @@ export const TeacherWorkspace = ({ submissions }: TeacherWorkspaceProps) => {
                         <div className='col-span-1 text-right'>Action</div>
                     </div>
 
+
                     {submissions.length === 0 ? (<p className='text-xs text-white/40 py-8 text-center'>No student data found.</p>) : (
                         <div className='m-4'>
                             {submissions.map((sub) => {
@@ -39,6 +55,7 @@ export const TeacherWorkspace = ({ submissions }: TeacherWorkspaceProps) => {
                                             <p className='font-medium text-white truncate'>{sub.studentName}</p>
                                             <p className='text-xs text-white/40 truncate mt-0.5'>{sub.studentEmail}</p>
                                         </div>
+                                        
 
                                         <div className='col-span-3 text-xs text-white/70'>
                                             {hasSubmitted && sub.submittedAt ? (
@@ -51,9 +68,19 @@ export const TeacherWorkspace = ({ submissions }: TeacherWorkspaceProps) => {
                                         </div>
 
                                         <div className='col-span-2 text-center'>
-                                            <span className='inline-block px-3 py-1 bg-white/5 border border-white/10 rounded-md font-mono text-xs text-white/90'>
-                                                -- / 100
-                                            </span>
+                                            {selectedId === sub.studentId ? (
+                                                <input
+                                                    type="number"
+                                                    value={marks}
+                                                    onChange={(e) => setMarks(e.target.value)}
+                                                    placeholder="--"
+                                                    className='w-16 px-2 py-1 bg-white/5 border border-white/10 rounded-md font-mono text-xs text-white/90 text-center'
+                                                />
+                                            ) : (
+                                                <span className='inline-block px-3 py-1 bg-white/5 border border-white/10 rounded-md font-mono text-xs text-white/90'>
+                                                    {sub.marks !== null ? sub.marks : "--"} / 100
+                                                </span>
+                                            )}
                                         </div>
 
                                         <div className='col-span-2 flex justify-center'>
@@ -75,9 +102,16 @@ export const TeacherWorkspace = ({ submissions }: TeacherWorkspaceProps) => {
                                                 </a>) : (
                                                     <span className="text-white/20 text-xs">-</span>
                                                 )}
+                                            {hasSubmitted && (
+                                                <button onClick={() => handleGradeAssignment(sub)} className='ml-2 text-xs text-green-400 hover:text-green-300 underline'>
+                                                    Grade
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
+
                                 )
+                                
                             })}
                         </div>
                     )}

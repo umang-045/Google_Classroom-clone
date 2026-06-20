@@ -18,10 +18,13 @@ interface Assignment {
 interface Submission {
     id: number | string
     studentName: string
+    studentId: number
     studentEmail: string
     fileUrl: string | null
     submittedAt: string | null
     hasSubmitted: boolean
+    marks: number | null, 
+    feedback: string | null
 }
 
 const AssignmentDetailPage = () => {
@@ -64,7 +67,7 @@ const AssignmentDetailPage = () => {
     }
 
     useEffect(() => {
-        const init = async () => {
+        const role = async () => {
             setLoading(true)
             setError("")
             try {
@@ -81,7 +84,7 @@ const AssignmentDetailPage = () => {
             }
         }
 
-        init()
+        role()
     }, [classroomId, assignmentId])
 
 
@@ -146,7 +149,7 @@ const AssignmentDetailPage = () => {
             </div>
  
             {role === "teacher" && (
-                <TeacherWorkspace submissions={submissions} />
+                <TeacherWorkspace submissions={submissions} classroomId={Number(classroomId)} assignmentId={assignmentId} onGraded={() => fetchAssignmentData(role)}/>
             )}
  
             {role === "student" && (

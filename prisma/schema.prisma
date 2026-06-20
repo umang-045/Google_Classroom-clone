@@ -75,6 +75,8 @@ model Submission{
   submitted_at DateTime @default(now())
   assignment Assignment @relation("SubmitAssignment",fields:[assignmentId],references: [id])
   assignmentId Int
+  marks Int?
+  feedback String?
   student Users @relation("StudentAssignment",fields:[studentId],references: [id])
   studentId Int
   @@unique([studentId, assignmentId])

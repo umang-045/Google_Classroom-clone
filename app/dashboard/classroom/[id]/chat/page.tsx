@@ -35,28 +35,24 @@ const ChatPage =()=> {
 
     useEffect(() => {
         let active = true;
-
         const fetchChatData = async () => {
             try {
                 const res = await fetch(`/api/classroom/${classroomId}/chat`);
                 const data: { messages: Message[]; currentUser: CurrentUser } = await res.json();
 
                 if (!active) return;
-
-                const reversedUsername = data.currentUser.name.split("").reverse().join("");
-
+                const username = data.currentUser.name;
                 setMessages([...data.messages].reverse());
                 setCurrentUser(data.currentUser);
-                socket.emit("join-room", { room, username: reversedUsername });
+                socket.emit("join-room", { room, username: username });
             } catch (error) {
                 console.error(error);
             } finally {
                 if (active) setLoading(false);
             }
         };
-
         fetchChatData();
-
+        
         return () => {
             active = false;
         };
