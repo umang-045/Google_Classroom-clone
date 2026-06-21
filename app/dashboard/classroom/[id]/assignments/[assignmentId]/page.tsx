@@ -13,6 +13,9 @@ interface Assignment {
     due_at: string
     fileUrl?: string
     submitted?: boolean
+    marks?: number | null
+    feedback?: string | null
+    submissionFileUrl?: string | null
 }
 
 interface Submission {
@@ -23,7 +26,7 @@ interface Submission {
     fileUrl: string | null
     submittedAt: string | null
     hasSubmitted: boolean
-    marks: number | null, 
+    marks: number | null,
     feedback: string | null
 }
 
@@ -46,11 +49,11 @@ const AssignmentDetailPage = () => {
         try {
             const res = await fetch(`/api/assignments/${classroomId}`)
             const data = await res.json()
-            if (!res.ok){
-            throw new Error(data.message || "Failed to load assignment")
+            if (!res.ok) {
+                throw new Error(data.message || "Failed to load assignment")
             }
             const found = data.assignments.find((a: Assignment) => a.id === assignmentId)
-            if (!found){ throw new Error("Assignment not found")}
+            if (!found) { throw new Error("Assignment not found") }
 
             setAssignment(found)
             setIsSubmitted(!!found.submitted)
@@ -106,7 +109,7 @@ const AssignmentDetailPage = () => {
             setDeleteLoading(false)
         }
     }
-        if (loading) return <div className='p-8 text-center text-white/50'>Loading...</div>
+    if (loading) return <div className='p-8 text-center text-white/50'>Loading...</div>
     if (error) return <div className='p-8 text-center text-destructive'>{error}</div>
     if (!assignment) return null
 
@@ -126,7 +129,7 @@ const AssignmentDetailPage = () => {
                         Due: {new Date(assignment.due_at).toLocaleString()}
                     </p>
                 </div>
- 
+
                 {role === "teacher" && (
                     <div className='flex gap-3 max-sm:w-full'>
                         <Button
@@ -147,11 +150,11 @@ const AssignmentDetailPage = () => {
                     </div>
                 )}
             </div>
- 
+
             {role === "teacher" && (
-                <TeacherWorkspace submissions={submissions} classroomId={Number(classroomId)} assignmentId={assignmentId} onGraded={() => fetchAssignmentData(role)}/>
+                <TeacherWorkspace submissions={submissions} classroomId={Number(classroomId)} assignmentId={assignmentId} onGraded={() => fetchAssignmentData(role)} />
             )}
- 
+
             {role === "student" && (
                 <StudentWorkspace
                     classroomId={Number(classroomId)}
@@ -159,9 +162,12 @@ const AssignmentDetailPage = () => {
                     isSubmitted={isSubmitted}
                     setIsSubmitted={setIsSubmitted}
                     onSuccess={() => fetchAssignmentData(role)}
+                    marks={assignment.marks ?? null}
+                    feedback={assignment.feedback ?? null}
+                    submissionFileUrl={assignment.submissionFileUrl ?? null}
                 />
             )}
- 
+
             {editAssignment && (
                 <CreateAssignment
                     classroomId={Number(classroomId)}
@@ -175,5 +181,5 @@ const AssignmentDetailPage = () => {
         </div>
     )
 }
- 
+
 export default AssignmentDetailPage

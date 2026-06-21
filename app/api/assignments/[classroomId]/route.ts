@@ -41,7 +41,10 @@ export async function GET(req: NextRequest, { params }) {
 
                 return {
                     ...assignment,
-                    submitted: !!submission
+                    submitted: !!submission,
+                    marks: submission?.marks ?? null,
+                    feedback: submission?.feedback ?? null,
+                    submissionFileUrl: submission?.fileUrl ?? null
                 }
             })
         )

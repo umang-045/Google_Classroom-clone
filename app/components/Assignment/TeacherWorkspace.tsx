@@ -1,6 +1,7 @@
 "use client"
 
 import React, { useState } from 'react'
+import GradeSubmission from './GradeSubmission'
 
 interface Submission {
     id: number | string
@@ -10,113 +11,131 @@ interface Submission {
     fileUrl: string | null
     submittedAt: string | null
     hasSubmitted: boolean
-    marks: number | null,
+    marks: number | null
     feedback: string | null
 }
 
 interface TeacherWorkspaceProps {
     submissions: Submission[]
-    classroomId: number,
-    assignmentId: number,
+    classroomId: number
+    assignmentId: number
     onGraded: () => void
 }
 
 export const TeacherWorkspace = ({ submissions, classroomId, assignmentId, onGraded }: TeacherWorkspaceProps) => {
-    const [selectedId, setSelectedId] = useState<number | null>(null)
-    const [marks, setMarks] = useState("")
-    const [feedback, setFeedback] = useState("")
-    const [saving, setSaving] = useState(false)
-    const handleGradeAssignment = (submissionsData: Submission) => {
-        setSelectedId(submissionsData.studentId)
-        setMarks(submissionsData.marks !== null ? String(submissionsData.marks) : "")
-        setFeedback(submissionsData.feedback ?? "")
-    }
+    const [selectedSubmission, setSelectedSubmission] = useState<Submission | null>(null)
+
     return (
         <>
             <div className='w-full overflow-x-auto'>
-                <div className='min-w-[800px]'>
-                    <div className='grid grid-cols-12 p-8 text-xs font-semibold text-white/40 uppercase tracking-wider border-b border-white/5'>
-                        <div className='col-span-4'>Student Details</div>
-                        <div className='col-span-3'>Submission Date</div>
-                        <div className='col-span-2 text-center'>Marks / 100</div>
-                        <div className='col-span-2 text-center'>Status</div>
-                        <div className='col-span-1 text-right'>Action</div>
-                    </div>
+                <table className='w-full text-sm border-collapse'>
+                    <thead>
+                        <tr className='border-b border-white/5'>
+                            <th className='text-left p-4 text-xs font-semibold text-white/40  tracking-wider'>Student Details</th>
+                            <th className='text-center p-4 text-xs font-semibold text-white/40  tracking-wider'>Submission Date</th>
+                            <th className='text-center p-4 text-xs font-semibold text-white/40  tracking-wider'>Submitted File</th>
+                            <th className='text-center p-4 text-xs font-semibold text-white/40  tracking-wider'>Status</th>
+                            <th className='text-center p-4 text-xs font-semibold text-white/40  tracking-wider'>Marks</th>
+                            <th className='text-center p-4 text-xs font-semibold text-white/40  tracking-wider'>Check Assignment</th>
+                        </tr>
+                    </thead>
 
-
-                    {submissions.length === 0 ? (<p className='text-xs text-white/40 py-8 text-center'>No student data found.</p>) : (
-                        <div className='m-4'>
-                            {submissions.map((sub) => {
+                    <tbody>
+                        {submissions.length === 0 ? (
+                            <tr>
+                                <td colSpan={6} className='text-xs text-white/40 py-8 text-center'>
+                                    No student data found.
+                                </td>
+                            </tr>
+                        ) : (
+                            submissions.map((sub) => {
                                 const hasSubmitted = sub.hasSubmitted !== undefined ? sub.hasSubmitted : !!sub.submittedAt
+                                const isGraded = sub.marks !== null
 
                                 return (
-                                    <div key={sub.id} className='grid grid-cols-12 gap-4 items-center py-4 text-sm hover:bg-white/[0.02] transition-colors rounded-lg px-2 group'>
-                                        <div className='col-span-4 min-w-0'>
+                                    <tr key={sub.id} className='hover:bg-white/[0.02] transition-colors'>
+                                        <td className='p-4'>
                                             <p className='font-medium text-white truncate'>{sub.studentName}</p>
                                             <p className='text-xs text-white/40 truncate mt-0.5'>{sub.studentEmail}</p>
-                                        </div>
-                                        
+                                        </td>
 
-                                        <div className='col-span-3 text-xs text-white/70'>
+                                        <td className='p-4 text-xs text-center text-white/70'>
                                             {hasSubmitted && sub.submittedAt ? (
                                                 new Date(sub.submittedAt).toLocaleString(undefined, {
                                                     dateStyle: 'short',
                                                     timeStyle: 'short'
-                                                })) : (
+                                                })
+                                            ) : (
                                                 <span className="text-white/30 italic">Not submitted</span>
                                             )}
-                                        </div>
+                                        </td>
 
-                                        <div className='col-span-2 text-center'>
-                                            {selectedId === sub.studentId ? (
-                                                <input
-                                                    type="number"
-                                                    value={marks}
-                                                    onChange={(e) => setMarks(e.target.value)}
-                                                    placeholder="--"
-                                                    className='w-16 px-2 py-1 bg-white/5 border border-white/10 rounded-md font-mono text-xs text-white/90 text-center'
-                                                />
+                                        <td className='p-4 text-center'>
+                                            {hasSubmitted && sub.fileUrl ? (
+                                                <a href={sub.fileUrl} target='_blank' rel='noopener noreferrer' className='text-xs text-blue-400 hover:text-blue-300 underline'>
+                                                    View Submitted File
+                                                </a>
                                             ) : (
-                                                <span className='inline-block px-3 py-1 bg-white/5 border border-white/10 rounded-md font-mono text-xs text-white/90'>
-                                                    {sub.marks !== null ? sub.marks : "--"} / 100
-                                                </span>
+                                                <span className="text-white/20 text-xs">-</span>
                                             )}
-                                        </div>
+                                        </td>
 
-                                        <div className='col-span-2 flex justify-center'>
-                                            {hasSubmitted ? (
-                                                <span className='inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400'>
-                                                    <span className='w-1.5 h-1.5 bg-yellow-400 rounded-full animate-pulse' />
+                                        <td className='p-4 text-center'>
+                                            {isGraded ? (
+                                                <span className='text-xs px-2 py-0.5 rounded-full bg-green-500/10 border border-green-500/20 text-green-400'>
+                                                    Graded
+                                                </span>
+                                            ) : hasSubmitted ? (
+                                                <span className='text-xs px-2 py-0.5 rounded-full bg-yellow-500/10 border border-yellow-500/20 text-yellow-400'>
                                                     Pending
-                                                </span>) : (
-                                                <span className='inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400'>
+                                                </span>
+                                            ) : (
+                                                <span className='text-xs px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-400'>
                                                     Missing
                                                 </span>
                                             )}
-                                        </div>
+                                        </td>
 
-                                        <div className='col-span-1 text-right'>
-                                            {hasSubmitted && sub.fileUrl ?
-                                                (<a href={sub.fileUrl} target='_blank' rel='noopener noreferrer' className='inline-flex items-center text-xs text-blue-400 hover:text-blue-300 underline'>
-                                                    View File
-                                                </a>) : (
-                                                    <span className="text-white/20 text-xs">-</span>
-                                                )}
-                                            {hasSubmitted && (
-                                                <button onClick={() => handleGradeAssignment(sub)} className='ml-2 text-xs text-green-400 hover:text-green-300 underline'>
-                                                    Grade
+                                        <td className='p-4 text-center'>
+                                            <span className='px-2 py-1 bg-white/5 border border-white/10 rounded-md font-mono text-xs text-white/90'>
+                                                {isGraded ? sub.marks : "--"}
+                                            </span>
+                                        </td>
+
+                                        <td className='p-4 text-center'>
+                                            {hasSubmitted ? (
+                                                <button
+                                                    onClick={() => setSelectedSubmission(sub)}
+                                                    className={`text-xs cursor-pointer underline ${isGraded ? 'text-red-400/50 hover:text-red-300' : 'text-green-400 hover:text-green-300'}`}
+                                                >
+                                                    {isGraded ? "Edit Grade" : "Check Assignment"}
                                                 </button>
+                                            ) : (
+                                                <span className="text-white/20 text-xs">-</span>
                                             )}
-                                        </div>
-                                    </div>
-
+                                        </td>
+                                    </tr>
                                 )
-                                
-                            })}
-                        </div>
-                    )}
-                </div>
+                            })
+                        )}
+                    </tbody>
+                </table>
             </div>
+
+            {selectedSubmission && (
+                <GradeSubmission
+                    classroomId={classroomId}
+                    assignmentId={assignmentId}
+                    submission={{
+                        studentId: selectedSubmission.studentId,
+                        studentName: selectedSubmission.studentName,
+                        marks: selectedSubmission.marks,
+                        feedback: selectedSubmission.feedback
+                    }}
+                    setGradeBox={(val) => { if (!val) setSelectedSubmission(null) }}
+                    onGraded={onGraded}
+                />
+            )}
         </>
     )
 }
