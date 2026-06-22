@@ -21,10 +21,10 @@ const TopBar = () => {
                 </div>
 
                 <div className="flex gap-[50px] items-center">
-                    <Button onClick={() => setjoinclassBox(true)} variant="ghost">🔗 Join Class
+                    <Button onClick={() => setjoinclassBox(true)} variant="ghost"> Join Class
                     </Button>
                     <Button onClick={() => setcreateclassBox(true)} variant="ghost">
-                        ➕ Create Class
+                         Create Class
                     </Button>
                    
                 </div>

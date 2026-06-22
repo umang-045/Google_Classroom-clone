@@ -36,7 +36,7 @@ const AllClasses = () => {
     <TopBar/>
     <div>
       <div className='teaching'>
-        <h2 className='heading'>Enrolled as Teacher 🧑‍🏫</h2>
+        <h2 className='heading'>Enrolled as Teacher </h2>
         <div className='classContainer my-2'>
           {teachingClassroom.length === 0
             ? <p className='noClass'>No classrooms created yet!</p>
@@ -48,7 +48,7 @@ const AllClasses = () => {
       </div>
 
       <div className='enrolled'>
-        <h2 className='heading'>Enrolled As Student 🧑‍🎓</h2>
+        <h2 className='heading'>Enrolled As Student </h2>
         <div className='classContainer'>
           {enrolledClassroom.map((item, colorIndex) => (
             <ClassroomCard key={item.classroom.id} Classroomdetails={item.classroom} colorIndex={teachingClassroom.length + colorIndex} role="student"/>

@@ -7,6 +7,7 @@ import FluidTabs from '@/components/animata/tabs/fluid-tabs'
 import ClassroomMenu from '@/app/components/ClassroomMenu'
 import { classroomProp } from '@/app/api/classroom/[id]/route'
 
+
 interface Data {
     classroom: classroomProp
     role: string
@@ -86,7 +87,7 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}?colorIndex=${colorIndex}`)}>Stream</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/assignments?colorIndex=${colorIndex}`)}>Assignment</FluidTabs.Tab>
                     <FluidTabs.Tab>Materials</FluidTabs.Tab>
-                    <FluidTabs.Tab >Members</FluidTabs.Tab>
+                    <FluidTabs.Tab onClick={()=>  router.push(`/dashboard/classroom/${id}/members?colorIndex=${colorIndex}`) }>Members</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/chat?colorIndex=${colorIndex}`)}>Chat</FluidTabs.Tab>
                 </FluidTabs.List>
             </FluidTabs>

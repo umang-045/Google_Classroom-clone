@@ -17,7 +17,7 @@ model Users {
   assignments Assignment[] @relation("Teacher")
   submissions Submission[] @relation("StudentAssignment")
   messageSender Chat[] @relation("MessageSender")
-
+  announcemnt Announcement[] @relation("TeacherAnnouncement")
 }
 
 model VerificationTable {
@@ -43,6 +43,7 @@ model Classroom{
   students  ClassroomStudent[]
   assignments Assignment[] @relation("Assignment")
   classroomChat Chat[] @relation("ClassroomChat") 
+  classroomAnnouncemnet Announcement[] @relation("ClassroomAnnouncement")
 }
 
 model ClassroomStudent{
@@ -53,6 +54,7 @@ model ClassroomStudent{
   classroom   Classroom @relation(fields: [classroomId], references: [id])
   classroomId Int
   @@unique([userId, classroomId]) 
+  
 }
 
 model Assignment{
@@ -90,4 +92,15 @@ model Chat{
   senderId Int
   classroom Classroom @relation("ClassroomChat",fields:[classId],references: [id])
   classId Int
+}
+
+model Announcement{
+  id Int @id @default(autoincrement())
+  title String
+  content String 
+  created_at DateTime @default(now())
+  classroom Classroom @relation("ClassroomAnnouncement",fields:[classroomId],references: [id])
+  classroomId Int
+  teacher Users @relation("TeacherAnnouncement",fields:[teacherId],references: [id])
+  teacherId Int
 }
