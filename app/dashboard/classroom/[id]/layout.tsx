@@ -84,7 +84,7 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
                 defaultActiveIndex={getActiveIndex()}
             >
                 <FluidTabs.List className='w-full text-white/70'>
-                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}?colorIndex=${colorIndex}`)}>Stream</FluidTabs.Tab>
+                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}?colorIndex=${colorIndex}`)}>Announcement</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/assignments?colorIndex=${colorIndex}`)}>Assignment</FluidTabs.Tab>
                     <FluidTabs.Tab>Materials</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={()=>  router.push(`/dashboard/classroom/${id}/members?colorIndex=${colorIndex}`) }>Members</FluidTabs.Tab>
