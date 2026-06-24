@@ -25,7 +25,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
         setError("")
         setSuccess("")
 
-        const res = await fetch(`/api//announcements/${classroomId}`, {
+        const res = await fetch(`/api/announcements/${classroomId}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form),
@@ -67,7 +67,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
                             onChange={(e) => setForm({ ...form, title: e.target.value })}
                         />
                     </div>
-                    <div className='space-y-2'>
+                    <div className='w-full space-y-2'>
                         <label htmlFor='content'>Content <span className='text-destructive'>*</span></label>
                         <textarea
                             id='content'
@@ -75,6 +75,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
                             rows={4}
                             value={form.content}
                             onChange={(e) => setForm({ ...form, content: e.target.value })}
+                             className='border-input flex w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none resize-none focus-visible:ring-1 focus-visible:ring-ring'
                         />
                     </div>
 

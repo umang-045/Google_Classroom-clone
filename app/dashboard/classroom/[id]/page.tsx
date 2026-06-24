@@ -55,7 +55,7 @@ const Page = () => {
         if (!confirm("Delete this announcement?")) return
         setDeleteLoading(true)
         try {
-            const res = await fetch(`/api/classroom/${classroomId}/announcement/${announcementId}`, {
+            const res = await fetch(`/api/announcements/${classroomId}/${announcementId}`, {
                 method: "DELETE",
             })
             const data = await res.json()

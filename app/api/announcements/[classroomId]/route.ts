@@ -80,6 +80,9 @@ export async function GET(req: NextRequest, { params }) {
         const allAnnouncement = await prisma.announcement.findMany({
             where: {
                 classroomId: classId,
+            },
+            orderBy: {
+                created_at: 'desc'
             }
         })
         return NextResponse.json({ allAnnouncement }, { status: 200 })

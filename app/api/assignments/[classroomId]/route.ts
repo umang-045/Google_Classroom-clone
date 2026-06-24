@@ -27,7 +27,10 @@ export async function GET(req: NextRequest, { params }) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
         }
         const assignments = await prisma.assignment.findMany({
-            where: { classId: classId }
+            where: { classId: classId },
+            orderBy: {
+                created_at: 'desc'
+            }
         })
 
         const assignmentsWithStatus = await Promise.all(
