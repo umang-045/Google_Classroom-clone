@@ -1,5 +1,6 @@
 "use client"
 import * as React from "react"
+import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -35,8 +36,6 @@ import {
 
 import { classphoto } from "@/app/components/ClassroomCard"
 
-
-
 const data = {
   user: {
     name: "shadcn",
@@ -70,19 +69,33 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname()
 
-const isActive = (url: string) =>
-  url === "/dashboard"
-    ? pathname === url
-    : pathname === url || pathname.startsWith(url + "/")
+const isActive = (url: string) => {
+  if (url === "/dashboard") {
+    return pathname === url
+  } else {
+    return pathname === url || pathname.startsWith(url + "/")
+  }
+}
 
-const session = useSession();
-const userInfo = session.data;
+  const session = useSession();
+  const userInfo = session.data;
 
-data.user = {
-    name: userInfo?.user?.name ?? "",
-    email: userInfo?.user?.email ?? "",
-    avatar: classphoto(userInfo?.user?.name ?? "")
-} 
+  const [profile, setProfile] = useState<{ name: string; email: string; image: string | null } | null>(null)
+  const [avatarOverride, setAvatarOverride] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!userInfo?.user) return
+    fetch("/api/userprofile")
+      .then((res) => res.json())
+      .then((data) => setProfile(data.user))
+      .catch((err) => console.log(err))
+  }, [userInfo?.user])
+
+  data.user = {
+    name: profile?.name ?? userInfo?.user?.name ?? "",
+    email: profile?.email ?? userInfo?.user?.email ?? "",
+    avatar: avatarOverride || profile?.image || classphoto(profile?.name ?? userInfo?.user?.name ?? "")
+  }
 
   return (
     <Sidebar collapsible="icon" variant="inset" {...props}>
@@ -103,18 +116,13 @@ data.user = {
       </SidebarHeader>
 
       <SidebarContent className="mt-5">
-
-        {/* GENERAL */}
         <SidebarGroup>
           <SidebarGroupLabel>General</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {data.general.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={isActive(item.url)}
-                    render={<a href={item.url} />}
-                  >
+                  <SidebarMenuButton isActive={isActive(item.url)} render={<a href={item.url} />}>
                     <item.icon />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
@@ -126,17 +134,13 @@ data.user = {
 
         <SidebarSeparator />
 
-        {/* ENROLLED */}
         <SidebarGroup>
           <SidebarGroupLabel>Enrolled</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {data.enrolled.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={isActive(item.url)}
-                    render={<a href={item.url} />}
-                  >
+                  <SidebarMenuButton isActive={isActive(item.url)} render={<a href={item.url} />}>
                     <item.icon />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
@@ -148,17 +152,13 @@ data.user = {
 
         <SidebarSeparator />
 
-        {/* TEACHING */}
         <SidebarGroup>
           <SidebarGroupLabel>Teaching</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {data.teaching.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton
-                    isActive={isActive(item.url)}
-                    render={<a href={item.url} />}
-                  >
+                  <SidebarMenuButton isActive={isActive(item.url)} render={<a href={item.url} />}>
                     <item.icon />
                     <span>{item.title}</span>
                   </SidebarMenuButton>
@@ -170,12 +170,11 @@ data.user = {
 
         <SidebarSeparator />
 
-        {/* NavSecondary */}
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
 
-      <SidebarFooter >
-        <NavUser user={data.user}  />
+      <SidebarFooter>
+        <NavUser user={data.user} onAvatarChange={setAvatarOverride} />
       </SidebarFooter>
     </Sidebar>
   )

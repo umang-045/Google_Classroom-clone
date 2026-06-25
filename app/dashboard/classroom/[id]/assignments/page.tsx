@@ -9,6 +9,7 @@ interface Assignment {
     id: number
     title: string
     description: string
+    created_at: string
     due_at: string
     fileUrl?: string
     submitted?: boolean
@@ -18,7 +19,7 @@ const AssignmentsPage = () => {
     const params = useParams()
     const router = useRouter()
     const classroomId = params.id
-    
+
     const [role, setRole] = useState<string>("")
     const [assignments, setAssignments] = useState<Assignment[]>([])
     const [fetchError, setFetchError] = useState("")
@@ -56,8 +57,8 @@ const AssignmentsPage = () => {
     }, [classroomId])
 
     const handleOpenWorkspace = (assignmentId: number) => {
-    router.push(`/dashboard/classroom/${classroomId}/assignments/${assignmentId}`)
-}
+        router.push(`/dashboard/classroom/${classroomId}/assignments/${assignmentId}`)
+    }
 
     return (
         <div className='py-4 px-2 sm:px-4'>
@@ -75,9 +76,9 @@ const AssignmentsPage = () => {
                     )}
                 </div>
             )}
- 
+
             {fetchError && <p className='text-center text-destructive mb-4'>{fetchError}</p>}
- 
+
             {assignments.length > 0 ? (
                 <div className='space-y-3'>
                     {assignments.map((item) => (
@@ -96,5 +97,5 @@ const AssignmentsPage = () => {
         </div>
     )
 }
- 
+
 export default AssignmentsPage

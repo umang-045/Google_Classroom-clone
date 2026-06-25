@@ -31,6 +31,7 @@ export const authOptions = {
             name: true,
             email: true,
             password: true,
+            image: true,
           },
         })
 
@@ -57,51 +58,59 @@ export const authOptions = {
           id: user.id.toString(),
           name: user.name,
           email: user.email,
+          image: user.image,
         }
       },
     }),
   ],
 
   session: {
-  strategy: "jwt" as const,
-},
+    strategy: "jwt" as const,
+  },
   callbacks: {
     async signIn({ user, account }) {
-    if (account?.provider === "google") {
+      if (account?.provider === "google") {
         if (!user.email) return false
         try {
-            const existing = await prisma.users.findUnique({
-                where: { email: user.email },
-                select: { id: true },
-            })
+          const existing = await prisma.users.findUnique({
+            where: { email: user.email },
+            select: { id: true },
+          })
 
-            if (existing) {
-                user.id = existing.id.toString() 
-            } else {
-                const created = await prisma.users.create({
-                    data: {
-                        name: user.name,
-                        email: user.email,
-                    },
-                    select: { id: true }
-                })
-                user.id = created.id.toString() 
-            }
-            return true
+          if (existing) {
+            user.id = existing.id.toString()
+            await prisma.users.update({
+              where: { email: user.email },
+              data: { image: user.image }
+            });
+
+          } else {
+            const created = await prisma.users.create({
+              data: {
+                name: user.name,
+                email: user.email,
+                image: user.image
+              },
+              select: { id: true }
+            })
+            user.id = created.id.toString()
+          }
+          return true
         } catch (err) {
-            console.error("Google sign-in sync error:", err)
-            return false
+          console.error("Google sign-in sync error:", err)
+          return false
         }
-    }
-    return true
-},
+      }
+      return true
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id
+        token.picture = user.image
       } else if (!token.id && token.email) {
         const dbUser = await prisma.users.findUnique({
           where: { email: token.email },
-          select: { id: true },
+          select: { id: true, image: true },
         })
 
         if (dbUser) {
@@ -115,6 +124,7 @@ export const authOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id
+        session.user.image = token.picture
       }
 
       return session

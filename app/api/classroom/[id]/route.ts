@@ -12,11 +12,13 @@ export interface classroomProp {
   teacher: {
     name: string;
     email: string;
+    image:string | null;
   };
   students: {
     user: {
       name: string;
       email: string;
+      image: string | null;
     };
   }[];
 }
@@ -30,7 +32,7 @@ async function individualPage(req: NextRequest, { params }: { params: Promise<{ 
         const { id } = await params
         const classroomId = parseInt(id)
 
-        const classroom:classroomProp | null = await prisma.classroom.findUnique({ where: { id: classroomId }, include: { teacher: { select: { name: true, email: true } }, students: { select: { user: { select: { name: true, email: true } } } } } })
+        const classroom:classroomProp | null = await prisma.classroom.findUnique({ where: { id: classroomId }, include: { teacher: { select: { name: true, email: true,image:true } }, students: { select: { user: { select: { name: true, email: true,image:true } } } } } })
 
         if (!classroom) {
             return NextResponse.json({ message: "Classroom Not Found" }, { status: 404 })

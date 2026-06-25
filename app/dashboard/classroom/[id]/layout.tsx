@@ -70,10 +70,18 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 
                 <div className='flex flex-col items-center gap-1 '>
-                    <div className='w-16 h-16 rounded-full flex items-center justify-center'
-                        style={{ background: AVATAR_COLORS[colorIndex % AVATAR_COLORS.length] }}>
-                        <p className='text-xl font-bold text-white'>{classphoto(classroomDetails.teacher.name)}</p>
-                    </div>
+                    {classroomDetails.teacher.image ? (
+                        <img 
+                            src={classroomDetails.teacher.image} 
+                            alt={classroomDetails.teacher.name} 
+                            className='w-16 h-16 rounded-full object-cover border-2 border-white/20'
+                        />
+                    ) : (
+                        <div className='w-16 h-16 rounded-full flex items-center justify-center'
+                            style={{ background: AVATAR_COLORS[colorIndex % AVATAR_COLORS.length] }}>
+                            <p className='text-xl font-bold text-white'>{classphoto(classroomDetails.teacher.name)}</p>
+                        </div>
+                    )}
                     <p className='text-xs text-white/70 text-center'>{classroomDetails.teacher.name}</p>
                     <p className='text-xs text-white/70 text-center '>{classroomDetails.teacher.email}</p>
                 </div>
