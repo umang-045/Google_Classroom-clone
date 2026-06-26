@@ -5,6 +5,7 @@ import ChatForm from "@/app/components/Chatroom/ChatForm";
 import ChatMessage from "@/app/components/Chatroom/ChatMessage";
 import { socket } from "@/lib/socketclient";
 import { useParams } from "next/navigation";
+import { Loader2 } from "lucide-react";
 
 interface Sender {
     name: string;
@@ -108,10 +109,9 @@ const ChatPage =()=> {
     const senderName = (sender: Sender | string) =>
         typeof sender === "string" ? sender : sender.name;
 
-    if (loading) {
-        return <div className="mt-24 text-center">Loading chat...</div>;
-    }
-
+    if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
+        <Loader2 className="size-6 animate-spin text-gray-400" />
+    </div>
     return (
         <div className="flex mt-8 justify-center w-full">
             <div className="w-full max-w-7xl mx-auto">

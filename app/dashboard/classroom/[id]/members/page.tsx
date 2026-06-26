@@ -4,6 +4,7 @@ import { classphoto } from '@/app/dashboard/allclasses/page'
 import { AVATAR_COLORS } from '@/app/components/ClassroomCard'
 import { useRouter } from 'next/navigation'
 import { useParams } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
 
 
 const Members = () => {
@@ -33,9 +34,9 @@ const Members = () => {
     details()
   }, [id,router])
 
-  if (loading || !classroomDetails) {
-    return <div className="text-white text-center py-10">Loading members...</div>
-  }
+  if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
+        <Loader2 className="size-6 animate-spin text-gray-400" />
+    </div>
 
   return (
     <div className=' mx-auto px-4 py-6'>

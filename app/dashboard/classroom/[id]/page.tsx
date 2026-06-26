@@ -4,6 +4,7 @@ import { useParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import CreateAnnouncement from '@/app/components/Announcement/CreateAnnouncement'
 import { AnnouncementCard } from '@/app/components/Announcement/AnnouncementCard'
+import { Loader2 } from 'lucide-react'
 
 interface Announcement {
     id: number
@@ -68,7 +69,9 @@ const Page = () => {
         }
     }
 
-    if (loading) return <p className='text-white/50 text-center py-12'>Loading...</p>
+    if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
+        <Loader2 className="size-6 animate-spin text-gray-400" />
+    </div>
 
     return (
         <div className='py-4 px-2 sm:px-4'>

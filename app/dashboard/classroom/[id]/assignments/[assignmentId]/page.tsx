@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { TeacherWorkspace } from '@/app/components/Assignment/TeacherWorkspace'
 import { StudentWorkspace } from '@/app/components/Assignment/StudentWorkspace'
 import { useParams, useRouter } from 'next/navigation'
+import { Loader2 } from 'lucide-react'
 
 interface Assignment {
     id: number
@@ -109,7 +110,9 @@ const AssignmentDetailPage = () => {
             setDeleteLoading(false)
         }
     }
-    if (loading) return <div className='p-8 text-center text-white/50'>Loading...</div>
+    if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
+        <Loader2 className="size-6 animate-spin text-gray-400" />
+    </div>
     if (error) return <div className='p-8 text-center text-destructive'>{error}</div>
     if (!assignment) return null
 

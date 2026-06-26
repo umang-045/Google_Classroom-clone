@@ -6,6 +6,7 @@ import { GRADIENTS, AVATAR_COLORS, classphoto } from '@/app/components/Classroom
 import FluidTabs from '@/components/animata/tabs/fluid-tabs'
 import ClassroomMenu from '@/app/components/ClassroomMenu'
 import { classroomProp } from '@/app/api/classroom/[id]/route'
+import { Loader2 } from 'lucide-react'
 
 
 interface Data {
@@ -51,7 +52,9 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
         details()
     }, [id])
 
-    if (loading) return <p className="text-center py-10">Loading...</p>
+    if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
+        <Loader2 className="size-6 animate-spin text-gray-400" />
+    </div>
     if (!classroomDetails) return <p className="text-center py-10">Classroom not found</p>
 
     return (

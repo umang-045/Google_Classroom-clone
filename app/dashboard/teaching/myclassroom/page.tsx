@@ -4,6 +4,7 @@ import '../../allclasses/allclasses.css'
 import ClassroomCard from '@/app/components/ClassroomCard'
 import { useRouter } from 'next/navigation'
 import TopBar from '@/app/components/TopBar'
+import { Loader2 } from 'lucide-react'
 
 
 
@@ -20,11 +21,9 @@ const teacherClassroompage = () => {
     }
     fetchteachingClassrooms()
   }, [])
-  if (loading) {
-    return (
-      <><p>loading..</p></>
-    )
-  }
+  if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
+          <Loader2 className="size-6 animate-spin text-gray-400" />
+      </div>
   return (
     <>
     <TopBar />
