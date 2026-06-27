@@ -19,6 +19,7 @@ model Users {
   submissions Submission[] @relation("StudentAssignment")
   messageSender Chat[] @relation("MessageSender")
   announcemnt Announcement[] @relation("TeacherAnnouncement")
+  joinRequest JoinRequest[] @relation("JoinRequestUser")
 }
 
 model VerificationTable {
@@ -29,6 +30,17 @@ model VerificationTable {
   otp        String
   expires_at DateTime
   created_at DateTime @default(now())
+}
+
+model JoinRequest {
+  id Int @id @default(autoincrement())
+  status String @default("PENDING")
+  requested_at DateTime @default(now())
+  user Users @relation("JoinRequestUser", fields: [userId], references: [id])
+  userId Int
+  classroom Classroom @relation("JoinRequestClassroom", fields: [classroomId], references: [id])
+  classroomId Int
+  @@unique([userId, classroomId])
 }
 
 model Classroom{
@@ -45,6 +57,7 @@ model Classroom{
   assignments Assignment[] @relation("Assignment")
   classroomChat Chat[] @relation("ClassroomChat") 
   classroomAnnouncemnet Announcement[] @relation("ClassroomAnnouncement")
+  joinRequest JoinRequest[] @relation("JoinRequestClassroom")
 }
 
 model ClassroomStudent{

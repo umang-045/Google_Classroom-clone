@@ -19,7 +19,13 @@ async function UserClassroom(req:NextRequest){
             include:{classroom:true}
         })
 
-        return NextResponse.json({teachingClassroom,enrolledClassroom},{status:200})
+        const pendingRequests = await prisma.joinRequest.findMany({
+            where: { userId },
+            include: { classroom: true }
+        })
+
+
+        return NextResponse.json({teachingClassroom,enrolledClassroom,pendingRequests},{status:200})
 
     }catch(err){
         console.error(err)

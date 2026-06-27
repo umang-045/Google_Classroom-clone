@@ -25,9 +25,13 @@ async function joinclass(req: NextRequest) {
         if (alreadyEnrolled) {
             return NextResponse.json({ message: "Already Enrolled !!" }, { status: 400 })
         }
-        await prisma.classroomStudent.create({ data: { user: { connect: { id: parseInt(token.id as string) } }, classroom: { connect: { id: existing.id } } } })
+        const alreadyRequested = await prisma.joinRequest.findUnique({ where: { userId_classroomId: { userId:parseInt( token.id as string), classroomId: existing.id } } })
+        if (alreadyRequested) {
+            return NextResponse.json({ message: "Already Requested !! Wait for Teacher Approval " }, { status: 400 })
+        }
+        await prisma.joinRequest.create({ data: { user: { connect: { id: parseInt(token.id as string) } }, classroom: { connect: { id: existing.id } } } })
 
-        return NextResponse.json({ message: "Joined Class Successfully" }, { status: 201 })
+        return NextResponse.json({ message: "Join Request Created Successfully" }, { status: 201 })
     } catch(err) {
         console.error(err)
         return NextResponse.json({ message: "Internal Error, Try again later!" }, { status: 500 })

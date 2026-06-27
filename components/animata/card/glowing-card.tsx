@@ -12,7 +12,7 @@ export default function GlowingCard({
   viaColor = "#C850C0",
   toColor = "#FFCC70",
   className,
-  children,  // 👈 add this
+  children,  
   ...props
 }: GlowCardProps) {
   const gradient = `linear-gradient(to right, ${fromColor}, ${viaColor}, ${toColor})`;
@@ -20,7 +20,7 @@ export default function GlowingCard({
   return (
     <div
       className={cn(
-        "rounded-3xl p-0.5 transition-[box-shadow,filter] duration-500 ease-in-out hover:shadow-glow hover:brightness-150 hover:bg-black",
+        "rounded-3xl  transition-[box-shadow,filter] duration-500 ease-in-out hover:shadow-glow hover:brightness-150",
         className,
       )}
       {...props}

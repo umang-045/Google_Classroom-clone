@@ -10,6 +10,7 @@ import { Loader2 } from "lucide-react";
 interface Sender {
     name: string;
     email: string;
+    image:string;
 }
 
 interface Message {
@@ -23,6 +24,7 @@ interface CurrentUser {
     id: number;
     name: string;
     email: string;
+    image?: string;
 }
 
 const ChatPage =()=> {
@@ -40,7 +42,7 @@ const ChatPage =()=> {
             try {
                 const res = await fetch(`/api/classroom/${classroomId}/chat`);
                 const data: { messages: Message[]; currentUser: CurrentUser } = await res.json();
-
+                console.log("currentUser:", data.currentUser);
                 if (!active) return;
                 const username = data.currentUser.name;
                 setMessages([...data.messages].reverse());
@@ -124,6 +126,7 @@ const ChatPage =()=> {
                                 key={uniqueKey}
                                 sender={senderName(msg.sender)}
                                 message={msg.message}
+                                image={typeof msg.sender === "object" ? msg.sender.image : undefined}
                                 isOwnMessage={senderName(msg.sender) === currentUser?.name}
                                 timestamp={msg.created_at}
                             />

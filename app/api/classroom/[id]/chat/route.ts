@@ -71,7 +71,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
                     message:true,
                     sender:{select:{
                         name:true,
-                        email:true
+                        email:true,
+                        image:true
                     }}
                 },
                 orderBy: { created_at: 'desc' },
@@ -79,7 +80,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             }),
             prisma.users.findUnique({
                 where: { id: userId },
-                select: { id: true, name: true, email: true }
+                select: { id: true, name: true, email: true, image: true }
             })
         ])
 
