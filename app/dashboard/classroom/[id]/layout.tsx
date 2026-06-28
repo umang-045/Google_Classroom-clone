@@ -31,7 +31,7 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
     const getActiveIndex = () => {
         if (pathname === `/dashboard/classroom/${id}`) return 0;
         if (pathname.startsWith(`/dashboard/classroom/${id}/assignments`)) return 1;
-        if (pathname.startsWith(`/dashboard/classroom/${id}/materials`)) return 2;
+        if (pathname.startsWith(`/dashboard/classroom/${id}/meetings`)) return 2;
         if (pathname.startsWith(`/dashboard/classroom/${id}/members`)) return 3;
         if (pathname.startsWith(`/dashboard/classroom/${id}/chat`)) return 4;
         return 0;
@@ -97,7 +97,7 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
                 <FluidTabs.List className='w-full text-white/70'>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}?colorIndex=${colorIndex}`)}>Announcement</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/assignments?colorIndex=${colorIndex}`)}>Assignment</FluidTabs.Tab>
-                    <FluidTabs.Tab>Materials</FluidTabs.Tab>
+                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/meetings?colorIndex=${colorIndex}`)}>Meetings</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={()=>  router.push(`/dashboard/classroom/${id}/members?colorIndex=${colorIndex}`) }>Members</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/chat?colorIndex=${colorIndex}`)}>Chat</FluidTabs.Tab>
                 </FluidTabs.List>

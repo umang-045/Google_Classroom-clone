@@ -20,6 +20,7 @@ model Users {
   messageSender Chat[] @relation("MessageSender")
   announcemnt Announcement[] @relation("TeacherAnnouncement")
   joinRequest JoinRequest[] @relation("JoinRequestUser")
+  meeting     Meeting[] @relation("TeacherMeeting")
 }
 
 model VerificationTable {
@@ -58,6 +59,7 @@ model Classroom{
   classroomChat Chat[] @relation("ClassroomChat") 
   classroomAnnouncemnet Announcement[] @relation("ClassroomAnnouncement")
   joinRequest JoinRequest[] @relation("JoinRequestClassroom")
+  meeting     Meeting[] @relation("ClassroomMeeting")
 }
 
 model ClassroomStudent{
@@ -117,4 +119,18 @@ model Announcement{
   classroomId Int
   teacher Users @relation("TeacherAnnouncement",fields:[teacherId],references: [id])
   teacherId Int
+}
+
+model Meeting{
+  id Int @id @default(autoincrement())
+  title String 
+  created_at DateTime @default(now())
+  status String @default("SCHEDULED")
+  scheduled_at DateTime
+  started_at DateTime?
+  ended_at DateTime?
+  classroom Classroom @relation("ClassroomMeeting",fields:[classroomId],references: [id])
+  classroomId Int
+  teacher Users @relation("TeacherMeeting",fields:[teacherId],references: [id])
+  teacherId Int 
 }
