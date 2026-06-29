@@ -16,9 +16,7 @@ interface Meeting {
 const MeetPage = () => {
     const params = useParams()
     const router = useRouter()
-    const searchParams = useSearchParams()
     const classroomId = params.id as string
-    const colorIndex = searchParams.get('colorIndex') || '0'
 
     const [role, setRole] = useState<string>("")
     const [meetings, setMeetings] = useState<Meeting[]>([])
@@ -58,6 +56,7 @@ const MeetPage = () => {
     }, [classroomId])
 
     const handleStart = async (meetingId: number) => {
+        const newTab=window.open('','_blank')
         setActionLoading(meetingId)
         try {
             const res = await fetch(`/api/meetings/${classroomId}/${meetingId}`, {
@@ -67,16 +66,18 @@ const MeetPage = () => {
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || "Failed to start meeting")
-            router.push(`/dashboard/classroom/${classroomId}/meet/${meetingId}?colorIndex=${colorIndex}`)
-        } catch (err: any) {
-            alert(err.message || "Something went wrong")
+            router.push(`/meet/${classroomId}/${meetingId}`)
+            if (newTab) newTab.location.href = `/meet/${classroomId}/${meetingId}`
+        } catch (err) {
+            if (newTab) newTab.close()
+            console.log(err.message || "Something went wrong")
         } finally {
             setActionLoading(null)
         }
     }
     const handleJoin = (meetingId: number) => {
-        router.push(`/dashboard/classroom/${classroomId}/meet/${meetingId}?colorIndex=${colorIndex}`)
-    }
+    window.open(`/meet/${classroomId}/${meetingId}`, '_blank')
+}
     if (loading) return <div className="flex items-center justify-center min-h-[60vh]">
         <Loader2 className="size-6 animate-spin text-gray-400" />
     </div>

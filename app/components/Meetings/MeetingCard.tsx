@@ -74,6 +74,15 @@ export const MeetingCard = ({ meeting, role, onStart, onJoin }: MeetingCardProps
                                 Join
                             </Button>
                         )}
+                        {role === "teacher" && meeting.status === "LIVE" && (
+                            <Button
+                                size='sm'
+                                className='bg-green-600 hover:bg-green-700 text-white text-xs h-8'
+                                onClick={() => onJoin(meeting.id)}
+                            >
+                                Rejoin Meeting
+                            </Button>
+                        )}
 
                         {meeting.status === "ENDED" && (
                             <span className='text-xs text-white/30 italic'>Meeting ended</span>
