@@ -87,6 +87,9 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
         const meetingData = await prisma.meeting.findMany({
             where: {
                 classroomId: classId,
+            },
+            orderBy:{
+                scheduled_at:'desc'
             }
         })
         return NextResponse.json({ meetings: meetingData }, { status: 200 })
