@@ -10,11 +10,8 @@ import { AppSidebar } from '@/components/app-sidebar'
 import { SidebarProvider } from '@/components/ui/sidebar'
 
 const Dashboardlayout = ({ children }) => {
-  const router = useRouter()
   const [createclassbox, setcreateclassBox] = useState<boolean>(false)
   const [joinclassbox, setjoinclassBox] = useState<boolean>(false)
-  const result = useSession()
-  const session = result.data
   const pathname = usePathname()
 
   const getActive = () => {
@@ -32,7 +29,6 @@ const Dashboardlayout = ({ children }) => {
         <AppSidebar />
         
         <div className='mainContent'>
-        
           {children}
         </div>
         </SidebarProvider>

@@ -2,6 +2,7 @@ import { SessionWrapper } from "./components/SessionWrapper";
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
+import { Toaster } from 'react-hot-toast'
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
         <div className="fixed inset-0 -z-10 bg-black/50 pointer-events-none" />
         <SessionWrapper>
+            <Toaster position="top-center" />
           {children}
         </SessionWrapper>
       </body>

@@ -28,7 +28,7 @@ const teacherClassroompage = () => {
     <>
     <TopBar />
       <div className='teaching'>
-        <h2 className='heading'>Enrolled as Teacher 🧑‍🏫</h2>
+        <h2 className='heading'>Enrolled as Teacher</h2>
         <div className='classContainer my-2'>
           {teachingClassroom.length === 0
             ? <p className='noClass'>No classrooms created yet!</p>

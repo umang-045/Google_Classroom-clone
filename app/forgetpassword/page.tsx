@@ -7,19 +7,18 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "@/components/ui/input-otp"
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 const ForgotPasswordPage = () => {
     const router = useRouter()
     const [email, setEmail] = useState<string>("")
     const [otp, setOtp] = useState<string>("")
     const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string>("")
     const [sent, setSent] = useState<boolean>(false)
 
     const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
-        setError("")
         const res = await fetch("/api/forgotpassword", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -28,15 +27,16 @@ const ForgotPasswordPage = () => {
         const data: { error?: string } = await res.json()
         setLoading(false)
         if (!res.ok) {
-            return setError(data.error || "Something went wrong. Try again.")
+            toast.error(data.error || "Something went wrong. Try again.")
+            return
         }
+        toast.success("OTP sent! Check your email.")
         setSent(true)
     }
 
     const verifyOtp = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
-        setError("")
         const res = await fetch("/api/forgotverify", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -45,7 +45,8 @@ const ForgotPasswordPage = () => {
         const data: { error?: string } = await res.json()
         setLoading(false)
         if (!res.ok) {
-            return setError(data.error || "Invalid OTP")
+            toast.error(data.error || "Invalid OTP")
+            return
         }
         sessionStorage.setItem("reset_email", email)
         router.push('/resetpassword')
@@ -77,10 +78,6 @@ const ForgotPasswordPage = () => {
                             <p className="text-sm text-gray-500 mt-1 mb-8">
                                 Enter your email and we will send you an OTP to reset your password.
                             </p>
-
-                            {error && (
-                                <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-xl">{error}</p>
-                            )}
 
                             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                                 <div className="flex flex-col gap-1">
@@ -120,10 +117,6 @@ const ForgotPasswordPage = () => {
                                     </CardDescription>
                                 </CardHeader>
 
-                                {error && (
-                                    <p className="text-red-500 text-sm mx-6 mb-2 bg-red-50 p-3 rounded-xl">{error}</p>
-                                )}
-
                                 <CardContent>
                                     <Field>
                                         <FieldLabel htmlFor="otp-verification" className="text-xs font-medium text-zinc-700 mb-2 block">
@@ -152,7 +145,7 @@ const ForgotPasswordPage = () => {
                                     <Button type="submit" disabled={loading || otp.length < 6}>
                                         {loading ? "Verifying..." : "Verify OTP"}
                                     </Button>
-                                    <Button type="button" variant="outline" onClick={() => { setSent(false); setOtp(""); setError("") }}>
+                                    <Button type="button" variant="outline" onClick={() => { setSent(false); setOtp("") }}>
                                         Go back
                                     </Button>
                                 </CardFooter>

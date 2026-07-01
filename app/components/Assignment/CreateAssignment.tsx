@@ -1,9 +1,11 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+"use client"
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
+import { Clipboard, X } from 'lucide-react'
 
 interface AssignmentData {
     id?: number
@@ -13,25 +15,25 @@ interface AssignmentData {
     fileUrl?: string
 }
 
-function CreateAssignment({classroomId,setcreateAssignmentBox,editData}: {classroomId: number,setcreateAssignmentBox: (val: boolean) => void,editData?: AssignmentData})
- {
+function CreateAssignment({ classroomId, setcreateAssignmentBox, editData }: { classroomId: number, setcreateAssignmentBox: (val: boolean) => void, editData?: AssignmentData }) {
     const isEditing = !!editData?.id
     const [createform, setcreateform] = useState({
         title: editData?.title ?? "",
         description: editData?.description ?? "",
-        due_at: editData?.due_at? new Date(editData.due_at).toISOString().slice(0, 16): "",
+        due_at: editData?.due_at ? new Date(editData.due_at).toISOString().slice(0, 16) : "",
     })
-    const [error, setError] = useState("")
-    const [success, setSuccess] = useState("")
     const router = useRouter()
     const [file, setfile] = useState<File | null>(null)
     const [fileKey, setFileKey] = useState(0)
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
+        if (!createform.title || !createform.description || !createform.due_at) {
+            toast.error("Please fill in all required fields.")
+            return
+        }
+
         setLoading(true)
-        setError("")
-        setSuccess("")
         let fileUrl = editData?.fileUrl ?? ""
 
         if (file) {
@@ -42,7 +44,7 @@ function CreateAssignment({classroomId,setcreateAssignmentBox,editData}: {classr
             const data = await res.json()
 
             if (!res.ok) {
-                setError(data.message || "Upload failed. Try again.")
+                toast.error(data.message || "Upload failed. Try again.")
                 setLoading(false)
                 return
             }
@@ -50,7 +52,7 @@ function CreateAssignment({classroomId,setcreateAssignmentBox,editData}: {classr
             fileUrl = data.result.secure_url
         }
 
-        const endpoint = isEditing? `/api/assignments/${classroomId}/${editData!.id}`
+        const endpoint = isEditing ? `/api/assignments/${classroomId}/${editData!.id}`
             : "/api/assignments/create-assignment"
 
         const method = isEditing ? "PATCH" : "POST"
@@ -64,12 +66,12 @@ function CreateAssignment({classroomId,setcreateAssignmentBox,editData}: {classr
         const data = await res.json()
 
         if (!res.ok) {
-            setError(data.message || "Something went wrong. Try again.")
+            toast.error(data.message || "Something went wrong. Try again.")
             setLoading(false)
             return
         }
 
-        setSuccess(isEditing ? "Assignment updated!" : "Assignment created!")
+        toast.success(isEditing ? "Assignment updated!" : "Assignment created!")
         setLoading(false)
 
         setTimeout(() => {
@@ -79,99 +81,127 @@ function CreateAssignment({classroomId,setcreateAssignmentBox,editData}: {classr
     }
 
     return (
-        <div className='fixed inset-0 z-50 flex items-center justify-center bg-black/50'onClick={() => setcreateAssignmentBox(false)}>
-            <Card className='w-full max-w-lg bg-white' onClick={(e) => e.stopPropagation()}>
-                <CardHeader>
-                    <CardTitle className='font-semibold'>
-                        {isEditing ? "Edit Assignment" : "Create Assignment"}
-                    </CardTitle>
-                    <CardDescription>
-                        {isEditing ? "Update the assignment details below." : "Fill up essential details of Assignment"}
-                    </CardDescription>
-                </CardHeader>
+        <div
+            className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6 backdrop-blur-xs'
+            onClick={() => setcreateAssignmentBox(false)}
+        >
+            <div
+                style={{ background: 'linear-gradient(to top, #27272a, #151519)' }}
+                className='relative w-full max-w-xl rounded-xl border border-zinc-800/80 p-8 shadow-2xl space-y-7 animate-in fade-in-50 zoom-in-95 duration-150 text-zinc-200'
+                onClick={(e) => e.stopPropagation()}
+            >
+                <button
+                    onClick={() => setcreateAssignmentBox(false)}
+                    className='absolute top-5 right-5 text-zinc-400 hover:text-red-400 cursor-pointer transition-colors'
+                >
+                    <X size={20} />
+                </button>
 
-                <CardContent className='space-y-4'>
+                <div className='flex items-center gap-4 pl-0.5'>
+                    <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-800/70 text-sky-400 border border-zinc-700/60 shadow-inner'>
+                        <Clipboard size={22} />
+                    </div>
+                    <div>
+                        <h3 className='font-semibold text-2xl tracking-tight text-white'>
+                            {isEditing ? "Update Assignment" : "Create Assignment"}
+                        </h3>
+                        <p className='text-xs text-zinc-400 mt-1'>
+                            {isEditing ? "Modify configuration parameters" : "Fill out required information fields"}
+                        </p>
+                    </div>
+                </div>
+
+                <div className='space-y-5'>
                     <div className='w-full space-y-2'>
-                        <Label htmlFor='title' className='gap-1'>
-                            Title <span className='text-destructive'>*</span>
+                        <Label htmlFor='title' className='text-zinc-300 text-sm font-medium pl-0.5'>
+                            Title <span className='text-rose-500'>*</span>
                         </Label>
                         <Input
                             id='title'
                             type='text'
-                            placeholder='Title of Assignment'
+                            placeholder='Assignment Title'
                             required
                             value={createform.title}
                             onChange={(e) => setcreateform({ ...createform, title: e.target.value })}
+                            className='w-full h-11 rounded-md border-zinc-700 bg-zinc-900/40 text-zinc-100 placeholder:text-zinc-600 focus-visible:ring-1 focus-visible:ring-zinc-600 focus-visible:border-zinc-500'
                         />
                     </div>
 
                     <div className='w-full space-y-2'>
-                        <Label htmlFor='description' className='gap-1'>
-                            Description <span className='text-destructive'>*</span>
+                        <Label htmlFor='description' className='text-zinc-300 text-sm font-medium pl-0.5'>
+                            Description <span className='text-rose-500'>*</span>
                         </Label>
-                        <Input
+                        <textarea
                             id='description'
-                            type='text'
-                            placeholder='Description'
+                            placeholder='Provide descriptions/instructions here...'
                             required
+                            rows={4}
                             value={createform.description}
                             onChange={(e) => setcreateform({ ...createform, description: e.target.value })}
+                            className='flex min-h-[110px] w-full rounded-md border border-zinc-700 bg-zinc-900/40 px-3.5 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 outline-none resize-none focus-visible:ring-1 focus-visible:ring-zinc-600 focus-visible:border-zinc-500'
                         />
                     </div>
 
                     <div className='w-full space-y-2'>
-                        <Label htmlFor='due_at' className='gap-1'>
-                            Due Date <span className='text-destructive'>*</span>
+                        <Label htmlFor='due_at' className='text-zinc-300 text-sm font-medium pl-0.5'>
+                            Due Date <span className='text-rose-500'>*</span>
                         </Label>
                         <Input
                             id='due_at'
                             type='datetime-local'
                             required
                             value={createform.due_at}
+                            min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                             onChange={(e) => setcreateform({ ...createform, due_at: e.target.value })}
+                           
+                            className='w-full h-11 flex items-center rounded-md border-zinc-700 bg-zinc-900/40 text-zinc-100 focus-visible:ring-1 focus-visible:ring-zinc-600 focus-visible:border-zinc-500 colored-scheme-dark'
                         />
                     </div>
 
-                    <div className='w-full space-y-2'>
-                        <Label htmlFor='question-file' className='gap-1'>
-                            {isEditing ? "Replace File" : "Upload File"}
+                    <div className='w-full space-y-2 pt-1'>
+                        <Label htmlFor='question-file' className='text-zinc-300 text-sm font-medium pl-0.5'>
+                            {isEditing ? "Replace Reference File" : "Upload Reference File"}
                         </Label>
                         <Input
                             key={fileKey}
                             id='question-file'
-                            type='file'
-                            className='text-muted-foreground file:border-input file:text-foreground p-0 pr-3 italic file:mr-3 file:h-full file:border-0 file:border-r file:border-solid file:bg-transparent file:px-3 file:text-sm file:font-medium file:not-italic'
+                            type='file' 
+                            className='w-full h-11 flex items-center rounded-md border border-zinc-700 bg-zinc-900/40 text-zinc-400 file:bg-zinc-800 file:text-zinc-200 file:border-0 file:border-r file:border-zinc-700 file:mr-4 file:px-5 file:h-full file:flex file:items-center file:justify-center file:text-xs file:font-semibold transition-colors p-0 cursor-pointer'
                             onChange={(e) => setfile(e.target.files?.[0] || null)}
                         />
-                        <p className='text-muted-foreground text-xs'>
-                            {isEditing? editData?.fileUrl? "Leave empty to keep the existing file. Max 10MB."
-                                    : "No file currently attached. Max 10MB."
-                                : "You can upload a file here (Max 10MB)."}
-                        </p>
-                        {isEditing && editData?.fileUrl && (
-                            <a href={editData.fileUrl} target='_blank' rel='noopener noreferrer' className='text-sm text-blue-600 underline hover:text-blue-800'>
-                                View current file
-                            </a>
-                        )}
+                        <div className='flex items-center justify-between px-0.5 text-xs text-zinc-500 mt-1'>
+                            <span>Max size: 10MB</span>
+                            {isEditing && editData?.fileUrl && (
+                                <a href={editData.fileUrl} target='_blank' rel='noopener noreferrer' className='text-sky-400 underline hover:text-sky-300 transition-colors'>
+                                    View file
+                                </a>
+                            )}
+                        </div>
                     </div>
+                </div>
 
-                    {error && <p className='text-destructive text-sm'>{error}</p>}
-                    {success && <p className='text-green-600 text-sm'>{success}</p>}
-                </CardContent>
-
-                <CardContent className='flex justify-end gap-2 max-sm:justify-center'>
-                    <Button className='max-sm:flex-1' variant='outline' onClick={() => setcreateAssignmentBox(false)} disabled={loading}>
+                <div className='flex items-center justify-end gap-3 pt-4 border-t border-zinc-800/60 max-sm:flex-col-reverse'>
+                    <Button
+                        type='button'
+                        variant='ghost'
+                        onClick={() => setcreateAssignmentBox(false)}
+                        disabled={loading}
+                        className='rounded-md px-5 bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white border-0 text-xs h-10 max-sm:w-full'
+                    >
                         Cancel
                     </Button>
-                    <Button className='max-sm:flex-1' type='button' onClick={handleSubmit} disabled={loading}>
-                        {loading
-                            ? isEditing ? "Saving..." : "Creating..."
-                            : isEditing ? "Save Changes" : "Create"}
+                    <Button
+                        type='button'
+                        onClick={handleSubmit}
+                        disabled={loading}
+                        className='rounded-md cursor-pointer px-5 bg-blue-700 hover:bg-blue-700 text-white font-medium border-0 text-xs h-10 max-sm:w-full'
+                    >
+                        {loading ? 'Please Wait...' : isEditing ? 'Save Changes' : 'Create'}
                     </Button>
-                </CardContent>
-            </Card>
+                </div>
+            </div>
         </div>
     )
 }
 
-export default CreateAssignment
+export default CreateAssignment;

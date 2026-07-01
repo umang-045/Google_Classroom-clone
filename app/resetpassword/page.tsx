@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 const ResetPasswordPage = () => {
     const router = useRouter()
@@ -11,7 +12,6 @@ const ResetPasswordPage = () => {
     const [showPassword, setShowPassword] = useState<boolean>(false)
     const [showConfirm, setShowConfirm] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(false)
-    const [error, setError] = useState<string>("")
 
     useEffect(() => {
         const stored = sessionStorage.getItem("reset_email")
@@ -25,10 +25,10 @@ const ResetPasswordPage = () => {
     const handleReset = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (password !== confirmPassword) {
-            return setError("Passwords do not match.")
+            toast.error("Passwords do not match.")
+            return
         }
         setLoading(true)
-        setError("")
         const res = await fetch("/api/resetpassword", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -37,8 +37,10 @@ const ResetPasswordPage = () => {
         const data: { error?: string } = await res.json()
         setLoading(false)
         if (!res.ok) {
-            return setError(data.error || "Something went wrong. Try again.")
+            toast.error(data.error || "Something went wrong. Try again.")
+            return
         }
+        toast.success("Password reset successfully!")
         sessionStorage.removeItem("reset_email")
         router.push('/login')
     }
@@ -74,10 +76,6 @@ const ResetPasswordPage = () => {
                         </svg>
                         <span className="text-xs font-medium text-zinc-700">{email}</span>
                     </div>
-
-                    {error && (
-                        <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-xl">{error}</p>
-                    )}
 
                     <form onSubmit={handleReset} className="flex flex-col gap-4">
                         <div className="flex flex-col gap-1">

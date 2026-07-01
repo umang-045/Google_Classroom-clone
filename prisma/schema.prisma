@@ -39,7 +39,7 @@ model JoinRequest {
   requested_at DateTime @default(now())
   user Users @relation("JoinRequestUser", fields: [userId], references: [id])
   userId Int
-  classroom Classroom @relation("JoinRequestClassroom", fields: [classroomId], references: [id])
+  classroom Classroom @relation("JoinRequestClassroom", fields: [classroomId], references: [id], onDelete: Cascade)
   classroomId Int
   @@unique([userId, classroomId])
 }
@@ -67,7 +67,7 @@ model ClassroomStudent{
   joined_at   DateTime @default(now())
   user        Users     @relation("ClassroomStudent",fields: [userId], references: [id])
   userId      Int
-  classroom   Classroom @relation(fields: [classroomId], references: [id])
+  classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
   classroomId Int
   @@unique([userId, classroomId]) 
   
@@ -80,7 +80,7 @@ model Assignment{
   fileUrl String
   created_at DateTime @default(now())
   due_at DateTime 
-  classroom Classroom @relation("Assignment",fields:[classId],references:[id])
+  classroom Classroom @relation("Assignment",fields:[classId],references:[id], onDelete: Cascade)
   classId    Int
   teacher    Users @relation("Teacher",fields:[teacherId],references: [id])
   teacherId  Int
@@ -106,7 +106,7 @@ model Chat{
   created_at DateTime @default(now())
   sender Users @relation("MessageSender",fields:[senderId],references: [id])
   senderId Int
-  classroom Classroom @relation("ClassroomChat",fields:[classId],references: [id])
+  classroom Classroom @relation("ClassroomChat",fields:[classId],references: [id], onDelete: Cascade)
   classId Int
 }
 
@@ -115,7 +115,7 @@ model Announcement{
   title String
   content String 
   created_at DateTime @default(now())
-  classroom Classroom @relation("ClassroomAnnouncement",fields:[classroomId],references: [id])
+  classroom Classroom @relation("ClassroomAnnouncement",fields:[classroomId],references: [id], onDelete: Cascade)
   classroomId Int
   teacher Users @relation("TeacherAnnouncement",fields:[teacherId],references: [id])
   teacherId Int
@@ -129,7 +129,7 @@ model Meeting{
   scheduled_at DateTime
   started_at DateTime?
   ended_at DateTime?
-  classroom Classroom @relation("ClassroomMeeting",fields:[classroomId],references: [id])
+  classroom Classroom @relation("ClassroomMeeting",fields:[classroomId],references: [id], onDelete: Cascade)
   classroomId Int
   teacher Users @relation("TeacherMeeting",fields:[teacherId],references: [id])
   teacherId Int 

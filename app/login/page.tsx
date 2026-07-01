@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 interface LoginForm {
   email: string;
@@ -15,14 +16,13 @@ const LoginPage = () => {
   const router = useRouter()
   const [form, setform] = useState<LoginForm>({ email: "", password: "" });
   const [loading, setloading] = useState<boolean>(false);
-  const [error, seterror] = useState<string>("");
   const result = useSession();
   const session = result.data;
 
   useEffect(() => {
     if (session) {
       router.push('/dashboard')
-      alert("YOU ARE LOGGED IN ✅")
+      toast.success("YOU ARE LOGGED IN")
     }
   }, [session])
 
@@ -31,7 +31,6 @@ const LoginPage = () => {
   const handleLogin = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setloading(true);
-    seterror("");
     const res = await signIn("credentials", {
       email: form.email,
       password: form.password,
@@ -39,7 +38,7 @@ const LoginPage = () => {
     })
     setloading(false)
     if (res?.error) {
-      return seterror(res.error)
+      toast.error(res.error)
     }
     router.push("/dashboard")
   }
@@ -65,9 +64,6 @@ const LoginPage = () => {
             <h1 className="text-3xl font-extrabold text-zinc-900">Welcome Back!</h1>
             <p className="text-sm text-gray-500 mt-1 mb-8">Please enter log in details below.</p>
 
-            {error && (
-              <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-xl">{error}</p>
-            )}
 
             <form onSubmit={handleLogin} className="flex flex-col gap-4">
               <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />

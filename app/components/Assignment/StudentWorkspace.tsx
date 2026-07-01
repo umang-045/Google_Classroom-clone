@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import toast from 'react-hot-toast'
 
 interface StudentWorkspaceProps {
     classroomId: number
@@ -21,17 +22,12 @@ export const StudentWorkspace = ({ classroomId, assignmentId, isSubmitted, setIs
     const [file, setFile] = useState<File | null>(null)
     const [fileKey, setFileKey] = useState(0)
     const [submitLoading, setSubmitLoading] = useState(false)
-    const [submitError, setSubmitError] = useState("")
-    const [submitSuccess, setSubmitSuccess] = useState("")
 
     const isGraded = marks !== null
 
     const handleStudentSubmit = async () => {
-        setSubmitError("")
-        setSubmitSuccess("")
-
         if (isSubmitted) return
-        if (!file) { setSubmitError("Please select a file"); return }
+        if (!file) { toast.error("Please select a file"); return }
 
         try {
             setSubmitLoading(true)
@@ -53,12 +49,13 @@ export const StudentWorkspace = ({ classroomId, assignmentId, isSubmitted, setIs
             if (!res.ok) throw new Error(data.message || "Submission failed")
 
             setIsSubmitted(true)
-            setSubmitSuccess("Assignment submitted successfully!")
+            toast.success("Assignment submitted successfully!")
             setFile(null)
             setFileKey(prev => prev + 1)
             onSuccess()
-        } catch (err: any) {
-            setSubmitError(err.message || "Something went wrong")
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Something went wrong"
+            toast.error(message)
         } finally {
             setSubmitLoading(false)
         }
@@ -113,8 +110,6 @@ export const StudentWorkspace = ({ classroomId, assignmentId, isSubmitted, setIs
                                     onChange={(e) => setFile(e.target.files?.[0] || null)}
                                 />
                             </div>
-                            {submitError && <p className='text-destructive text-[11px] font-medium'>{submitError}</p>}
-                            {submitSuccess && <p className='text-green-400 text-[11px] font-medium'>{submitSuccess}</p>}
                             <Button
                                 onClick={handleStudentSubmit}
                                 disabled={submitLoading}

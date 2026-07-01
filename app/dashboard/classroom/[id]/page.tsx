@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import CreateAnnouncement from '@/app/components/Announcement/CreateAnnouncement'
 import { AnnouncementCard } from '@/app/components/Announcement/AnnouncementCard'
 import { Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 interface Announcement {
     id: number
@@ -21,7 +22,7 @@ const Page = () => {
     const [announcements, setAnnouncements] = useState<Announcement[]>([])
     const [deleteLoading, setDeleteLoading] = useState<boolean>(false)
     const [loading, setLoading] = useState<boolean>(true)
-    const [error, setError] = useState("")
+    const [loadFailed, setLoadFailed] = useState<boolean>(false)
     const [createAnnouncementBox, setCreateAnnouncementBox] = useState(false)
 
     const fetchAnnouncements = async () => {
@@ -30,8 +31,11 @@ const Page = () => {
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || "Failed to load announcements")
             setAnnouncements(data.allAnnouncement)
-        } catch (err: any) {
-            setError(err.message || "Something went wrong")
+            setLoadFailed(false)
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Something went wrong"
+            toast.error(message)
+            setLoadFailed(true)
         } finally {
             setLoading(false)
         }
@@ -61,9 +65,11 @@ const Page = () => {
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || "Delete failed")
+            toast.success("Announcement deleted")
             fetchAnnouncements()
-        } catch (err: any) {
-            alert(err.message || "Something went wrong")
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Something went wrong"
+            toast.error(message)
         } finally {
             setDeleteLoading(false)
         }
@@ -92,8 +98,6 @@ const Page = () => {
                 </div>
             )}
 
-            {error && <p className='text-center text-destructive mb-4'>{error}</p>}
-
             {announcements.length > 0 ? (
                 <div className='space-y-3'>
                     {announcements.map((item) => (
@@ -107,7 +111,9 @@ const Page = () => {
                     ))}
                 </div>
             ) : (
-                !error && <p className='text-center text-white/50 py-12'>No announcements published here yet.</p>
+                <p className='text-center text-white/50 py-12'>
+                    {loadFailed ? "Couldn't load announcements. Try refreshing." : "No announcements published here yet."}
+                </p>
             )}
         </div>
     )

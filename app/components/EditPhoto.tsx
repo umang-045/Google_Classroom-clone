@@ -1,6 +1,7 @@
 "use client"
-import { useState, useRef,useEffect } from "react"
+import { useState, useRef, useEffect } from "react"
 import { X, Upload, Loader2, ImagePlus } from "lucide-react"
+import toast from "react-hot-toast"
 
 interface EditPhotoProps {
   currentAvatar: string
@@ -12,7 +13,6 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -26,14 +26,13 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
   const handleFileSelect = (selected: File | null) => {
     if (!selected) return
     if (!selected.type.startsWith("image/")) {
-      setError("Please select an image file")
+      toast.error("Please select an image file")
       return
     }
     if (selected.size > 10 * 1024 * 1024) {
-      setError("File too large, max 10MB")
+      toast.error("File too large, max 10MB")
       return
     }
-    setError(null)
     setFile(selected)
     if (preview) {
       URL.revokeObjectURL(preview)
@@ -44,7 +43,6 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
   const handleSave = async () => {
     if (!file) return
     setIsUploading(true)
-    setError(null)
     try {
       const formData = new FormData()
       formData.append("file", file)
@@ -66,10 +64,11 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
       const updateData = await updateRes.json()
       if (!updateRes.ok) throw new Error(updateData.message || "Failed to update profile")
 
+      toast.success("Profile photo updated!")
       onSuccess(imageUrl)
       onClose()
     } catch (err: any) {
-      setError(err.message || "Something went wrong")
+      toast.error(err.message || "Something went wrong")
     } finally {
       setIsUploading(false)
     }
@@ -120,8 +119,6 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
             <Upload className="size-4" />
             Choose image
           </button>
-
-          {error && <p className="text-xs text-red-500">{error}</p>}
         </div>
 
         <div className="mt-6 flex justify-end gap-2 ">

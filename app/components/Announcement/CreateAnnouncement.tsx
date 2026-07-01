@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 interface CreateAnnouncementProps {
     classroomId: number
@@ -12,38 +13,43 @@ interface CreateAnnouncementProps {
 
 export default function CreateAnnouncement({ classroomId, setCreateAnnouncementBox, onSuccess }: CreateAnnouncementProps) {
     const [form, setForm] = useState({ title: "", content: "" })
-    const [error, setError] = useState("")
-    const [success, setSuccess] = useState("")
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
         if (!form.title || !form.content) {
-            setError("Title and content are required.")
+            toast.error("Title and content are required.")
             return
         }
+        
         setLoading(true)
-        setError("")
-        setSuccess("")
 
-        const res = await fetch(`/api/announcements/${classroomId}`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form),
-        })
-        const data = await res.json()
+        try {
+            const res = await fetch(`/api/announcements/${classroomId}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            })
+            const data = await res.json()
 
-        if (!res.ok) {
-            setError(data.message || "Something went wrong.")
+            if (!res.ok) {
+                toast.error(data.message || "Something went wrong.")
+                setLoading(false)
+                return
+            }
+
+            toast.success("Announcement posted!")
             setLoading(false)
-            return
+            
+            setTimeout(() => {
+                setCreateAnnouncementBox(false)
+                onSuccess()
+            }, 800)
+            
+        } catch (err) {
+            console.error(err)
+            toast.error("Network error. Please try again.")
+            setLoading(false)
         }
-
-        setSuccess("Announcement posted!")
-        setLoading(false)
-        setTimeout(() => {
-            setCreateAnnouncementBox(false)
-            onSuccess()
-        }, 800)
     }
 
     return (
@@ -75,12 +81,9 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
                             rows={4}
                             value={form.content}
                             onChange={(e) => setForm({ ...form, content: e.target.value })}
-                             className='border-input flex w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none resize-none focus-visible:ring-1 focus-visible:ring-ring'
+                            className='border-input flex w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none resize-none focus-visible:ring-1 focus-visible:ring-ring'
                         />
                     </div>
-
-                    {error && <p className='text-destructive text-sm'>{error}</p>}
-                    {success && <p className='text-green-600 text-sm'>{success}</p>}
                 </CardContent>
 
                 <CardContent className='flex justify-end gap-2'>

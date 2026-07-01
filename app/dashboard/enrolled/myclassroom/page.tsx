@@ -28,7 +28,7 @@ const enrolledClassroompage = () => {
     <>
     <TopBar />
       <div className='enrolled'>
-        <h2 className='heading'>Enrolled As Student 🧑‍🎓</h2>
+        <h2 className='heading'>Enrolled As Student</h2>
         <div className='classContainer'>
           {enrolledClassroom.map((item, colorIndex) => (
             <ClassroomCard key={item.classroom.id} Classroomdetails={item.classroom} colorIndex={colorIndex} role="student" />

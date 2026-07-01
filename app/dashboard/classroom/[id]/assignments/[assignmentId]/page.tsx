@@ -6,6 +6,7 @@ import { TeacherWorkspace } from '@/app/components/Assignment/TeacherWorkspace'
 import { StudentWorkspace } from '@/app/components/Assignment/StudentWorkspace'
 import { useParams, useRouter } from 'next/navigation'
 import { Loader2 } from 'lucide-react'
+import toast from 'react-hot-toast'
 
 interface Assignment {
     id: number
@@ -103,9 +104,11 @@ const AssignmentDetailPage = () => {
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || "Delete failed")
-            router.push(`/classroom/${classroomId}/assignments`)
-        } catch (err: any) {
-            alert(err.message || "Something went wrong")
+            toast.success("Assignment deleted")   
+            router.push(`/dashboard/classroom/${classroomId}/assignments`)
+        } catch (err) {
+            const message = err instanceof Error ? err.message : "Something went wrong"
+            toast.error(message)
         } finally {
             setDeleteLoading(false)
         }

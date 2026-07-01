@@ -44,14 +44,12 @@ export default function LandingPage() {
           <div className="text-xl text-white font-extrabold tracking-tight">
             Digital<span className="text-blue-400">Classroom</span>
           </div>
-
-          <SiblingFocusNav className="gap-8 text-gray-300 text-sm font-medium">
+          <SiblingFocusNav className="gap-20 text-gray-300 text-sm font-medium tracking-wider">
             <SiblingFocusNav.Link href="#about">About</SiblingFocusNav.Link>
             <SiblingFocusNav.Link href="#features">Features</SiblingFocusNav.Link>
             <SiblingFocusNav.Link href="#contact">Contact</SiblingFocusNav.Link>
             <SiblingFocusNav.Link href="/dashboard">Dashboard</SiblingFocusNav.Link>
           </SiblingFocusNav>
-
           <div className="flex items-center gap-3 cursor-pointer">
             <button
               onClick={() => {
@@ -66,7 +64,6 @@ export default function LandingPage() {
             >
               {session ? 'Sign Out' : 'Sign In'}
             </button>
-
             <button
               onClick={() => router.push(session ? '/dashboard' : '/signup')}
               className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-5 py-2 rounded-lg shadow-md shadow-blue-900/40 transition-all cursor-pointer"
@@ -79,12 +76,12 @@ export default function LandingPage() {
 
       <div className="relative z-10 min-h-screen text-white overflow-x-hidden">
 
-        <section id="about" className="relative min-h-[90vh] px-8 md:px-16 flex items-center overflow-x-hidden">
-          <div className="grid md:grid-cols-2 gap-12 items-center w-full py-20">
+        <section id="about" className="relative min-h-[90vh] px-12 md:px-24 flex items-center overflow-x-hidden">
+
+          <div className="grid md:grid-cols-[1fr_1.4fr] items-center w-full py-12 md:gap-16">
+
 
             <div className="flex flex-col">
-              
-
               <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight">
                 <span className="text-white block mb-2">Modern Digital</span>
                 <GradientText
@@ -96,15 +93,13 @@ export default function LandingPage() {
                 </GradientText>
                 <span className="text-white block mt-2">For Your Classroom</span>
               </h1>
-
               <p className="text-zinc-300 text-base md:text-lg max-w-md mb-10">
                 Manage classrooms, share assignments, run live sessions, and track student progress, all in one place.
               </p>
-
               <div className="flex gap-3 flex-wrap mb-12">
                 <button
                   onClick={() => router.push(session ? '/dashboard' : '/signup')}
-                  className="border border-white/30 text-white font-medium text-sm px-7 py-3 rounded-lg  cursor-pointer transition-all hover:bg-white/10"
+                  className="border border-white/30 text-white font-medium text-sm px-7 py-3 rounded-lg cursor-pointer transition-all hover:bg-white/10"
                 >
                   Start Learning for Free
                 </button>
@@ -115,10 +110,9 @@ export default function LandingPage() {
                   Explore Dashboard
                 </button>
               </div>
-
               <ul className="flex flex-col gap-3">
                 {BULLET_POINTS.map(({ text }) => (
-                  <li key={text} className="flex items-start gap-3 text-zinc-400 text-sm">
+                  <li key={text} className="flex items-start gap-3 text-zinc-400 text-m">
                     <span className="mt-0.5 text-blue-400">-</span>
                     {text}
                   </li>
@@ -126,25 +120,26 @@ export default function LandingPage() {
               </ul>
             </div>
 
-            
-            <div className="flex justify-center items-center w-full max-w-[600px] aspect-square mx-auto ">
+
+            <div className="flex justify-end items-center w-full aspect-video mx-auto overflow-visible min-w-0">
               <DotLottieReact
-                src="/assets/STUDENT.json" 
+                src="/assets/online.json"
                 loop
                 autoplay
+                style={{ width: '100%', height: '100%' }}
+                renderConfig={{ autoResize: true }}
               />
             </div>
+
           </div>
         </section>
-        
-        <section id="features" className="relative mt-2 px-16 flex flex-col">
+        <section id="features" className="relative mt-2 px-12 md:px-24 flex flex-col">
           <div>
             <h1 className="text-5xl md:text-6xl font-black text-white">Features</h1>
             <p className="mt-4 text-zinc-400 text-base max-w-xl">
               Everything a modern classroom needs, built into one platform.
             </p>
           </div>
-
           <div className="relative w-full h-[500px] mb-16">
             <CircularGallery
               items={GALLERY_ITEMS}
@@ -158,7 +153,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-        <footer id="contact" className="border-t border-white/10 px-8 md:px-16 mt-8 py-16 relative">
+        <footer id="contact" className="border-t border-white/10 px-12 md:px-24 mt-8 py-16 relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-10">
             <div>
               <div className="text-2xl font-extrabold text-white mb-4">
@@ -181,7 +176,6 @@ export default function LandingPage() {
                 ))}
               </div>
             </div>
-
             <div>
               <h3 className="text-zinc-300 font-semibold text-sm uppercase tracking-widest mb-5">Navigation</h3>
               <ul className="flex flex-col gap-3">
@@ -194,7 +188,6 @@ export default function LandingPage() {
                 ))}
               </ul>
             </div>
-
             <div>
               <h3 className="text-zinc-300 font-semibold text-sm uppercase tracking-widest mb-5">Contact</h3>
               <ul className="flex flex-col gap-3 text-sm text-zinc-500">
@@ -212,7 +205,6 @@ export default function LandingPage() {
             </div>
           </div>
         </footer>
-
       </div>
     </>
   )

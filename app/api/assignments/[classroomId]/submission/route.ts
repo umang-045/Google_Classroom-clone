@@ -36,7 +36,18 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
             return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
         }
 
-        
+        const assignment = await prisma.assignment.findUnique({
+            where: { id: data.assignmentId }
+        })
+
+        if (!assignment) {
+            return NextResponse.json({ message: "Assignment not found" }, { status: 404 })
+        }
+
+        if (assignment.due_at && new Date(assignment.due_at) < new Date()) {
+            return NextResponse.json({ message: "Due date has passed. Submission not allowed." }, { status: 400 })
+        }
+
         const alreadySubmitted = await prisma.submission.findUnique({
             where: {
                 studentId_assignmentId: {

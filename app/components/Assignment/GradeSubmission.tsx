@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 interface SubmissionData {
     studentId: number
@@ -22,23 +23,18 @@ interface GradeSubmissionProps {
 export default function GradeSubmission({ classroomId, assignmentId, submission, setGradeBox, onGraded }: GradeSubmissionProps) {
     const [marks, setMarks] = useState(submission.marks !== null ? String(submission.marks) : "")
     const [feedback, setFeedback] = useState(submission.feedback ?? "")
-    const [error, setError] = useState("")
-    const [success, setSuccess] = useState("")
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
-        setError("")
-        setSuccess("")
-
         if (!marks) {
-            setError("Marks is required.")
+            toast.error("Marks is required.")
             return
         }
         const givenMarks = Number(marks)
-    if (givenMarks < 0 || givenMarks > 100) {
-        setError("Marks must be between 0 and 100.")
-        return
-    }
+        if (givenMarks < 0 || givenMarks > 100) {
+            toast.error("Marks must be between 0 and 100.")
+            return
+        }
 
         setLoading(true)
 
@@ -55,12 +51,12 @@ export default function GradeSubmission({ classroomId, assignmentId, submission,
         const data = await res.json()
 
         if (!res.ok) {
-            setError(data.message || "Something went wrong. Try again.")
+            toast.error(data.message || "Something went wrong. Try again.")
             setLoading(false)
             return
         }
 
-        setSuccess("Grade saved!")
+        toast.success(`${submission.studentName} has been graded!`)
         setLoading(false)
 
         setTimeout(() => {
@@ -111,9 +107,6 @@ export default function GradeSubmission({ classroomId, assignmentId, submission,
                             className='border-input flex w-full rounded-md border bg-transparent px-3 py-2 text-sm shadow-xs outline-none resize-none focus-visible:ring-1 focus-visible:ring-ring'
                         />
                     </div>
-
-                    {error && <p className='text-destructive text-sm'>{error}</p>}
-                    {success && <p className='text-green-600 text-sm'>{success}</p>}
                 </CardContent>
 
                 <CardContent className='flex justify-end gap-2 max-sm:justify-center'>
@@ -128,4 +121,3 @@ export default function GradeSubmission({ classroomId, assignmentId, submission,
         </div>
     )
 }
-

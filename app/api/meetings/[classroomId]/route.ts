@@ -22,6 +22,15 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
         if (!data || !data.title || !data.scheduled_at) {
             return NextResponse.json({ message: "Fill up the details" }, { status: 400 })
         }
+        const scheduledDate = new Date(data.scheduled_at);
+
+        if (isNaN(scheduledDate.getTime())) {
+            return NextResponse.json({ message: "Invalid date format" }, { status: 400 })
+        }
+
+        if (scheduledDate <= new Date()) {
+            return NextResponse.json({ message: "Scheduled date and time must be in the future." }, { status: 400 })
+        }
         const classroom = await prisma.classroom.findUnique({
             where: {
                 id: classId
@@ -88,8 +97,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
             where: {
                 classroomId: classId,
             },
-            orderBy:{
-                scheduled_at:'desc'
+            orderBy: {
+                scheduled_at: 'desc'
             }
         })
         return NextResponse.json({ meetings: meetingData }, { status: 200 })

@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
+import toast from 'react-hot-toast'
 
 interface ScheduleMeetingProps {
     classroomId: number
@@ -12,33 +13,32 @@ interface ScheduleMeetingProps {
 
 export default function ScheduleMeeting({ classroomId, setScheduleMeetingBox, onSuccess }: ScheduleMeetingProps) {
     const [form, setForm] = useState({ title: "", scheduled_at: "" })
-    const [error, setError] = useState("")
-    const [success, setSuccess] = useState("")
     const [loading, setLoading] = useState(false)
 
     const handleSubmit = async () => {
         if (!form.title || !form.scheduled_at) {
-            setError("Title and scheduled_at are required.")
+            toast.error("Title and scheduled_at are required.")
             return
         }
-        setLoading(true)
-        setError("")
-        setSuccess("")
+        const selectedDate = new Date(form.scheduled_at)
+        if (selectedDate <= new Date()) {
+            toast.error("Scheduled date and time must be in the future.")
+            return
+        }
 
+        setLoading(true)
         const res = await fetch(`/api/meetings/${classroomId}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form),
         })
         const data = await res.json()
-
         if (!res.ok) {
-            setError(data.message || "Something went wrong.")
+            toast.error(data.message || "Something went wrong.")
             setLoading(false)
             return
         }
-
-        setSuccess("Meeting Scheduled!")
+        toast.success("Meeting Scheduled!")
         setLoading(false)
         setTimeout(() => {
             setScheduleMeetingBox(false)
@@ -56,7 +56,6 @@ export default function ScheduleMeeting({ classroomId, setScheduleMeetingBox, on
                     <CardTitle className='font-semibold'>Schedule Meeting</CardTitle>
                     <CardDescription>Schedule a Meeting for your class</CardDescription>
                 </CardHeader>
-
                 <CardContent className='space-y-4'>
                     <div className='space-y-2'>
                         <label htmlFor='title'>Title <span className='text-destructive'>*</span></label>
@@ -73,14 +72,11 @@ export default function ScheduleMeeting({ classroomId, setScheduleMeetingBox, on
                             id='scheduled_at'
                             type='datetime-local'
                             value={form.scheduled_at}
+                            min={new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
                             onChange={(e) => setForm({ ...form, scheduled_at: e.target.value })}
                         />
                     </div>
-
-                    {error && <p className='text-destructive text-sm'>{error}</p>}
-                    {success && <p className='text-green-600 text-sm'>{success}</p>}
                 </CardContent>
-
                 <CardContent className='flex justify-end gap-2'>
                     <Button variant='outline' onClick={() => setScheduleMeetingBox(false)} disabled={loading}>
                         Cancel

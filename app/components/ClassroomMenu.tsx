@@ -6,6 +6,7 @@ import {
     DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useRouter } from 'next/navigation'
+import toast from 'react-hot-toast'
 
 interface ClassroomMenuProp {
     joinCode: string,
@@ -14,7 +15,6 @@ interface ClassroomMenuProp {
 }
 
 const ClassroomMenu = ({ joinCode, id, role }: ClassroomMenuProp) => {
-    const [error, setError] = useState<string>("")
     const [isDeleting, setIsDeleting] = useState<boolean>(false)
     const [isLeaving, setIsLeaving] = useState<boolean>(false)
     const router = useRouter()
@@ -33,14 +33,15 @@ const ClassroomMenu = ({ joinCode, id, role }: ClassroomMenuProp) => {
             })
             const data = await res.json();
             if (!res.ok) {
-                setError(data.message || "Try Again ")
+                toast.error(data.message || "Try Again")
                 setIsDeleting(false)
                 return
             }
+            toast.success("Classroom deleted")
             router.push('/dashboard/allclasses')
         } catch (err) {
             console.error(err)
-            setError("Something went wrong")
+            toast.error("Something went wrong")
             setIsDeleting(false)
         }
     }
@@ -59,14 +60,15 @@ const ClassroomMenu = ({ joinCode, id, role }: ClassroomMenuProp) => {
             })
             const data = await res.json()
             if (!res.ok) {
-                setError(data.message || "Try Again")
+                toast.error(data.message || "Try Again")
                 setIsLeaving(false)
                 return
             }
+            toast.success("You left the classroom")
             router.push('/dashboard/allclasses')
         } catch (err) {
             console.error(err)
-            setError("Something went wrong")
+            toast.error("Something went wrong")
             setIsLeaving(false)
         }
     }
@@ -74,7 +76,7 @@ const ClassroomMenu = ({ joinCode, id, role }: ClassroomMenuProp) => {
     const handleCopyJoinCode = (e: React.MouseEvent) => {
         e.stopPropagation()
         navigator.clipboard.writeText(joinCode)
-        alert("Join Code Copied ")
+        toast.success("Join code copied")
     }
 
     const isActionLoading = isDeleting || isLeaving
