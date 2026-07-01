@@ -88,6 +88,9 @@
   --sidebar-border: oklch(0.35 0 0);
   --sidebar-ring: oklch(0.45 0 0);
 }
+.lk-disconnect-button {
+    display: none !important;
+}
 
 @layer base {
   * {

@@ -13,11 +13,11 @@ app.prepare().then(() => {
 
   const httpServer = createServer(handler);
   const io = new Server(httpServer);
-  const participants: Record<string, Record<string, string>> = {};
 
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    
     socket.on("join-room", ({ room, username }: { room: string; username: string }) => {
       if (!room || !username) return;
       socket.join(room);
@@ -25,78 +25,14 @@ app.prepare().then(() => {
       socket.to(room).emit("user_joined", `${username} joined room ${room}`);
     });
 
+    
     socket.on("message", (data) => {
       if (!data?.room) return;
       socket.to(data.room).emit("message", data);
     });
 
-//from here  webrtc 
-    socket.on("join-meeting", ({ room, name }: { room: string; name: string }) => {
-      if (!room) return;
-
-      const existingPeers = Array.from(io.sockets.adapter.rooms.get(room) || []);
-
-      if (!participants[room]) participants[room] = {};
-      participants[room][socket.id] = name || "Guest";
-
-      socket.join(room);
-      console.log(`${socket.id} (${name}) joined meeting room ${room}`);
-
-      const existingPeerList = existingPeers.map((id) => ({
-        peerId: id,
-        name: participants[room][id] || "Guest"
-      }));
-
-      socket.emit("existing-peers", existingPeerList);
-      socket.to(room).emit("peer-joined", { peerId: socket.id, name: name || "Guest" });
-    });
-
-    socket.on("signal", ({ to, signal }: { to: string; signal: any }) => {
-      if (!to) return;
-      io.to(to).emit("signal", { from: socket.id, signal });
-    });
-
-    socket.on("screen-share-status", ({ room, sharing }: { room: string; sharing: boolean }) => {
-      if (!room) return;
-      socket.to(room).emit("screen-share-status", { peerId: socket.id, sharing });
-    });
-
-    socket.on('toggle-video-track', ({ room, videoActive }) => {
-      socket.to(room).emit('video-track-change', {
-        peerId: socket.id,
-        videoActive
-      });
-    });
-
-  
-    socket.on('video-state-sync', ({ room, videoActive }) => {
-      socket.to(room).emit('video-track-change', {
-        peerId: socket.id,
-        videoActive
-      });
-    });
-
-    socket.on("leave-meeting", ({ room }: { room: string }) => {
-      if (!room) return;
-      socket.leave(room);
-      if (participants[room]) delete participants[room][socket.id];
-      socket.to(room).emit("peer-left", socket.id);
-    });
-
-    socket.on("end-meeting", ({ room }: { room: string }) => {
-      if (!room) return;
-      io.to(room).emit("meeting-ended");
-      delete participants[room];
-    });
-
     socket.on("disconnect", () => {
       console.log(`User disconnected: ${socket.id}`);
-      socket.rooms.forEach((room) => {
-        if (room !== socket.id) {
-          if (participants[room]) delete participants[room][socket.id];
-          socket.to(room).emit("peer-left", socket.id);
-        }
-      });
     });
   });
 

@@ -10,7 +10,7 @@ import { Loader2 } from "lucide-react";
 interface Sender {
     name: string;
     email: string;
-    image:string;
+    image: string;
 }
 
 interface Message {
@@ -27,9 +27,9 @@ interface CurrentUser {
     image?: string;
 }
 
-const ChatPage =()=> {
-    const params= useParams();
-    const classroomId=params.id
+const ChatPage = () => {
+    const params = useParams();
+    const classroomId = params.id
     const room = `class-${classroomId}`;
     const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
@@ -55,7 +55,7 @@ const ChatPage =()=> {
             }
         };
         fetchChatData();
-        
+
         return () => {
             active = false;
         };
@@ -102,10 +102,19 @@ const ChatPage =()=> {
 
         const saved = await res.json();
 
+
+        const messageWithImage = {
+            ...saved,
+            sender: {
+                ...saved.sender,
+                image: currentUser?.image
+            }
+        }
+
         setMessages((prev) =>
-            prev.some((m) => m.id === saved.id) ? prev : [...prev, saved]
+            prev.some((m) => m.id === saved.id) ? prev : [...prev, messageWithImage]
         );
-        socket.emit("message", { room, ...saved });
+        socket.emit("message", { room, ...messageWithImage });
     };
 
     const senderName = (sender: Sender | string) =>
