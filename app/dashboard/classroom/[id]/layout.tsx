@@ -18,16 +18,16 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
     const [classroomDetails, setClassroomDetails] = useState<classroomProp | null>(null)
     const [loading, setLoading] = useState(true)
     const [role, setRole] = useState<string>("")
-    
+
     const params = useParams()
     const router = useRouter()
     const pathname = usePathname()
     const searchParams = useSearchParams()
-    
+
     const id = params.id
     const colorIndex = parseInt(searchParams.get('colorIndex') || '0')
 
-    
+
     const getActiveIndex = () => {
         if (pathname === `/dashboard/classroom/${id}`) return 0;
         if (pathname.startsWith(`/dashboard/classroom/${id}/assignments`)) return 1;
@@ -71,12 +71,12 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
                     </ol>
                     <p className=' text-xs font-medium mt-1 text-white/70 rounded-xl w-fit '>• Join Code - {classroomDetails.joinCode}</p>
                 </div>
-                
+
                 <div className='flex flex-col items-center gap-1 '>
                     {classroomDetails.teacher.image ? (
-                        <img 
-                            src={classroomDetails.teacher.image} 
-                            alt={classroomDetails.teacher.name} 
+                        <img
+                            src={classroomDetails.teacher.image}
+                            alt={classroomDetails.teacher.name}
                             className='w-16 h-16 rounded-full object-cover border-2 border-white/20'
                         />
                     ) : (
@@ -98,11 +98,12 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}?colorIndex=${colorIndex}`)}>Announcement</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/assignments?colorIndex=${colorIndex}`)}>Assignment</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/meetings?colorIndex=${colorIndex}`)}>Meetings</FluidTabs.Tab>
-                    <FluidTabs.Tab onClick={()=>  router.push(`/dashboard/classroom/${id}/members?colorIndex=${colorIndex}`) }>Members</FluidTabs.Tab>
+                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/quiz?colorIndex=${colorIndex}`)}>Quiz</FluidTabs.Tab>
+                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/members?colorIndex=${colorIndex}`)}>Members</FluidTabs.Tab>
                     <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/chat?colorIndex=${colorIndex}`)}>Chat</FluidTabs.Tab>
                 </FluidTabs.List>
             </FluidTabs>
-            
+
             <div className="mt-4">
                 {children}
             </div>

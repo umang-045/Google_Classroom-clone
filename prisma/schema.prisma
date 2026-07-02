@@ -7,25 +7,27 @@ datasource db {
 }
 
 model Users {
-  id         Int      @id @default(autoincrement())
-  name       String
-  email      String   @unique
-  password   String?
-  created_at DateTime @default(now())
-  image      String? @db.Text
-  teachingClassrooms Classroom[] @relation("TeacherClassroom")
+  id                 Int                @id @default(autoincrement())
+  name               String
+  email              String             @unique
+  password           String?
+  created_at         DateTime           @default(now())
+  image              String?            @db.Text
+  teachingClassrooms Classroom[]        @relation("TeacherClassroom")
   enrolledClassrooms ClassroomStudent[] @relation("ClassroomStudent")
-  assignments Assignment[] @relation("Teacher")
-  submissions Submission[] @relation("StudentAssignment")
-  messageSender Chat[] @relation("MessageSender")
-  announcemnt Announcement[] @relation("TeacherAnnouncement")
-  joinRequest JoinRequest[] @relation("JoinRequestUser")
-  meeting     Meeting[] @relation("TeacherMeeting")
+  assignments        Assignment[]       @relation("Teacher")
+  submissions        Submission[]       @relation("StudentAssignment")
+  messageSender      Chat[]             @relation("MessageSender")
+  announcemnt        Announcement[]     @relation("TeacherAnnouncement")
+  joinRequest        JoinRequest[]      @relation("JoinRequestUser")
+  meeting            Meeting[]          @relation("TeacherMeeting")
+  quiz               Quiz[]             @relation("TeacherQuiz")
+  quizSubmission     QuizSubmission[]   @relation("StudentQuiz")
 }
 
 model VerificationTable {
-  id         Int      @id  @default(autoincrement())
-  name       String   
+  id         Int      @id @default(autoincrement())
+  name       String
   email      String   @unique
   password   String
   otp        String
@@ -34,103 +36,132 @@ model VerificationTable {
 }
 
 model JoinRequest {
-  id Int @id @default(autoincrement())
-  status String @default("PENDING")
-  requested_at DateTime @default(now())
-  user Users @relation("JoinRequestUser", fields: [userId], references: [id])
-  userId Int
-  classroom Classroom @relation("JoinRequestClassroom", fields: [classroomId], references: [id], onDelete: Cascade)
-  classroomId Int
+  id           Int       @id @default(autoincrement())
+  status       String    @default("PENDING")
+  requested_at DateTime  @default(now())
+  user         Users     @relation("JoinRequestUser", fields: [userId], references: [id])
+  userId       Int
+  classroom    Classroom @relation("JoinRequestClassroom", fields: [classroomId], references: [id], onDelete: Cascade)
+  classroomId  Int
+
   @@unique([userId, classroomId])
 }
 
-model Classroom{
-  id  Int @id @default(autoincrement())
-  className String
-  semester String
-  section  String
-  description String 
-  joinCode String @unique
-  created_at DateTime @default(now())
-  teacher Users @relation("TeacherClassroom",fields:[teacherId],references:[id])
-  teacherId Int
-  students  ClassroomStudent[]
-  assignments Assignment[] @relation("Assignment")
-  classroomChat Chat[] @relation("ClassroomChat") 
-  classroomAnnouncemnet Announcement[] @relation("ClassroomAnnouncement")
-  joinRequest JoinRequest[] @relation("JoinRequestClassroom")
-  meeting     Meeting[] @relation("ClassroomMeeting")
+model Classroom {
+  id                    Int                @id @default(autoincrement())
+  className             String
+  semester              String
+  section               String
+  description           String
+  joinCode              String             @unique
+  created_at            DateTime           @default(now())
+  teacher               Users              @relation("TeacherClassroom", fields: [teacherId], references: [id])
+  teacherId             Int
+  students              ClassroomStudent[]
+  assignments           Assignment[]       @relation("Assignment")
+  classroomChat         Chat[]             @relation("ClassroomChat")
+  classroomAnnouncemnet Announcement[]     @relation("ClassroomAnnouncement")
+  joinRequest           JoinRequest[]      @relation("JoinRequestClassroom")
+  meeting               Meeting[]          @relation("ClassroomMeeting")
+  quiz                  Quiz[]             @relation("ClassroomQuiz")
 }
 
-model ClassroomStudent{
-  id          Int      @id @default(autoincrement())
-  joined_at   DateTime @default(now())
-  user        Users     @relation("ClassroomStudent",fields: [userId], references: [id])
+model ClassroomStudent {
+  id          Int       @id @default(autoincrement())
+  joined_at   DateTime  @default(now())
+  user        Users     @relation("ClassroomStudent", fields: [userId], references: [id])
   userId      Int
   classroom   Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
   classroomId Int
-  @@unique([userId, classroomId]) 
-  
+
+  @@unique([userId, classroomId])
 }
 
-model Assignment{
-  id Int @id @default(autoincrement())
-  title String
+model Assignment {
+  id          Int          @id @default(autoincrement())
+  title       String
   description String
-  fileUrl String
-  created_at DateTime @default(now())
-  due_at DateTime 
-  classroom Classroom @relation("Assignment",fields:[classId],references:[id], onDelete: Cascade)
-  classId    Int
-  teacher    Users @relation("Teacher",fields:[teacherId],references: [id])
-  teacherId  Int
+  fileUrl     String
+  created_at  DateTime     @default(now())
+  due_at      DateTime
+  classroom   Classroom    @relation("Assignment", fields: [classId], references: [id], onDelete: Cascade)
+  classId     Int
+  teacher     Users        @relation("Teacher", fields: [teacherId], references: [id])
+  teacherId   Int
   submissions Submission[] @relation("SubmitAssignment")
 }
 
-model Submission{
-  id Int @id @default(autoincrement())
-  fileUrl String
-  submitted_at DateTime @default(now())
-  assignment Assignment @relation("SubmitAssignment",fields:[assignmentId],references: [id])
+model Submission {
+  id           Int        @id @default(autoincrement())
+  fileUrl      String
+  submitted_at DateTime   @default(now())
+  assignment   Assignment @relation("SubmitAssignment", fields: [assignmentId], references: [id])
   assignmentId Int
-  marks Int?
-  feedback String?
-  student Users @relation("StudentAssignment",fields:[studentId],references: [id])
-  studentId Int
+  marks        Int?
+  feedback     String?
+  student      Users      @relation("StudentAssignment", fields: [studentId], references: [id])
+  studentId    Int
+
   @@unique([studentId, assignmentId])
 }
 
-model Chat{
-  id Int @id @default(autoincrement())
-  message String
-  created_at DateTime @default(now())
-  sender Users @relation("MessageSender",fields:[senderId],references: [id])
-  senderId Int
-  classroom Classroom @relation("ClassroomChat",fields:[classId],references: [id], onDelete: Cascade)
-  classId Int
+model Chat {
+  id         Int       @id @default(autoincrement())
+  message    String
+  created_at DateTime  @default(now())
+  sender     Users     @relation("MessageSender", fields: [senderId], references: [id])
+  senderId   Int
+  classroom  Classroom @relation("ClassroomChat", fields: [classId], references: [id], onDelete: Cascade)
+  classId    Int
 }
 
-model Announcement{
-  id Int @id @default(autoincrement())
-  title String
-  content String 
-  created_at DateTime @default(now())
-  classroom Classroom @relation("ClassroomAnnouncement",fields:[classroomId],references: [id], onDelete: Cascade)
+model Announcement {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String
+  created_at  DateTime  @default(now())
+  classroom   Classroom @relation("ClassroomAnnouncement", fields: [classroomId], references: [id], onDelete: Cascade)
   classroomId Int
-  teacher Users @relation("TeacherAnnouncement",fields:[teacherId],references: [id])
-  teacherId Int
+  teacher     Users     @relation("TeacherAnnouncement", fields: [teacherId], references: [id])
+  teacherId   Int
 }
 
-model Meeting{
-  id Int @id @default(autoincrement())
-  title String 
-  created_at DateTime @default(now())
-  status String @default("SCHEDULED")
+model Meeting {
+  id           Int       @id @default(autoincrement())
+  title        String
+  created_at   DateTime  @default(now())
+  status       String    @default("SCHEDULED")
   scheduled_at DateTime
-  started_at DateTime?
-  ended_at DateTime?
-  classroom Classroom @relation("ClassroomMeeting",fields:[classroomId],references: [id], onDelete: Cascade)
+  started_at   DateTime?
+  ended_at     DateTime?
+  classroom    Classroom @relation("ClassroomMeeting", fields: [classroomId], references: [id], onDelete: Cascade)
+  classroomId  Int
+  teacher      Users     @relation("TeacherMeeting", fields: [teacherId], references: [id])
+  teacherId    Int
+}
+
+model Quiz {
+  id          Int              @id @default(autoincrement())
+  title       String
+  description String
+  created_at  DateTime         @default(now())
+  questions   Json
+  classroom   Classroom        @relation("ClassroomQuiz", fields: [classroomId], references: [id], onDelete: Cascade)
   classroomId Int
-  teacher Users @relation("TeacherMeeting",fields:[teacherId],references: [id])
-  teacherId Int 
+  teacher     Users            @relation("TeacherQuiz", fields: [teacherId], references: [id])
+  teacherId   Int
+  submissions QuizSubmission[] @relation("SubmitQuiz")
+}
+
+model QuizSubmission {
+  id           Int      @id @default(autoincrement())
+  submitted_at DateTime @default(now())
+  status       String   @default("SUBMITTED")
+  marks        Int?
+  answers      Json
+  quiz         Quiz     @relation("SubmitQuiz", fields: [quizId], references: [id])
+  quizId       Int
+  student   Users @relation("StudentQuiz", fields: [studentId], references: [id])
+  studentId Int
+  @@unique([quizId, studentId])
 }
