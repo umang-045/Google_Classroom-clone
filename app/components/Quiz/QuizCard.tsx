@@ -36,7 +36,6 @@ export const QuizCard = ({ quiz, role, onOpenQuiz }: QuizCardProps) => {
     return (
         <div className='w-full rounded-xl bg-white/5 border border-white/10 border-l-4 border-l-emerald-500/70 text-white p-5 shadow-sm hover:bg-white/[0.07] transition-colors'>
             <div className='flex items-start gap-3'>
-                {/* Icon Wrapper */}
                 <div className='shrink-0 w-9 h-9 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center'>
                     <FileQuestion className='w-4 h-4 text-emerald-400' />
                 </div>
@@ -53,9 +52,9 @@ export const QuizCard = ({ quiz, role, onOpenQuiz }: QuizCardProps) => {
                         </div>
                         <Button
                             size='sm'
-                            className='text-xs h-7 shrink-0 bg-emerald-600 hover:bg-emerald-500 text-white' 
-                        >
-                            {role === "teacher" ? "View / Grade" : "Attempt"}
+                            className='text-xs h-7 shrink-0 p-4 cursor-pointer hover:brightness-80 bg-emerald-500/15 text-emerald-400 '
+                            onClick={() => onOpenQuiz(quiz.id)}>
+                            View Quiz 
                         </Button>
                     </div>
 

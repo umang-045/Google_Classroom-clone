@@ -4,14 +4,14 @@ import prisma from "@/lib/db";
 
 interface AnswerInput {
     questionId: string;
-    answer: string;
+    selectedOptionIndex: number;
 }
 
 interface dataProp {
     answers: AnswerInput[];
 }
 
-export async function POST(req: NextRequest, { params }: { params: Promise<{ classroomId: string, quizid: string }> }) {
+export async function POST(req: NextRequest, { params }: { params: Promise<{ classroomId: string, quizId: string }> }) {
     try {
         const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
         if (!token || !token.id) {
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
         }
         const paramsdata = await params;
         const classId = Number(paramsdata.classroomId)
-        const quizId = Number(paramsdata.quizid)
+        const quizId = Number(paramsdata.quizId)
 
         if (isNaN(classId)) {
             return NextResponse.json({ message: "Invalid Classroom" }, { status: 401 });
@@ -60,18 +60,42 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
             return NextResponse.json({ message: "Quiz not found in this classroom" }, { status: 404 });
         }
         const data: dataProp = await req.json()
-        if (!data || data.answers.length == 0) {
+        if (!data || !Array.isArray(data.answers) || data.answers.length === 0) {
             return NextResponse.json({ message: "Provide your answers" }, { status: 400 })
         }
+
+        const quizQuestions = quiz.questions as {
+            id: string
+            question: string
+            marks: number
+            correctOptionIndex: number
+        }[]
+
+        let totalMarks = 0
+        const gradedAnswers = quizQuestions.map(q => {
+            const studentAnswer = data.answers.find(a => a.questionId === q.id)
+            const isCorrect = studentAnswer?.selectedOptionIndex === q.correctOptionIndex
+            const marksAwarded = isCorrect ? q.marks : 0
+            totalMarks += marksAwarded
+
+            return {
+                questionId: q.id,
+                selectedOptionIndex: studentAnswer?.selectedOptionIndex ?? null,
+                isCorrect,
+                marksAwarded
+            }
+        })
 
         await prisma.quizSubmission.create({
             data: {
                 quizId: quizId,
                 studentId: Number(token.id),
-                answers: data.answers as any,
+                answers: gradedAnswers as any,
+                marks: totalMarks,
+                status: "GRADED"
             }
         });
-        return NextResponse.json({ message: " Quiz Submitted Successfully" }, { status: 201 })
+        return NextResponse.json({ message: "Quiz submitted and graded", marks: totalMarks }, { status: 201 })
 
     } catch (err) {
         console.log(err);
@@ -79,7 +103,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
     }
 }
 
-export async function GET(req: NextRequest, { params }: { params: Promise<{ classroomId: string, quizid: string }> }) {
+export async function GET(req: NextRequest, { params }: { params: Promise<{ classroomId: string, quizId: string }> }) {
     try {
         const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
         if (!token || !token.id) {
@@ -87,7 +111,7 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
         }
         const paramsdata = await params;
         const classId = Number(paramsdata.classroomId)
-        const quizId = Number(paramsdata.quizid)
+        const quizId = Number(paramsdata.quizId)
         if (isNaN(classId)) {
             return NextResponse.json({ message: "Invalid Classroom" }, { status: 401 });
         }

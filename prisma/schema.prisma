@@ -159,7 +159,7 @@ model QuizSubmission {
   status       String   @default("SUBMITTED")
   marks        Int?
   answers      Json
-  quiz         Quiz     @relation("SubmitQuiz", fields: [quizId], references: [id])
+  quiz Quiz @relation("SubmitQuiz", fields: [quizId], references: [id], onDelete: Cascade)
   quizId       Int
   student   Users @relation("StudentQuiz", fields: [studentId], references: [id])
   studentId Int

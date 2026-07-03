@@ -1,4 +1,5 @@
 "use client"
+import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
@@ -33,9 +34,73 @@ const BULLET_POINTS = [
   { text: 'AI-powered instant doubt support for faster learning.' },
 ]
 
+const TESTIMONIALS = [
+  {
+    quote: "Running my classroom got so much simpler. Assignments, grading, live sessions, it's all in one tab now instead of five different apps.",
+    name: 'Ritika Sharma',
+    role: 'High School Teacher',
+    avatar: '/students/student1.webp',
+  },
+  {
+    quote: "The AI summaries save me hours before exams. I can catch up on a missed lecture in ten minutes instead of rewatching the whole thing.",
+    name: 'Anjali Mehta',
+    role: 'Class 11 Student',
+    avatar: '/students/testimonial2.webp',
+  },
+  {
+    quote: "I can actually see what my daughter is working on and how she's progressing, without having to ask her every evening.",
+    name: 'Priya Nair',
+    role: 'Parent',
+    avatar: '/students/testimonial6.webp',
+  },
+  {
+    quote: "Grading used to eat my whole Sunday. Now assignments get auto-sorted and I just review flagged ones. I've got my weekends back.",
+    name: 'Sandeep Rao',
+    role: 'Middle School Teacher',
+    avatar: '/students/testimonial3.webp',
+  },
+  {
+    quote: "Group projects were always messy over chat and email. Having shared docs and a live board in one place actually got my team organized.",
+    name: 'Ananya Iyer',
+    role: 'Class 9 Student',
+    avatar: '/students/testimonial4.webp',
+  },
+  {
+    quote: "The progress tracker gives me a clear weekly view instead of vague updates. I know exactly where my son needs extra support now.",
+    name: 'Vikram Desai',
+    role: 'Parent',
+    avatar: '/students/testimonial5.webp',
+  },
+]
+
+const FAQ_ITEMS = [
+  {
+    question: "Is DigitalClassroom free to use?",
+    answer: "Yes! We offer a robust free tier for individual teachers and students that includes basic classroom management tools, assignment sharing, and standard progress tracking."
+  },
+  {
+    question: "How does the AI Summarizer feature work?",
+    answer: "Our built-in AI safely parses recorded video lectures and transcripts to generate concise, bulleted recaps, structural code blocks, or main topic takeaways within minutes of a class ending."
+  },
+  {
+    question: "Can parents monitor their child's progress?",
+    answer: "Absolutely. Parents get dedicated, read-only portals where they can inspect weekly streaks, leaderboard positions, pending deadlines, and overall performance grading metrics."
+  },
+  {
+    question: "Is data stored on the cloud secure?",
+    answer: "We treat data privacy with the highest priority. All your shared assignments, notes, and records are safely locked down using modern AES-256 cloud encryption protocols."
+  }
+]
+
+
 export default function LandingPage() {
   const { data: session } = useSession()
   const router = useRouter()
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
+
+  const toggleFaq = (index: number) => {
+    setOpenFaq(openFaq === index ? null : index)
+  }
 
   return (
     <>
@@ -77,10 +142,7 @@ export default function LandingPage() {
       <div className="relative z-10 min-h-screen text-white overflow-x-hidden">
 
         <section id="about" className="relative min-h-[90vh] px-12 md:px-24 flex items-center overflow-x-hidden">
-
           <div className="grid md:grid-cols-[1fr_1.4fr] items-center w-full py-12 md:gap-16">
-
-
             <div className="flex flex-col">
               <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight">
                 <span className="text-white block mb-2">Modern Digital</span>
@@ -120,7 +182,6 @@ export default function LandingPage() {
               </ul>
             </div>
 
-
             <div className="flex justify-end items-center w-full aspect-video mx-auto overflow-visible min-w-0">
               <DotLottieReact
                 src="/assets/online.json"
@@ -130,9 +191,9 @@ export default function LandingPage() {
                 renderConfig={{ autoResize: true }}
               />
             </div>
-
           </div>
         </section>
+
         <section id="features" className="relative mt-2 px-12 md:px-24 flex flex-col">
           <div>
             <h1 className="text-5xl md:text-6xl font-black text-white">Features</h1>
@@ -152,6 +213,110 @@ export default function LandingPage() {
             />
           </div>
         </section>
+
+        <section id="testimonials" className="relative pt-32 pb-8 px-12 md:px-24 flex flex-col">
+          <div className="mb-12">
+            <h1 className="text-5xl md:text-6xl font-black text-white">
+              What our <span className="text-blue-400">Users</span> Say
+            </h1>
+            <p className="mt-4 text-zinc-400 text-base max-w-xl">
+              Real feedback from teachers, students, and parents using DigitalClassroom every day.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 items-stretch">
+            {TESTIMONIALS.map(({ quote, name, role, avatar }) => (
+              <div
+                key={name}
+                className="bg-white/[0.04] border border-white/10 rounded-2xl p-10 flex flex-col h-full min-h-[340px] hover:-translate-y-1 hover:bg-white/[0.06] transition-all"
+              >
+                <div className="flex gap-1 mb-6 text-blue-400">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
+                      <path d="M10 1.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" />
+                    </svg>
+                  ))}
+                </div>
+
+                <p className="text-zinc-300 text-base leading-relaxed">"{quote}"</p>
+
+                <div className="flex items-center gap-4 mt-auto pt-10">
+                  <img
+                    src={avatar}
+                    alt={name}
+                    className="w-12 h-12 rounded-full object-cover border border-blue-400/40 flex-shrink-0"
+                  />
+                  <div>
+                    <div className="text-white font-semibold text-base">{name}</div>
+                    <div className="text-zinc-500 text-sm">{role}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+       
+        <section id="faq" className="relative pt-32 pb-24 px-12 md:px-24">
+          <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] items-start gap-12 w-full">
+            
+            <div className="flex flex-col w-full">
+              <div>
+                <h1 className="text-5xl md:text-6xl font-black text-white">
+                  Frequently Asked <span className="text-blue-400">Questions</span>
+                </h1>
+                <p className="mt-4 text-zinc-400 text-base max-w-xl">
+                  Got questions? We've got answers. Explore how DigitalClassroom works.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-4 w-full mt-12">
+                {FAQ_ITEMS.map(({ question, answer }, index) => {
+                  const isOpen = openFaq === index
+                  return (
+                    <div
+                      key={index}
+                      className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden transition-all duration-300"
+                    >
+                      <button
+                        onClick={() => toggleFaq(index)}
+                        className="w-full text-left p-6 flex justify-between items-center gap-4 hover:bg-white/[0.02] transition-colors focus:outline-none"
+                      >
+                        <span className="text-white font-semibold text-base md:text-lg">{question}</span>
+                        <span className={`text-blue-400 transition-transform duration-300 transform ${isOpen ? 'rotate-180' : ''}`}>
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                          </svg>
+                        </span>
+                      </button>
+                      <div
+                        className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                          isOpen ? 'max-h-48 border-t border-white/5' : 'max-h-0'
+                        }`}
+                      >
+                        <p className="p-6 text-zinc-400 text-sm md:text-base leading-relaxed">
+                          {answer}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            <div className="flex justify-center items-center w-full aspect-square max-w-[500px] mx-auto md:sticky md:top-28">
+              <DotLottieReact
+                src="/assets/faqs.json"
+                loop
+                autoplay
+                style={{ width: '100%', height: '100%' }}
+                renderConfig={{ autoResize: true }}
+              />
+            </div>
+
+          </div>
+        </section>
+
 
         <footer id="contact" className="border-t border-white/10 px-12 md:px-24 mt-8 py-16 relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-10">
