@@ -58,7 +58,7 @@ export const MeetingCard = ({ meeting, role, onStart, onJoin }: MeetingCardProps
                         {role === "teacher" && meeting.status === "SCHEDULED" && (
                             <Button
                                 size='sm'
-                                className='bg-blue-600 hover:bg-blue-700 text-white text-xs h-8'
+                                className='bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-300 text-xs h-8'
                                 onClick={() => onStart(meeting.id)}
                             >
                                 Start Meeting
@@ -68,7 +68,7 @@ export const MeetingCard = ({ meeting, role, onStart, onJoin }: MeetingCardProps
                         {role === "student" && meeting.status === "LIVE" && (
                             <Button
                                 size='sm'
-                                className='bg-green-600 hover:bg-green-700 text-white text-xs h-8'
+                                className='bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 text-xs h-8'
                                 onClick={() => onJoin(meeting.id)}
                             >
                                 Join
@@ -77,7 +77,7 @@ export const MeetingCard = ({ meeting, role, onStart, onJoin }: MeetingCardProps
                         {role === "teacher" && meeting.status === "LIVE" && (
                             <Button
                                 size='sm'
-                                className='bg-green-600 hover:bg-green-700 text-white text-xs h-8'
+                                className='bg-green-500/15 hover:bg-green-500/25 border border-green-500/30 text-green-300 text-xs h-8'
                                 onClick={() => onJoin(meeting.id)}
                             >
                                 Rejoin Meeting
@@ -92,4 +92,4 @@ export const MeetingCard = ({ meeting, role, onStart, onJoin }: MeetingCardProps
             </div>
         </div>
     )
-}
+} 

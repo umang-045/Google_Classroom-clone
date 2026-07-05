@@ -8,6 +8,7 @@ import CircularGallery from '@/components/CircularGallery'
 import GradientText from '@/components/GradientText'
 import SiblingFocusNav from '@/components/animata/container/sibling-focus-nav'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+import { motion } from 'framer-motion'
 
 const NAV_ITEMS = [
   { label: 'Home', href: '#about' },
@@ -91,7 +92,6 @@ const FAQ_ITEMS = [
     answer: "We treat data privacy with the highest priority. All your shared assignments, notes, and records are safely locked down using modern AES-256 cloud encryption protocols."
   }
 ]
-
 
 export default function LandingPage() {
   const { data: session } = useSession()
@@ -194,14 +194,26 @@ export default function LandingPage() {
           </div>
         </section>
 
+       
         <section id="features" className="relative mt-2 px-12 md:px-24 flex flex-col">
-          <div>
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
             <h1 className="text-5xl md:text-6xl font-black text-white">Features</h1>
             <p className="mt-4 text-zinc-400 text-base max-w-xl">
               Everything a modern classroom needs, built into one platform.
             </p>
-          </div>
-          <div className="relative w-full h-[500px] mb-16">
+          </motion.div>
+          <motion.div
+            className="relative w-full h-[500px] mb-16"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
             <CircularGallery
               items={GALLERY_ITEMS}
               bend={1}
@@ -211,24 +223,42 @@ export default function LandingPage() {
               font="bold 30px sans-serif"
               scrollSpeed={2}
             />
-          </div>
+          </motion.div>
         </section>
 
+        
         <section id="testimonials" className="relative pt-32 pb-8 px-12 md:px-24 flex flex-col">
-          <div className="mb-12">
+          <motion.div
+            className="mb-12"
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
             <h1 className="text-5xl md:text-6xl font-black text-white">
               What our <span className="text-blue-400">Users</span> Say
             </h1>
             <p className="mt-4 text-zinc-400 text-base max-w-xl">
               Real feedback from teachers, students, and parents using DigitalClassroom every day.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid md:grid-cols-3 gap-8 items-stretch">
-            {TESTIMONIALS.map(({ quote, name, role, avatar }) => (
-              <div
+            {TESTIMONIALS.map(({ quote, name, role, avatar }, index) => (
+              <motion.div
                 key={name}
-                className="bg-white/[0.04] border border-white/10 rounded-2xl p-10 flex flex-col h-full min-h-[340px] hover:-translate-y-1 hover:bg-white/[0.06] transition-all"
+      
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{
+                  duration: 0.6,
+                  ease: 'easeOut',
+                  delay: index * 0.1
+                }}
+              
+                whileHover={{ y: -4, backgroundColor: "rgba(255, 255, 255, 0.06)" }}
+                className="bg-white/[0.04] border border-white/10 rounded-2xl p-10 flex flex-col h-full min-h-[340px]"
               >
                 <div className="flex gap-1 mb-6 text-blue-400">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -251,7 +281,7 @@ export default function LandingPage() {
                     <div className="text-zinc-500 text-sm">{role}</div>
                   </div>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
         </section>
@@ -259,28 +289,42 @@ export default function LandingPage() {
        
         <section id="faq" className="relative pt-32 pb-24 px-12 md:px-24">
           <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] items-start gap-12 w-full">
-            
+
             <div className="flex flex-col w-full">
-              <div>
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+              >
                 <h1 className="text-5xl md:text-6xl font-black text-white">
                   Frequently Asked <span className="text-blue-400">Questions</span>
                 </h1>
                 <p className="mt-4 text-zinc-400 text-base max-w-xl">
                   Got questions? We've got answers. Explore how DigitalClassroom works.
                 </p>
-              </div>
+              </motion.div>
 
               <div className="flex flex-col gap-4 w-full mt-12">
                 {FAQ_ITEMS.map(({ question, answer }, index) => {
                   const isOpen = openFaq === index
                   return (
-                    <div
+                    <motion.div
                       key={index}
-                      className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden transition-all duration-300"
+                      initial={{ opacity: 0, y: 40 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true, margin: "-100px" }}
+                      transition={{
+                        duration: 0.6,
+                        ease: 'easeOut',
+                        delay: index * 0.08
+                      }}
+                      whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.02)" }}
+                      className="bg-white/[0.03] border border-white/10 rounded-xl overflow-hidden"
                     >
                       <button
                         onClick={() => toggleFaq(index)}
-                        className="w-full text-left p-6 flex justify-between items-center gap-4 hover:bg-white/[0.02] transition-colors focus:outline-none"
+                        className="w-full text-left p-6 flex justify-between items-center gap-4 focus:outline-none"
                       >
                         <span className="text-white font-semibold text-base md:text-lg">{question}</span>
                         <span className={`text-blue-400 transition-transform duration-300 transform ${isOpen ? 'rotate-180' : ''}`}>
@@ -290,15 +334,14 @@ export default function LandingPage() {
                         </span>
                       </button>
                       <div
-                        className={`transition-all duration-300 ease-in-out overflow-hidden ${
-                          isOpen ? 'max-h-48 border-t border-white/5' : 'max-h-0'
-                        }`}
+                        className={`transition-all duration-300 ease-in-out overflow-hidden ${isOpen ? 'max-h-48 border-t border-white/5' : 'max-h-0'
+                          }`}
                       >
                         <p className="p-6 text-zinc-400 text-sm md:text-base leading-relaxed">
                           {answer}
                         </p>
                       </div>
-                    </div>
+                    </motion.div>
                   )
                 })}
               </div>
@@ -317,7 +360,7 @@ export default function LandingPage() {
           </div>
         </section>
 
-
+       
         <footer id="contact" className="border-t border-white/10 px-12 md:px-24 mt-8 py-16 relative">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-10">
             <div>
@@ -334,9 +377,12 @@ export default function LandingPage() {
                   { href: 'https://x.com', src: '/twitter.png' },
                 ].map(({ href, src }) => (
                   <Link href={href} target="_blank" key={href}>
-                    <button className="bg-white/[0.06] p-2.5 rounded-xl hover:-translate-y-1 hover:bg-white/[0.12] transition-all">
+                    <motion.button
+                      whileHover={{ y: -4, backgroundColor: "rgba(255, 255, 255, 0.12)" }}
+                      className="bg-white/[0.06] p-2.5 rounded-xl"
+                    >
                       <img src={src} className="w-5 h-5" alt="" />
-                    </button>
+                    </motion.button>
                   </Link>
                 ))}
               </div>

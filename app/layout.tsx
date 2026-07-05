@@ -4,6 +4,7 @@ import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from 'react-hot-toast'
 
+
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 
 export const metadata: { title: string, description: string } = {

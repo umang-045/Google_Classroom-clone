@@ -29,12 +29,14 @@ import {
   BookOpen,
   ClipboardCheck,
   Radio,
+  Sparkles,
   Settings2 as Settings2Icon,
   CircleHelp as CircleHelpIcon,
   Search as SearchIcon,
 } from "lucide-react"
 
 import { classphoto } from "@/app/components/ClassroomCard"
+import AIChatButton from "@/app/components/AiChatButton"
 
 const data = {
   user: {
@@ -120,6 +122,18 @@ const isActive = (url: string) => {
           <SidebarGroupLabel>General</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
+              {/* AI chat trigger — styled as a normal sidebar item, opens the chat modal */}
+              <SidebarMenuItem>
+                <AIChatButton
+                  trigger={(onClick) => (
+                    <SidebarMenuButton onClick={onClick}>
+                      <Sparkles />
+                      <span>Ask AI</span>
+                    </SidebarMenuButton>
+                  )}
+                />
+              </SidebarMenuItem>
+
               {data.general.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton isActive={isActive(item.url)} render={<a href={item.url} />}>

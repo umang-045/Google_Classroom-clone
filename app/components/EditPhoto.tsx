@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
+import { Button } from "@/components/ui/button"
 import { X, Upload, Loader2, ImagePlus } from "lucide-react"
 import toast from "react-hot-toast"
 
@@ -76,30 +77,49 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6 backdrop-blur-xs"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-sm rounded-lg bg-white p-6 shadow-lg"
+        style={{ background: 'linear-gradient(to top, #27272a, #151519)' }}
+        className="relative w-full max-w-md rounded-xl border border-zinc-800/80 p-8 shadow-2xl space-y-7 animate-in fade-in-50 zoom-in-95 duration-150 text-zinc-200"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold text-black/80">Update profile photo</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-black cursor-pointer">
-            <X className="size-4 text-red-400" />
-          </button>
+ 
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-5 right-5 text-zinc-400 hover:text-red-400 cursor-pointer transition-colors"
+        >
+          <X size={20} />
+        </button>
+
+      
+        <div className="flex items-center gap-4 pl-0.5">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-800/70 text-cyan-400 border border-zinc-700/60 shadow-inner">
+            <ImagePlus size={22} />
+          </div>
+          <div>
+            <h3 className="font-semibold text-2xl tracking-tight text-white">
+              Update Profile Photo
+            </h3>
+            <p className="text-xs text-zinc-400 mt-1">
+              Upload a personalized avatar image up to 10MB
+            </p>
+          </div>
         </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <div className="size-24 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center">
-            {preview || currentAvatar.startsWith("http") ? (
+      
+        <div className="flex flex-col items-center justify-center gap-5 py-2">
+          <div className="relative size-28 rounded-full overflow-hidden border-2 border-zinc-700/80 bg-zinc-900/60 p-1 flex items-center justify-center shadow-2xl">
+            {preview || currentAvatar?.startsWith("http") ? (
               <img
                 src={preview !== null ? preview : currentAvatar}
                 alt="avatar preview"
-                className="size-full object-cover"
+                className="size-full rounded-full object-cover"
               />
             ) : (
-              <ImagePlus className="size-8 text-gray-400" />
+              <ImagePlus className="size-8 text-zinc-600" />
             )}
           </div>
 
@@ -111,34 +131,37 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
             onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)}
           />
 
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => fileInputRef.current?.click()}
-            className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm text-black cursor-pointer hover:bg-gray-50"
+            className="h-10 px-4 rounded-md border border-zinc-700 bg-zinc-900/20 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors text-xs"
           >
-            <Upload className="size-4" />
-            Choose image
-          </button>
+            <Upload className="mr-2 size-4 text-zinc-400" />
+            Choose image file
+          </Button>
         </div>
 
-        <div className="mt-6 flex justify-end gap-2 ">
-          <button
+       
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800/60 max-sm:flex-col-reverse">
+          <Button
             type="button"
+            variant="ghost"
             onClick={onClose}
             disabled={isUploading}
-            className="rounded-md px-3 py-1.5 bg-gray-100 text-sm cursor-pointer hover:bg-gray-100 text-red-400 disabled:opacity-50"
+            className="rounded-md px-5 bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white border-0 text-xs h-10 max-sm:w-full"
           >
             Cancel
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={handleSave}
             disabled={!file || isUploading}
-            className="flex items-center gap-2 rounded-md bg-black px-3 py-1.5 text-sm text-white cursor-pointer "
+            className="rounded-md cursor-pointer px-5 bg-blue-700 hover:bg-blue-800 text-white font-medium border-0 text-xs h-10 max-sm:w-full"
           >
-            {isUploading && <Loader2 className="size-4 animate-spin" />}
+            {isUploading && <Loader2 className="mr-2 size-3.5 animate-spin" />}
             {isUploading ? "Saving..." : "Save"}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

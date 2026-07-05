@@ -159,9 +159,19 @@ model QuizSubmission {
   status       String   @default("SUBMITTED")
   marks        Int?
   answers      Json
-  quiz Quiz @relation("SubmitQuiz", fields: [quizId], references: [id], onDelete: Cascade)
+  quiz         Quiz     @relation("SubmitQuiz", fields: [quizId], references: [id], onDelete: Cascade)
   quizId       Int
-  student   Users @relation("StudentQuiz", fields: [studentId], references: [id])
-  studentId Int
+  student      Users    @relation("StudentQuiz", fields: [studentId], references: [id])
+  studentId    Int
+
   @@unique([quizId, studentId])
+}
+
+model Summary {
+  id          Int      @id @default(autoincrement())
+  type        String
+  sourceId    Int
+  classroomId Int
+  summary     String   @db.Text
+  created_at  DateTime @default(now())
 }

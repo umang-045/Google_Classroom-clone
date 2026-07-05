@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import CreateAssignment from '@/app/components/Assignment/CreateAssignment'
 import { Button } from '@/components/ui/button'
+import SummarizeButton from '@/app/components/SummariseButton'
 import { TeacherWorkspace } from '@/app/components/Assignment/TeacherWorkspace'
 import { StudentWorkspace } from '@/app/components/Assignment/StudentWorkspace'
 import { useParams, useRouter } from 'next/navigation'
@@ -134,6 +135,12 @@ const AssignmentDetailPage = () => {
                     <p className='text-xs text-white/50 mt-0.5'>
                         Due: {new Date(assignment.due_at).toLocaleString()}
                     </p>
+
+                    <SummarizeButton
+                        type="assignment"
+                        sourceId={assignment.id}
+                        classroomId={Number(classroomId)}
+                    />
                 </div>
 
                 {role === "teacher" && (

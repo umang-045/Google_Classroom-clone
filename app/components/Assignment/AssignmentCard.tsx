@@ -2,6 +2,7 @@
 import React from 'react'
 import { ClipboardList } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import SummarizeButton from '../SummariseButton'
 
 interface Assignment {
     id: number
@@ -16,6 +17,7 @@ interface Assignment {
 interface AssignmentCardProps {
     assignment: Assignment
     role: string
+    classroomId: number
     isSubmittedByStudent: boolean
     onOpenWorkspace: (id: number) => void
 }
@@ -34,7 +36,7 @@ function getRelativeTime(dateString: string) {
     return new Date(dateString).toLocaleDateString(undefined, { dateStyle: 'medium' })
 }
 
-export const AssignmentCard = ({ assignment, role, isSubmittedByStudent, onOpenWorkspace }: AssignmentCardProps) => {
+export const AssignmentCard = ({ assignment, role, classroomId, isSubmittedByStudent, onOpenWorkspace }: AssignmentCardProps) => {
     const isNew = Date.now() - new Date(assignment.created_at).getTime() < 86400000
     const isOverdue = new Date(assignment.due_at) < new Date()
 
@@ -75,6 +77,14 @@ export const AssignmentCard = ({ assignment, role, isSubmittedByStudent, onOpenW
                         }`}>
                             Due: {new Date(assignment.due_at).toLocaleDateString()}
                         </span>
+                    </div>
+
+                    <div onClick={e => e.stopPropagation()}>
+                        <SummarizeButton
+                            type="assignment"
+                            sourceId={assignment.id}
+                            classroomId={classroomId}
+                        />
                     </div>
 
                     <div className='mt-4 pt-4 border-t border-white/5 flex items-center justify-between gap-4' onClick={e => e.stopPropagation()}>

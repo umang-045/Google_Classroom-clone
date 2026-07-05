@@ -102,6 +102,7 @@ const Page = () => {
                 <div className='space-y-3'>
                     {announcements.map((item) => (
                         <AnnouncementCard
+                            classroomId={Number(classroomId)}
                             key={item.id}
                             announcement={item}
                             role={role}

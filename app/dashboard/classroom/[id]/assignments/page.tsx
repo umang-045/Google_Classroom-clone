@@ -97,6 +97,7 @@ const AssignmentsPage = () => {
                 <div className='space-y-3'>
                     {assignments.map((item) => (
                         <AssignmentCard
+                            classroomId={Number(classroomId)}
                             key={item.id}
                             assignment={item}
                             role={role}
