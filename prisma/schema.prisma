@@ -23,6 +23,7 @@ model Users {
   meeting            Meeting[]          @relation("TeacherMeeting")
   quiz               Quiz[]             @relation("TeacherQuiz")
   quizSubmission     QuizSubmission[]   @relation("StudentQuiz")
+  notification       Notification[]     @relation("UserNotifications")
 }
 
 model VerificationTable {
@@ -64,6 +65,7 @@ model Classroom {
   joinRequest           JoinRequest[]      @relation("JoinRequestClassroom")
   meeting               Meeting[]          @relation("ClassroomMeeting")
   quiz                  Quiz[]             @relation("ClassroomQuiz")
+  notifications          Notification[]     @relation("ClassroomNotifications")
 }
 
 model ClassroomStudent {
@@ -174,4 +176,17 @@ model Summary {
   classroomId Int
   summary     String   @db.Text
   created_at  DateTime @default(now())
+}
+
+model Notification {
+  id          Int        @id @default(autoincrement())
+  title       String
+  messgae     String
+  type        String
+  isRead      Boolean
+  created_at  DateTime   @default(now())
+  user        Users      @relation("UserNotifications", fields: [userId], references: [id], onDelete: Cascade)
+  userId      Int
+  classroom   Classroom? @relation("ClassroomNotifications", fields: [classroomId], references: [id], onDelete: Cascade)
+  classroomId Int?
 }

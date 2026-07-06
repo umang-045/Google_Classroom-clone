@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/db";
 import { getToken } from "next-auth/jwt";
+import { sendNotificationToClass } from "@/lib/sendNotification";
 
 export async function POST(req: NextRequest, { params }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
@@ -37,6 +38,13 @@ export async function POST(req: NextRequest, { params }) {
                 teacherId: teacherId
             }
         })
+
+        await sendNotificationToClass({
+            classroomId: classId,
+            title: "New Announcement",
+            message: `A new announcement "${data.title}" has been posted.`,
+            type: "ANNOUNCEMENT"
+        });
         return NextResponse.json({ message: "Announcement Added" }, { status: 201 })
 
     } catch (err) {

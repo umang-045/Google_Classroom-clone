@@ -26,16 +26,17 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
         if (data.marks===undefined || !data.feedback || !data.studentId) {
             return NextResponse.json({ message: "Fill the details" }, { status: 400 })
         }
-        const teacher = await prisma.assignment.findUnique({
+        const assignment = await prisma.assignment.findUnique({
             where: {
                 id: assignmentId
             },
             select: {
-                teacherId: true
+                teacherId: true,
+                title: true
             }
         })
 
-        if (!teacher || teacher.teacherId != Number(token.id)) {
+        if (!assignment || assignment.teacherId != Number(token.id)) {
             return NextResponse.json({ message: "You are not authorized to grade this assignment" }, { status: 403 })
         }
 
@@ -51,6 +52,20 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
                 }
             }
         })
+        await prisma.notification.create({
+            data: {
+                userId: data.studentId,
+                classroomId: classroomId,
+                title: "Assignment Graded",
+                messgae: `Your submission for "${assignment.title}" has been graded. Marks: ${data.marks}`,
+                type: "GRADE", 
+                isRead: false
+            }
+        })
+        const io = (global as any).io;
+        if (io) {
+            io.to(`user-channel-${data.studentId}`).emit("new-notification-alert");
+        }
         return NextResponse.json({ message: "Grading done Successfully" }, { status: 200 })
 
     } catch (err) {

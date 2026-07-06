@@ -287,7 +287,7 @@ export default function LandingPage() {
         </section>
 
        
-        <section id="faq" className="relative pt-32 pb-24 px-12 md:px-24">
+        <section id="faqs" className="relative pt-32 pb-24 px-12 md:px-24">
           <div className="grid grid-cols-1 md:grid-cols-[1.3fr_1fr] items-start gap-12 w-full">
 
             <div className="flex flex-col w-full">

@@ -12,19 +12,28 @@ import {
 import {
   BookOpenIcon,
   ClipboardListIcon,
-  BellIcon,
+  MessageCircleIcon,
   GraduationCapIcon,
 } from "lucide-react"
 
 export function SectionCards({ data }: { data: any }) {
-  const enrolledCount = data?.enrolledClassrooms?.length || 0
-  const teachingCount = data?.teachingClassrooms?.length || 0
+  const stats = data?.stats || {}
 
-  const totalStudents = data?.teachingClassrooms?.reduce(
-    (count: number, classroom: any) => count + (classroom.students?.length || 0),
-    0) || 0
+  
+  const enrolledCount = stats.totalEnrolled ?? data?.enrolledClassrooms?.length ?? 0
+  const teachingCount = stats.totalTeaching ?? data?.teachingClassrooms?.length ?? 0
+  const pendingGrading = stats.totalPendingGrading ?? 0
+  const upcomingAssignmentsCount =
+    stats.totalUpcomingAssignments ?? data?.upcomingAssignments?.length ?? 0
+  const announcementsCount = data?.announcements?.length ?? 0
 
 
+  const totalStudents =
+    data?.teachingClassrooms?.reduce(
+      (count: number, classroom: any) =>
+        count + (classroom.studentsCount ?? classroom.students?.length ?? 0),
+      0
+    ) || 0
 
   return (
     <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
@@ -46,7 +55,7 @@ export function SectionCards({ data }: { data: any }) {
           <div className="line-clamp-1 flex gap-2 font-medium text-neutral-300">
             Classes this semester
           </div>
-          <div className="text-neutral-500">0 new since last month</div>
+          <div className="text-neutral-500">Across all enrolled classes</div>
         </CardFooter>
       </Card>
 
@@ -67,7 +76,7 @@ export function SectionCards({ data }: { data: any }) {
           <div className="line-clamp-1 flex gap-2 font-medium text-neutral-300">
             {totalStudents} students enrolled
           </div>
-          <div className="text-neutral-500">0 submissions need grading</div>
+          <div className="text-neutral-500">{pendingGrading} submissions need grading</div>
         </CardFooter>
       </Card>
 
@@ -75,7 +84,7 @@ export function SectionCards({ data }: { data: any }) {
         <CardHeader>
           <CardDescription className="text-neutral-400">Pending Assignments</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
-           0
+            {upcomingAssignmentsCount}
           </CardTitle>
           <CardAction>
             <Badge variant="outline" className="border-neutral-600 text-neutral-300">
@@ -86,7 +95,7 @@ export function SectionCards({ data }: { data: any }) {
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm border-neutral-700">
           <div className="line-clamp-1 flex gap-2 font-medium text-neutral-300">
-             due within 48 hours
+            Upcoming across all classes
           </div>
           <div className="text-neutral-500">Across all enrolled classes</div>
         </CardFooter>
@@ -94,20 +103,20 @@ export function SectionCards({ data }: { data: any }) {
 
       <Card className="bg-neutral-800 border-neutral-700">
         <CardHeader>
-          <CardDescription className="text-neutral-400">Notifications</CardDescription>
+          <CardDescription className="text-neutral-400">Announcements</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
-            0
+            {announcementsCount}
           </CardTitle>
           <CardAction>
             <Badge variant="outline" className="border-neutral-600 text-neutral-300">
-              <BellIcon className="size-3" />
-              Unread
+              <MessageCircleIcon className="size-3" />
+              Recent
             </Badge>
           </CardAction>
         </CardHeader>
         <CardFooter className="flex-col items-start gap-1.5 text-sm border-neutral-700">
           <div className="line-clamp-1 flex gap-2 font-medium text-neutral-300">
-            0 submissions need grading
+            {pendingGrading} submissions need grading
           </div>
           <div className="text-neutral-500">Across all teaching classes</div>
         </CardFooter>

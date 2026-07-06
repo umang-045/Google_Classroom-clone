@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getToken } from "next-auth/jwt";
+import { sendNotificationToClass } from "@/lib/sendNotification";
 
 interface dataProp {
     title: string,
@@ -29,11 +30,11 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ message: "Due date must be in the future" }, { status: 400 })
         }
 
-        const teacherId = await prisma.classroom.findUnique({ where: { id: data.classroomId }, select: { teacherId: true } })
-        if (!teacherId) {
+        const classroomData = await prisma.classroom.findUnique({ where: { id: data.classroomId }, select: { teacherId: true } })
+        if (!classroomData) {
             return NextResponse.json({ message: "classroom not found" }, { status: 404 })
         }
-        if (Number(token.id) != Number(teacherId.teacherId)) {
+        if (Number(token.id) != Number(classroomData.teacherId)) {
             return NextResponse.json({ message: "Only Teachers Can Create Assignment" }, { status: 400 })
         }
 
@@ -43,10 +44,19 @@ export async function POST(req: NextRequest) {
                 description: data.description,
                 fileUrl: data.fileUrl,
                 due_at: dueDate.toISOString(),
-                teacherId: Number(teacherId.teacherId),
+                teacherId: Number(classroomData.teacherId),
                 classId: data.classroomId,
             }
         })
+
+        
+        await sendNotificationToClass({
+            classroomId: Number(data.classroomId),
+            title: "New Assignment",
+            message: `A new assignment "${data.title}" has been posted.`,
+            type: "ASSIGNMENT"
+        });
+
         return NextResponse.json({ message: "Assignment Created Successfully" }, { status: 201 })
     } catch (err) {
         console.log(err)

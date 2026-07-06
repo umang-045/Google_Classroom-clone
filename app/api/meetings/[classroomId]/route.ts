@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import prisma from '@/lib/db'
 import { getToken } from "next-auth/jwt";
+import { sendNotificationToClass } from "@/lib/sendNotification";
 
 interface dataProp {
     title: string;
@@ -50,6 +51,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
                 teacherId: Number(token.id)
             }
         })
+        await sendNotificationToClass({
+            classroomId: classId,
+            title: "New Meeting Scheduled",
+            message: `A new live class meeting "${data.title}" has been scheduled for ${scheduledDate.toLocaleString()}.`,
+            type: "ANNOUNCEMENT" 
+        });
         return NextResponse.json({ message: "Created Meeting Successfully" }, { status: 201 })
 
     } catch (err) {

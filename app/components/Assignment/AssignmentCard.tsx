@@ -79,11 +79,13 @@ export const AssignmentCard = ({ assignment, role, classroomId, isSubmittedByStu
                         </span>
                     </div>
 
+              
                     <div onClick={e => e.stopPropagation()}>
                         <SummarizeButton
                             type="assignment"
                             sourceId={assignment.id}
                             classroomId={classroomId}
+                            className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300"
                         />
                     </div>
 

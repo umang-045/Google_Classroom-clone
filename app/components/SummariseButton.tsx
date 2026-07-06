@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils"; // Standard shadcn utility for merging classes safely
 
 type SummaryType = "announcement" | "assignment" | "chat";
 
@@ -10,12 +11,14 @@ interface SummarizeButtonProps {
   type: SummaryType;
   classroomId: number;
   sourceId?: number; 
+  className?: string; 
 }
 
 export default function SummarizeButton({
   type,
   classroomId,
   sourceId,
+  className,
 }: SummarizeButtonProps) {
   const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -39,7 +42,7 @@ export default function SummarizeButton({
 
       setSummary(data.summary);
     } catch (err) {
-      console.log(error);
+      setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -52,7 +55,10 @@ export default function SummarizeButton({
         size="sm"
         onClick={handleSummarize}
         disabled={loading}
-        className="text-xs h-7 bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 hover:text-amber-300"
+        className={cn(
+          "text-xs h-7 bg-amber-500/10 border-amber-500/30 text-amber-400 hover:bg-amber-500/20 hover:text-amber-300 transition-colors",
+          className
+        )}
       >
         {loading ? (
           <>
@@ -70,7 +76,7 @@ export default function SummarizeButton({
       {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
 
       {summary && (
-        <div className="mt-3 p-3 rounded-lg bg-white/5 border border-white/10 text-xs text-white/70 leading-relaxed whitespace-pre-wrap">
+        <div className="mt-3 p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/80 text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap animate-in fade-in-50 duration-200">
           {summary}
         </div>
       )}

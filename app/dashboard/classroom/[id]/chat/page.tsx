@@ -5,7 +5,7 @@ import ChatForm from "@/app/components/Chatroom/ChatForm";
 import ChatMessage from "@/app/components/Chatroom/ChatMessage";
 import { socket } from "@/lib/socketclient";
 import { useParams } from "next/navigation";
-import { Loader2 } from "lucide-react";
+import { Loader2, MessageSquare } from "lucide-react";
 
 interface Sender {
     name: string;
@@ -102,7 +102,6 @@ const ChatPage = () => {
 
         const saved = await res.json();
 
-
         const messageWithImage = {
             ...saved,
             sender: {
@@ -120,32 +119,75 @@ const ChatPage = () => {
     const senderName = (sender: Sender | string) =>
         typeof sender === "string" ? sender : sender.name;
 
-    if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
-        <Loader2 className="size-6 animate-spin text-gray-400" />
-    </div>
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center min-h-[75vh] gap-3">
+            <div className="relative flex items-center justify-center">
+                <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
+            </div>
+        
+        </div>
+    )
+
     return (
-        <div className="flex mt-8 justify-center w-full">
-            <div className="w-full max-w-7xl mx-auto">
-                <h1 className="mb-4 text-3xl font-medium text-white/70">Classroom Chat</h1>
-                <div className="flex flex-col h-140 overflow-y-auto p-4  text-white rounded-lg bg-white/20">
-                    {messages.map((msg, i) => {
-                        const uniqueKey = msg.id ? `msg-${msg.id}` : `idx-${i}`;
-                        return (
-                            <ChatMessage
-                                key={uniqueKey}
-                                sender={senderName(msg.sender)}
-                                message={msg.message}
-                                image={typeof msg.sender === "object" ? msg.sender.image : undefined}
-                                isOwnMessage={senderName(msg.sender) === currentUser?.name}
-                                timestamp={msg.created_at}
-                            />
-                        );
-                    })}
-                    <div ref={bottomRef} />
+        <div className="w-full py-6 px-4 md:px-6 text-white animate-in fade-in duration-300">
+            <div className="w-full max-w-7xl mx-auto space-y-6">
+                
+         
+                <div className='flex items-center gap-4 pl-0.5 pb-2 border-b border-white/10'>
+                    <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-blue-400 border border-blue-500/30 shadow-sm'>
+                        <MessageSquare size={22} />
+                    </div>
+                    <div>
+                        <h3 className='font-semibold text-2xl tracking-tight text-white'>
+                            Classroom Chat
+                        </h3>
+                        <p className='text-xs text-white/50 mt-0.5'>
+                            Real-time discussion board with your classmates and instructors
+                        </p>
+                    </div>
                 </div>
-                <ChatForm onSendMessage={handleSendMessage} />
+
+       
+                <div 
+                    style={{ backgroundImage: "url('/bg3.webp')" }}
+                    className="flex flex-col h-[520px] overflow-y-auto p-5 rounded-xl border border-white/15 bg-cover bg-center bg-no-repeat shadow-md space-y-4 relative"
+                >
+                   
+                    <div className="absolute inset-0 bg-black/30 pointer-events-none rounded-xl" />
+
+                    <div className="flex flex-col space-y-4 relative z-10 w-full h-full overflow-y-auto">
+                        {messages.length === 0 ? (
+                            <div className="flex flex-1 items-center justify-center h-full">
+                                <p className="text-xs text-white/60 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-xs italic">
+                                    No messages yet. Say hello to get the conversation started!
+                                </p>
+                            </div>
+                        ) : (
+                            messages.map((msg, i) => {
+                                const uniqueKey = msg.id ? `msg-${msg.id}` : `idx-${i}`;
+                                return (
+                                    <ChatMessage
+                                        key={uniqueKey}
+                                        sender={senderName(msg.sender)}
+                                        message={msg.message}
+                                        image={typeof msg.sender === "object" ? msg.sender.image : undefined}
+                                        isOwnMessage={senderName(msg.sender) === currentUser?.name}
+                                        timestamp={msg.created_at}
+                                    />
+                                );
+                            })
+                        )}
+                        <div ref={bottomRef} />
+                    </div>
+                </div>
+
+                
+                <div className="p-4 rounded-xl border border-white/5 bg-white/5">
+                    <ChatForm onSendMessage={handleSendMessage} />
+                </div>
             </div>
         </div>
     );
 }
-export default ChatPage
+
+export default ChatPage;

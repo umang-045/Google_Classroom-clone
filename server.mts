@@ -14,10 +14,19 @@ app.prepare().then(() => {
   const httpServer = createServer(handler);
   const io = new Server(httpServer);
 
+  (global as any).io = io;
+
   io.on("connection", (socket) => {
     console.log(`User connected: ${socket.id}`);
 
+    socket.on("register-notification-stream", (userId: number) => {
+      if (!userId) return;
+      const userChannel = `user-channel-${userId}`;
+      socket.join(userChannel);
+      console.log(`User ID ${userId} registered to notification stream: ${userChannel}`);
+    });
     
+
     socket.on("join-room", ({ room, username }: { room: string; username: string }) => {
       if (!room || !username) return;
       socket.join(room);
@@ -25,7 +34,7 @@ app.prepare().then(() => {
       socket.to(room).emit("user_joined", `${username} joined room ${room}`);
     });
 
-    
+
     socket.on("message", (data) => {
       if (!data?.room) return;
       socket.to(data.room).emit("message", data);

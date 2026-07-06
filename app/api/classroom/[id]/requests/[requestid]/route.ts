@@ -34,14 +34,61 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             return NextResponse.json({ message: "Join request not found in this classroom" }, { status: 404 })
         }
 
+        const io = (global as any).io;
+
         if (action === "approve") {
             await prisma.classroomStudent.create({
-                data: { userId: joinRequest.userId, classroomId: joinRequest.classroomId }
+                data: {
+                    userId: joinRequest.userId,
+                    classroomId: joinRequest.classroomId
+                }
             })
-            await prisma.joinRequest.delete({ where: { id: reqId } })
+            await prisma.joinRequest.delete({
+                where: {
+                    id: reqId
+                }
+            })
+
+
+            await prisma.notification.create({
+                data: {
+                    userId: joinRequest.userId,
+                    classroomId: classId,
+                    title: "Join Request Approved",
+                    messgae: `You have been accepted into the classroom "${classroom.className}".`,
+                    type: "ANNOUNCEMENT",
+                    isRead: false
+                }
+            });
+
+            if (io) {
+                io.to(`user-channel-${joinRequest.userId}`).emit("new-notification-alert");
+            }
+
             return NextResponse.json({ message: "Student approved and added to classroom" }, { status: 200 })
         } else {
+
+           
+
             await prisma.joinRequest.delete({ where: { id: reqId } })
+
+
+            await prisma.notification.create({
+                data: {
+                    userId: joinRequest.userId,
+                    classroomId: classId,
+                    title: "Join Request Rejected",
+                    messgae: `Your request to join the classroom "${classroom.className}" was declined.`,
+                    type: "ANNOUNCEMENT",
+                    isRead: false
+                }
+            });
+
+
+            if (io) {
+                io.to(`user-channel-${joinRequest.userId}`).emit("new-notification-alert");
+            }
+
             return NextResponse.json({ message: "Join request rejected" }, { status: 200 })
         }
 

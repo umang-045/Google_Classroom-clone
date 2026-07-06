@@ -113,9 +113,9 @@ export const StudentWorkspace = ({ classroomId, assignmentId, isSubmitted, setIs
                             <Button
                                 onClick={handleStudentSubmit}
                                 disabled={submitLoading}
-                                className='w-full bg-blue-600 hover:bg-blue-700 text-white text-xs h-9 font-medium transition-colors'
+                                className='w-full bg-blue-500/50 cursor-pointer hover:bg-blue-700/40 text-white text-xs h-9 font-medium transition-colors'
                             >
-                                {submitLoading ? "Submitting File Data..." : "Turn In"}
+                                {submitLoading ? "Submitting File Data..." : "Submit File"}
                             </Button>
                         </div>
                     )}

@@ -63,7 +63,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
                 className='relative w-full max-w-xl rounded-xl border border-zinc-800/80 p-8 shadow-2xl space-y-7 animate-in fade-in-50 zoom-in-95 duration-150 text-zinc-200'
                 onClick={(e) => e.stopPropagation()}
             >
-                {/* Close Button */}
+               
                 <button
                     onClick={() => setCreateAnnouncementBox(false)}
                     className='absolute top-5 right-5 text-zinc-400 hover:text-red-400 cursor-pointer transition-colors'
@@ -71,7 +71,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
                     <X size={20} />
                 </button>
 
-                {/* Header Header */}
+              
                 <div className='flex items-center gap-4 pl-0.5'>
                     <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-800/70 text-amber-400 border border-zinc-700/60 shadow-inner'>
                         <Megaphone size={22} />
@@ -86,7 +86,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
                     </div>
                 </div>
 
-                {/* Form Fields */}
+           
                 <div className='space-y-5'>
                     <div className='w-full space-y-2'>
                         <Label htmlFor='title' className='text-zinc-300 text-sm font-medium pl-0.5'>
@@ -119,7 +119,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
                     </div>
                 </div>
 
-                {/* Form Actions */}
+              
                 <div className='flex items-center justify-end gap-3 pt-4 border-t border-zinc-800/60 max-sm:flex-col-reverse'>
                     <Button
                         type='button'

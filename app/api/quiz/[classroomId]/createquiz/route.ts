@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/db";
+import { sendNotificationToClass } from "@/lib/sendNotification";
 
 interface QuestionInput {
     id: string;
@@ -53,6 +54,12 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
                 teacherId: Number(token.id),
             }
         })
+        await sendNotificationToClass({
+            classroomId: classId,
+            title: "New Quiz Created",
+            message: `A new quiz "${data.title}" containing ${data.questions.length} questions is live.`,
+            type: "QUIZ"
+        });
         return NextResponse.json({ message: "Created Quiz Successfully" }, { status: 201 })
 
     } catch (err) {
