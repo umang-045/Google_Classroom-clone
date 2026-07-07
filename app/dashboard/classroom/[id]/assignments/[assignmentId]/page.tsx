@@ -118,7 +118,7 @@ const AssignmentDetailPage = () => {
         <div className="flex flex-col items-center justify-center min-h-[75vh] gap-3">
             <div className="relative flex items-center justify-center">
                 <div className="absolute size-12 bg-zinc-500/10 rounded-full animate-ping pointer-events-none" />
-                <Loader2 className="size-8 animate-spin text-zinc-500 duration-1000" />
+                <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
             </div>
             <span className="text-xs font-medium tracking-wider text-zinc-500 uppercase animate-pulse">
                 Loading Details...

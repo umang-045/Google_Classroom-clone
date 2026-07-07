@@ -53,7 +53,7 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
     }, [id])
 
     if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
-        <Loader2 className="size-6 animate-spin text-gray-400" />
+         <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
     </div>
     if (!classroomDetails) return <p className="text-center py-10">Classroom not found</p>
 
@@ -95,12 +95,12 @@ const ClassroomLayout = ({ children }: { children: React.ReactNode }) => {
                 defaultActiveIndex={getActiveIndex()}
             >
                 <FluidTabs.List className='w-full text-white/70'>
-                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}?colorIndex=${colorIndex}`)}>Announcement</FluidTabs.Tab>
-                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/assignments?colorIndex=${colorIndex}`)}>Assignment</FluidTabs.Tab>
-                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/meetings?colorIndex=${colorIndex}`)}>Meetings</FluidTabs.Tab>
-                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/quiz?colorIndex=${colorIndex}`)}>Quiz</FluidTabs.Tab>
-                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/members?colorIndex=${colorIndex}`)}>Members</FluidTabs.Tab>
-                    <FluidTabs.Tab onClick={() => router.push(`/dashboard/classroom/${id}/chat?colorIndex=${colorIndex}`)}>Chat</FluidTabs.Tab>
+                    <FluidTabs.Tab className='cursor-pointer' onClick={() => router.push(`/dashboard/classroom/${id}?colorIndex=${colorIndex}`)}>Announcement</FluidTabs.Tab>
+                    <FluidTabs.Tab className='cursor-pointer' onClick={() => router.push(`/dashboard/classroom/${id}/assignments?colorIndex=${colorIndex}`)}>Assignment</FluidTabs.Tab>
+                    <FluidTabs.Tab className='cursor-pointer' onClick={() => router.push(`/dashboard/classroom/${id}/meetings?colorIndex=${colorIndex}`)}>Meetings</FluidTabs.Tab>
+                    <FluidTabs.Tab className='cursor-pointer' onClick={() => router.push(`/dashboard/classroom/${id}/quiz?colorIndex=${colorIndex}`)}>Quiz</FluidTabs.Tab>
+                    <FluidTabs.Tab className='cursor-pointer' onClick={() => router.push(`/dashboard/classroom/${id}/members?colorIndex=${colorIndex}`)}>Members</FluidTabs.Tab>
+                    <FluidTabs.Tab className='cursor-pointer' onClick={() => router.push(`/dashboard/classroom/${id}/chat?colorIndex=${colorIndex}`)}>Chat</FluidTabs.Tab>
                 </FluidTabs.List>
             </FluidTabs>
 

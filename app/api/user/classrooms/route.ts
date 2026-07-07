@@ -2,7 +2,7 @@ import prisma from '../../../../lib/db'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
 
-async function UserClassroom(req:NextRequest){
+export async function GET(req:NextRequest){
     try{
         const token = await getToken({req:req,secret:process.env.NEXTAUTH_SECRET})
         if(!token || !token.id){
@@ -33,4 +33,3 @@ async function UserClassroom(req:NextRequest){
     }
 }
 
-export {UserClassroom as GET}

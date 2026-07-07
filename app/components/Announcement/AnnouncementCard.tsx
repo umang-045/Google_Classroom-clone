@@ -53,7 +53,7 @@ export const AnnouncementCard = ({ announcement, role, classroomId, onDelete, de
                             <Button
                                 variant='destructive'
                                 size='sm'
-                                className='text-xs h-7 shrink-0'
+                                className='text-xs h-7 shrink-0 cursor-pointer'
                                 onClick={() => onDelete(announcement.id)}
                                 disabled={deleteLoading}
                             >

@@ -31,7 +31,7 @@ const AllClasses = () => {
   }, [searchParams])
 
   if (loading) return <div className="flex items-center justify-center min-h-screen">
-    <Loader2 className="size-6 animate-spin text-gray-400" />
+     <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
   </div>
 
 

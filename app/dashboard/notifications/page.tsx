@@ -1,12 +1,13 @@
-"use client"
+"use client";
 import React, { useEffect, useState } from "react";
-import { Bell, BookOpen, MessageSquare, Award, HelpCircle } from "lucide-react";
+import { Bell, BookOpen, MessageSquare, Award, HelpCircle, Trash2 } from "lucide-react";
 import toast from "react-hot-toast";
+import { Loader2 } from "lucide-react";
 
 interface NotificationItem {
   id: number;
   title: string;
-  messgae: string; 
+  messgae: string;
   type: "ASSIGNMENT" | "ANNOUNCEMENT" | "GRADE" | "QUIZ";
   isRead: boolean;
   created_at: string;
@@ -16,6 +17,7 @@ interface NotificationItem {
 export default function NotificationsPage() {
   const [notifications, setNotifications] = useState<NotificationItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [clearing, setClearing] = useState(false);
 
   const getIcon = (type: string) => {
     switch (type) {
@@ -27,98 +29,143 @@ export default function NotificationsPage() {
     }
   };
 
-  useEffect(() => {
-    const loadNotifications = async () => {
-      try {
-    
-        const res = await fetch("/api/notifications");
-        const data = await res.json();
-        
-        if (res.ok) {
-          setNotifications(data.notifications || []);
-       
-          const unreadExists = data.notifications?.some((n: NotificationItem) => !n.isRead);
-          if (unreadExists) {
-            await fetch("/api/notifications", { method: "PUT" });
-          }
-        } else {
-          toast.error(data.message || "Failed to load notifications.");
-        }
-      } catch (err) {
-        console.error("Client fetch error:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const loadNotifications = async () => {
+    try {
+      const res = await fetch("/api/notifications");
+      const data = await res.json();
 
+      if (res.ok) {
+        setNotifications(data.notifications || []);
+        const unreadExists = data.notifications?.some((n: NotificationItem) => !n.isRead);
+        if (unreadExists) {
+          await fetch("/api/notifications", { method: "PUT" });
+        }
+      } else {
+        toast.error(data.message || "Failed to load notifications.");
+      }
+    } catch (err) {
+      console.error("Client fetch error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     loadNotifications();
   }, []);
 
+  const handleClearAll = async () => {
+    if (notifications.length === 0 || clearing) return;
+    setClearing(true);
+    try {
+      const res = await fetch("/api/notifications/clearall", {
+        method: "POST",
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setNotifications([]);
+        toast.success("Notifications cleared successfully");
+      } else {
+        toast.error(data.message || "Something went wrong.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to connect to the server.");
+    } finally {
+      setClearing(false);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="p-6 flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" />
+      <div className="flex flex-col items-center justify-center min-h-[75vh] gap-3">
+        <div className="relative flex items-center justify-center">
+           <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-3 border-b border-zinc-800 pb-4">
-        <Bell className="size-6 text-zinc-400" />
-        <h1 className="text-2xl font-bold text-white">Notifications</h1>
+  
+    <div className="flex flex-col min-h-screen w-full bg-zinc-950 text-white pb-10">
+      
+     
+      <div className="px-8 py-5 border-b border-zinc-800 flex items-center justify-between shrink-0 bg-zinc-950 sticky top-0 z-10">
+        <div className="flex items-center gap-3">
+          <Bell className="size-5 text-zinc-400" />
+          <h1 className="text-xl font-bold tracking-tight">Notifications</h1>
+        </div>
+
+        {notifications.length > 0 && (
+          <button
+            onClick={handleClearAll}
+            disabled={clearing}
+            className="flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-zinc-900 border border-zinc-800 hover:border-red-900/50 hover:bg-red-950/20 text-zinc-400 hover:text-red-400 transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+          >
+            {clearing ? (
+              <Loader2 className="size-3.5 animate-spin text-red-400" />
+            ) : (
+              <Trash2 className="size-3.5" />
+            )}
+            Clear All
+          </button>
+        )}
       </div>
 
-      {notifications.length === 0 ? (
-        <div className="text-center py-12 text-zinc-500 border border-dashed border-zinc-800 rounded-xl">
-          No notifications yet.
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {notifications.map((notif) => (
-            <div
-              key={notif.id}
-              className={`flex gap-4 p-4 rounded-xl border transition-all duration-200 ${
-                notif.isRead 
-                  ? "bg-zinc-900/40 border-zinc-800/60 opacity-70" 
-                  : "bg-zinc-900 border-blue-500/30 shadow-sm shadow-blue-500/5"
-              }`}
-            >
-              <div className="p-2 bg-zinc-800/50 rounded-lg h-fit shrink-0">
-                {getIcon(notif.type)}
-              </div>
-              
-              <div className="flex-1 min-w-0 space-y-1">
-                <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-semibold text-zinc-100 text-sm md:text-base truncate">
-                    {notif.title}
-                  </h3>
-                  <span className="text-xs text-zinc-500 whitespace-nowrap pt-0.5">
-                    {new Date(notif.created_at).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit"
-                    })}
-                  </span>
+      <div className="flex-1 w-full">
+        {notifications.length === 0 ? (
+          <div className="flex flex-col items-center justify-center pt-32 text-center text-zinc-500">
+            <Bell className="size-12 text-zinc-700 mb-3 animate-pulse" />
+            <p className="text-base font-medium">No notifications yet.</p>
+          </div>
+        ) : (
+          <div className="w-full divide-y divide-zinc-900">
+            {notifications.map((notif) => (
+              <div
+                key={notif.id}
+                className={`flex gap-5 p-6 w-full transition-all duration-150 group ${notif.isRead
+                    ? "bg-zinc-950/20 opacity-60 hover:opacity-100 hover:bg-zinc-900/40"
+                    : "bg-zinc-900/20 border-l-2 border-l-blue-500 hover:bg-zinc-900/60"
+                  }`}
+              >
+                <div className="p-2.5 bg-zinc-900 rounded-lg h-fit shrink-0 border border-zinc-800/80 group-hover:border-zinc-700 transition-colors">
+                  {getIcon(notif.type)}
                 </div>
-                
-                <p className="text-sm text-zinc-400 break-words line-clamp-2">
-                  {notif.messgae}
-                </p>
 
-                {notif.classroom?.className && (
-                  <div className="inline-block mt-1">
-                    <span className="text-[11px] font-medium px-2 py-0.5 rounded bg-zinc-800 text-zinc-400 uppercase tracking-wider">
-                      {notif.classroom.className}
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  <div className="flex items-start justify-between gap-6">
+                    <h2 className="font-semibold text-zinc-200 text-sm md:text-base group-hover:text-white transition-colors">
+                      {notif.title}
+                    </h2>
+                    <span className="text-xs text-zinc-500 whitespace-nowrap pt-0.5 group-hover:text-zinc-400 transition-colors">
+                      {new Date(notif.created_at).toLocaleDateString(undefined, {
+                        month: "short",
+                        day: "numeric",
+                        hour: "2-digit",
+                        minute: "2-digit"
+                      })}
                     </span>
                   </div>
-                )}
+
+                  <p className="text-sm text-zinc-400 break-words leading-relaxed max-w-6xl group-hover:text-zinc-300 transition-colors">
+                    {notif.messgae}
+                  </p>
+
+                  {notif.classroom?.className && (
+                    <div className="inline-block pt-0.5">
+                      <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-zinc-900 text-zinc-400 uppercase tracking-wider border border-zinc-800 group-hover:border-zinc-700 group-hover:text-zinc-300 transition-colors">
+                        {notif.classroom.className}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      )}
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

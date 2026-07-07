@@ -91,7 +91,7 @@ const AssignmentsPage = () => {
 
             {loading ? (
                 <div className="flex items-center justify-center min-h-[75vh]">
-                    <Loader2 className="size-6 animate-spin text-gray-400" />
+                    <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
                 </div>
             ) : assignments.length > 0 ? (
                 <div className='space-y-3'>

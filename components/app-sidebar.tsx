@@ -31,9 +31,7 @@ import {
   School,
   BookOpen,
   Sparkles,
-  Settings2 as Settings2Icon,
   CircleHelp as CircleHelpIcon,
-  Search as SearchIcon,
 } from "lucide-react"
 
 import { classphoto } from "@/app/components/ClassroomCard"
@@ -143,7 +141,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <div className="flex items-center justify-between w-full">
                       <span>{item.title}</span>
                       {item.title === "Notifications" && unreadCount > 0 && (
-                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-bold text-white ring-1 ring-background animate-pulse">
+                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-200 px-1.5 text-[11px] font-bold text-zinc-950 ring-1 ring-background">
                           {unreadCount}
                         </span>
                       )}
@@ -200,7 +198,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
 
         <SidebarSeparator />
-
 
         <SidebarGroup>
           <SidebarMenu>

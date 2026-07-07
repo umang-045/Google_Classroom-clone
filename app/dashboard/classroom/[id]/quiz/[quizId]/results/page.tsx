@@ -83,7 +83,7 @@ const QuizResultsPage = () => {
 
             {loading ? (
                 <div className="flex items-center justify-center min-h-[50vh]">
-                    <Loader2 className="size-6 animate-spin text-gray-400" />
+                     <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
                 </div>
             ) : submissions.length > 0 ? (
                 <div className='rounded-xl bg-white/5 border border-white/10 overflow-hidden'>
