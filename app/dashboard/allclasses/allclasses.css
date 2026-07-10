@@ -1,45 +1,92 @@
-.heading{
-    color:rgb(201, 186, 186);
+.heading {
+    color: rgb(201, 186, 186);
     border-bottom: 1px solid #494a4b;
-    padding:15px;
+    padding: 15px;
     font-size: 20px;
     font-weight: bold;
-}
-.classContainer{
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    margin-bottom: 12px;
-    
-}
-.teaching .enrolled{
-    min-height: 250px;
-}
-.classCard {
-  background: linear-gradient(145deg, #1c1c1e, #2a2a2e);  
-  width: 375px;
-  height: 250px;
-  margin: 8px;
-  border-radius: 10px;
+    box-sizing: border-box;
 }
 
-.smallbox{
+/* Base Grid Layout for Desktop */
+.classContainer {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-items: stretch; /* Forces grid items to stretch to the width of the column track */
+    align-items: stretch;   /* Forces all cards in a single row to match heights */
+    gap: 16px;
+    margin-bottom: 12px;
+    width: 100%;
+    box-sizing: border-box; /* Includes padding within the width calculation */
+}
+
+/* Fixes the nested typo selector so it applies to all sections independently */
+.teaching, .enrolled, .pending {
+    min-height: 250px;
+}
+
+/* Default styling for a card on large screens */
+.classCard {
+    background: linear-gradient(145deg, #1c1c1e, #2a2a2e);  
+    width: 375px;
+    height: 250px;
+    margin: 0;
+    border-radius: 10px;
+    overflow: hidden; /* Prevents text or internal content from blowing out the width */
+}
+
+/* Tablet Screens */
+@media (max-width: 768px) {
+  .classContainer {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    justify-items: stretch !important;
+    gap: 12px;
+    padding: 0 16px; /* Adds breathing room on the left and right ends */
+  }
+  .classCard {
+    width: 100% !important;     /* Overrides the fixed 375px so cards stay fluid */
+    max-width: 100% !important; /* Prevents expanding past the grid column boundary */
+  }
+  .heading {
+    padding: 15px 16px; /* Aligns heading text with the edge of the cards */
+  }
+}
+
+/* Small Mobile Screens */
+@media (max-width: 480px) {
+  .classContainer {
+    grid-template-columns: minmax(0, 1fr) !important; /* Single column, strictly bound to screen width */
+    justify-items: stretch !important;
+    padding: 0 20px; /* Creates a clean gap so cards don't touch screen borders */
+  }
+  .classCard {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 220px;
+  }
+  .heading {
+    font-size: 17px;
+    padding: 10px 20px; /* Aligns heading text perfectly with mobile padding */
+  }
+}
+
+.smallbox {
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
+
 .info {
     display: flex;
     flex-direction: column;
 }
-.info p{
+
+.info p {
     margin-bottom: 2px;
     color: #030507;
     font-weight: 500;
 }
 
-
-
-.noClass{
-        color: rgb(96, 101, 105);
-        margin: 20px;
+.noClass {
+    color: rgb(96, 101, 105);
+    margin: 20px;
 }

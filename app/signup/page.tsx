@@ -12,6 +12,8 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, } from "@/components/ui/card"
 import { Field, FieldDescription, FieldLabel, } from "@/components/ui/field"
 import { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot, } from "@/components/ui/input-otp"
+import { toastOptions } from '../components/toastOptions'
+import { authOptions } from '../api/auth/[...nextauth]/route'
 
 interface SignUpForm {
     name: string;
@@ -31,9 +33,9 @@ const SignUpPage = () => {
     useEffect(() => {
         if (session) {
             router.push('/dashboard')
-            toast.success("You are already logged in!")
+            toast.success("You are already logged in!",toastOptions)
         }
-    }, [session])
+    }, [session, router])
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => setForm({ ...form, [e.target.name]: e.target.value })
 
@@ -54,10 +56,10 @@ const SignUpPage = () => {
         setVerify(true)
     }
 
-    const verifyOtp = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+        const verifyOtp = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoading(true)
-        const res = await fetch("/api/forgotverify", {
+        const res = await fetch("/api/verifyotp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: form.email, otp })
@@ -65,16 +67,16 @@ const SignUpPage = () => {
         const data: { error?: string } = await res.json()
         setLoading(false)
         if (!res.ok) {
-            toast.error(data.error || "Invalid Otp")
-            return
+            toast.error(data.error || "Invalid Otp",toastOptions)
         }
-        router.push('/resetpassword')
+        router.push('/login')
+        toast.success("Account Registered Successfully",toastOptions)
     }
 
     return (
         <div className="relative overflow-hidden min-h-screen bg-linear-to-br from-zinc-950 to-zinc-800 flex items-center justify-center p-4">
             <Image
-                src="/bg3.jpg"
+                src="/bg3.webp"
                 alt=""
                 fill
                 className="object-cover"
@@ -82,25 +84,25 @@ const SignUpPage = () => {
             />
             <div className='absolute inset-0 bg-black/30' />
 
-            <div className="relative z-10 w-full max-w-4xl rounded-3xl flex flex-col md:flex-row overflow-hidden justify-center bg-white/80 shadow-2xl">
-                <div className="p-8 w-1/2 flex flex-col justify-center">
+            <div className="relative z-10 w-full max-w-md md:max-w-4xl rounded-3xl flex flex-col md:flex-row overflow-hidden justify-center bg-white/80 shadow-2xl">
+                
+                <div className="p-6 md:p-8 w-full md:w-1/2 flex flex-col justify-center">
                     <div className="mb-6 flex items-center gap-2">
                         <div className="text-xs font-extrabold text-zinc-800">
                             Digital<span className='text-blue-700'>Classroom</span>
                         </div>
                     </div>
 
-
                     {!verify && (
                         <>
-                            <h1 className="text-3xl font-extrabold text-zinc-900">Welcome!</h1>
-                            <p className="text-sm text-gray-500 mt-1 mb-8">Please enter your details below.</p>
+                            <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-900">Welcome!</h1>
+                            <p className="text-sm text-gray-500 mt-1 mb-6 md:mb-8">Please enter your details below.</p>
 
                             <form onSubmit={handleSignup} className="flex flex-col gap-4">
-                                <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="text" name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required />
-                                <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl" type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
+                                <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900" type="text" name="name" placeholder="Full Name" value={form.name} onChange={handleChange} required />
+                                <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900" type="email" name="email" placeholder="Email" value={form.email} onChange={handleChange} required />
                                 <input className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900" type="password" name="password" placeholder="Password" value={form.password} onChange={handleChange} required />
-                                <button type="submit" disabled={loading} className="bg-zinc-900 hover:bg-gray-800 text-white py-3 rounded-xl font-medium disabled:opacity-60">
+                                <button type="submit" disabled={loading} className="bg-zinc-900 hover:bg-gray-800 text-white py-3 rounded-xl font-medium transition-colors disabled:opacity-60 cursor-pointer">
                                     {loading ? "Please wait..." : "Sign up"}
                                 </button>
                             </form>
@@ -115,46 +117,46 @@ const SignUpPage = () => {
                     )}
 
                     {verify && (
-                        <form onSubmit={verifyOtp}>
-                            <Card className="p-10  bg-white/7 ">
-                                <CardHeader>
-                                    <CardTitle className='text-2xl font-bold p'>Verify your login</CardTitle>
-                                    <CardDescription >
+                        <form onSubmit={verifyOtp} className="w-full">
+                            <Card className="p-4 md:p-6 bg-transparent border-none shadow-none">
+                                <CardHeader className="p-0 mb-4">
+                                    <CardTitle className='text-xl md:text-2xl font-bold'>Verify your login</CardTitle>
+                                    <CardDescription>
                                         Enter the verification code we sent to your email address:{" "}
-                                        <span className="font-medium">{form.email}</span>.
+                                        <span className="font-medium break-all">{form.email}</span>.
                                     </CardDescription>
                                 </CardHeader>
-                                <CardContent>
+                                <CardContent className="p-0 mb-6 overflow-x-auto">
                                     <Field>
-                                        <div className="flex items-center justify-between  text-black">
+                                        <div className="flex items-center justify-between text-black mb-2">
                                             <FieldLabel htmlFor="otp-verification">
                                                 Verification code
                                             </FieldLabel>
                                         </div>
                                         <InputOTP maxLength={6} id="otp-verification" required value={otp} onChange={(value) => setOtp(value)}>
-                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
+                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-10 md:*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-9 md:*:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-lg md:*:data-[slot=input-otp-slot]:text-xl">
                                                 <InputOTPSlot index={0} />
                                                 <InputOTPSlot index={1} />
                                                 <InputOTPSlot index={2} />
                                             </InputOTPGroup>
-                                            <InputOTPSeparator className="mx-2" />
-                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-xl">
+                                            <InputOTPSeparator className="mx-1 md:mx-2" />
+                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-10 md:*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-9 md:*:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-lg md:*:data-[slot=input-otp-slot]:text-xl">
                                                 <InputOTPSlot index={3} />
                                                 <InputOTPSlot index={4} />
                                                 <InputOTPSlot index={5} />
                                             </InputOTPGroup>
                                         </InputOTP>
-                                        <FieldDescription className="py-2">
-                                            <a href="/dashboard/signup">I no longer have access to this email address.</a>
+                                        <FieldDescription className="py-2 text-xs">
+                                            <a href="/dashboard/signup" className="hover:underline">I no longer have access to this email address.</a>
                                         </FieldDescription>
                                     </Field>
                                 </CardContent>
-                                <CardFooter>
-                                    <Field>
-                                        <Button type="submit" disabled={loading} >
-                                            {loading ? "Verifying..." : "Verify OTP  "}
+                                <CardFooter className="p-0 flex flex-col gap-2 items-stretch">
+                                    <Field className="w-full flex flex-col gap-2">
+                                        <Button type="submit" disabled={loading} className="cursor-pointer">
+                                            {loading ? "Verifying..." : "Verify OTP"}
                                         </Button>
-                                        <Button type="button" onClick={() => { setVerify(false) }} >
+                                        <Button type="button" variant="outline" onClick={() => { setVerify(false) }} className="cursor-pointer">
                                             Go back
                                         </Button>
                                     </Field>
@@ -164,7 +166,7 @@ const SignUpPage = () => {
                     )}
                 </div>
 
-                <div className="md:flex relative md:w-1/2 min-h-125 flex-col">
+                <div className="hidden md:flex relative md:w-1/2 min-h-125 flex-col">
                     <div className="w-full h-full max-h-[380px] flex items-center justify-center p-10">
                         <DotLottieReact
                             src="/assets/login.json"
@@ -185,4 +187,4 @@ const SignUpPage = () => {
     )
 }
 
-export default SignUpPage
+export default SignUpPage;

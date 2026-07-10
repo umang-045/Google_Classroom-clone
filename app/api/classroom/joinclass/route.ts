@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../lib/db";
 import { getToken } from "next-auth/jwt";
-import { sendNotificationToClass } from "@/lib/sendNotification";
+
 
 async function joinclass(req: NextRequest) {
     try {
@@ -61,7 +61,7 @@ async function joinclass(req: NextRequest) {
                 userId: existing.teacherId,
                 classroomId: existing.id,
                 title: "New Join Request",
-                messgae: `${token.name || "A student"} requested to join your class "${existing.className}".`,
+                message: `${token.name || "A student"} requested to join your class "${existing.className}".`,
                 type: "ANNOUNCEMENT",
                 isRead: false
             }

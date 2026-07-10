@@ -54,7 +54,7 @@ const AllClasses = () => {
 
         <div className='enrolled'>
           <h2 className='heading'>Enrolled As Student </h2>
-          <div className='classContainer cursor-pointer'>
+          <div className='classContainer my-2  cursor-pointer'>
             {enrolledClassroom.map((item, colorIndex) => (
               <ClassroomCard key={item.classroom.id} Classroomdetails={item.classroom} colorIndex={teachingClassroom.length + colorIndex} role="student" />
             ))}

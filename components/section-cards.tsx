@@ -33,14 +33,12 @@ export function SectionCards({ data }: { data: any }) {
       0
     ) || 0
 
-  // Shared responsive card layout with distinct glow setups per card type
   const baseCardStyle = "bg-zinc-900 border-zinc-800 transition-all duration-300 hover:brightness-110 group cursor-default"
 
   return (
     <div className="grid grid-cols-1 gap-4 px-4 lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
 
-      {/* Enrolled Classes - Blue Glow */}
-      <Card className={`${baseCardStyle} hover:border-blue-500/30 hover:shadow-[0_0_20px_rgba(59,130,246,0.12)]`}>
+      <Card className={`${baseCardStyle} cursor-pointer hover:border-blue-500/30 shadow-[0_0_20px_rgba(59,130,246,0.05)] hover:shadow-[0_0_20px_rgba(59,130,246,0.12)]`}>
         <CardHeader>
           <CardDescription className="text-zinc-400">Enrolled Classes</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
@@ -61,8 +59,8 @@ export function SectionCards({ data }: { data: any }) {
         </CardFooter>
       </Card>
 
-      {/* Classes Teaching - Purple Glow */}
-      <Card className={`${baseCardStyle} hover:border-purple-500/30 hover:shadow-[0_0_20px_rgba(168,85,247,0.12)]`}>
+      
+      <Card className={`${baseCardStyle} cursor-pointer shadow-[0_0_20px_rgba(168,85,247,0.05)] hover:border-purple-500/30 hover:shadow-[0_0_20px_rgba(168,85,247,0.12)]`}>
         <CardHeader>
           <CardDescription className="text-zinc-400">Classes Teaching</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
@@ -83,8 +81,8 @@ export function SectionCards({ data }: { data: any }) {
         </CardFooter>
       </Card>
 
-      {/* Pending Assignments - Amber/Yellow Glow */}
-      <Card className={`${baseCardStyle} hover:border-amber-500/30 hover:shadow-[0_0_20px_rgba(245,158,11,0.12)]`}>
+     
+      <Card className={`${baseCardStyle} cursor-pointer shadow-[0_0_20px_rgba(245,158,11,0.05)] hover:border-amber-500/30 hover:shadow-[0_0_20px_rgba(245,158,11,0.12)]`}>
         <CardHeader>
           <CardDescription className="text-zinc-400">Pending Assignments</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">
@@ -105,8 +103,7 @@ export function SectionCards({ data }: { data: any }) {
         </CardFooter>
       </Card>
 
-      {/* Announcements - Emerald/Green Glow */}
-      <Card className={`${baseCardStyle} hover:border-emerald-500/30 hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]`}>
+      <Card className={`${baseCardStyle} cursor-pointer shadow-[0_0_20px_rgba(16,185,129,0.05)] hover:border-emerald-500/30 hover:shadow-[0_0_20px_rgba(16,185,129,0.12)]`}>
         <CardHeader>
           <CardDescription className="text-zinc-400">Announcements</CardDescription>
           <CardTitle className="text-2xl font-semibold tabular-nums @[250px]/card:text-3xl text-white">

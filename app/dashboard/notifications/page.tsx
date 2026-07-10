@@ -1,13 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Bell, BookOpen, MessageSquare, Award, HelpCircle, Trash2 } from "lucide-react";
+import { Bell, BookOpen, MessageSquare, Award, HelpCircle, Trash2, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
-import { Loader2 } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 interface NotificationItem {
   id: number;
   title: string;
-  messgae: string;
+  message: string; // Fixed typo from 'messgae'
   type: "ASSIGNMENT" | "ANNOUNCEMENT" | "GRADE" | "QUIZ";
   isRead: boolean;
   created_at: string;
@@ -59,7 +60,7 @@ export default function NotificationsPage() {
     setClearing(true);
     try {
       const res = await fetch("/api/notifications/clearall", {
-        method: "POST",
+        method: "DELETE",
       });
       const data = await res.json();
 
@@ -80,24 +81,21 @@ export default function NotificationsPage() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[75vh] gap-3">
-        <div className="relative flex items-center justify-center">
-           <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
-        </div>
+        <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
       </div>
     );
   }
 
   return (
-  
     <div className="flex flex-col min-h-screen w-full bg-zinc-950 text-white pb-10">
-      
-     
-      <div className="px-8 py-5 border-b border-zinc-800 flex items-center justify-between shrink-0 bg-zinc-950 sticky top-0 z-10">
+      <div className="px-4 py-4 border-b border-zinc-800 flex items-center justify-between shrink-0 bg-zinc-950 sticky top-0 z-10">
         <div className="flex items-center gap-3">
-          <Bell className="size-5 text-zinc-400" />
-          <h1 className="text-xl font-bold tracking-tight">Notifications</h1>
-        </div>
+          <SidebarTrigger className="text-zinc-400 hover:text-white hover:bg-zinc-800" />
 
+          <Separator orientation="vertical" className="h-4 w-[1px] bg-zinc-800 self-center" />
+          <Bell className="size-5 text-zinc-400 ml-1" />
+          <h1 className="text-xl font-bold tracking-tight leading-none">Notifications</h1>
+        </div>
         {notifications.length > 0 && (
           <button
             onClick={handleClearAll}
@@ -114,6 +112,7 @@ export default function NotificationsPage() {
         )}
       </div>
 
+
       <div className="flex-1 w-full">
         {notifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center pt-32 text-center text-zinc-500">
@@ -126,8 +125,8 @@ export default function NotificationsPage() {
               <div
                 key={notif.id}
                 className={`flex gap-5 p-6 w-full transition-all duration-150 group ${notif.isRead
-                    ? "bg-zinc-950/20 opacity-60 hover:opacity-100 hover:bg-zinc-900/40"
-                    : "bg-zinc-900/20 border-l-2 border-l-blue-500 hover:bg-zinc-900/60"
+                  ? "bg-zinc-950/20 opacity-60 hover:opacity-100 hover:bg-zinc-900/40"
+                  : "bg-zinc-900/20 border-l-2 border-l-blue-500 hover:bg-zinc-900/60"
                   }`}
               >
                 <div className="p-2.5 bg-zinc-900 rounded-lg h-fit shrink-0 border border-zinc-800/80 group-hover:border-zinc-700 transition-colors">
@@ -144,13 +143,13 @@ export default function NotificationsPage() {
                         month: "short",
                         day: "numeric",
                         hour: "2-digit",
-                        minute: "2-digit"
+                        minute: "2-digit",
                       })}
                     </span>
                   </div>
 
                   <p className="text-sm text-zinc-400 break-words leading-relaxed max-w-6xl group-hover:text-zinc-300 transition-colors">
-                    {notif.messgae}
+                    {notif.message}
                   </p>
 
                   {notif.classroom?.className && (

@@ -29,31 +29,42 @@ interface CurrentUser {
 
 const ChatPage = () => {
     const params = useParams();
-    const classroomId = params.id
+    const classroomId = params.id;
     const room = `class-${classroomId}`;
+
     const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
     const [messages, setMessages] = useState<Message[]>([]);
     const [loading, setLoading] = useState(true);
+
     const bottomRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         let active = true;
+
         const fetchChatData = async () => {
             try {
                 const res = await fetch(`/api/classroom/${classroomId}/chat`);
-                const data: { messages: Message[]; currentUser: CurrentUser } = await res.json();
-                console.log("currentUser:", data.currentUser);
+                const data: {
+                    messages: Message[];
+                    currentUser: CurrentUser;
+                } = await res.json();
+
                 if (!active) return;
-                const username = data.currentUser.name;
+
                 setMessages([...data.messages].reverse());
                 setCurrentUser(data.currentUser);
-                socket.emit("join-room", { room, username: username });
+
+                socket.emit("join-room", {
+                    room,
+                    username: data.currentUser.name,
+                });
             } catch (error) {
                 console.error(error);
             } finally {
                 if (active) setLoading(false);
             }
         };
+
         fetchChatData();
 
         return () => {
@@ -85,13 +96,17 @@ const ChatPage = () => {
     }, []);
 
     useEffect(() => {
-        bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+        bottomRef.current?.scrollIntoView({
+            behavior: "smooth",
+        });
     }, [messages]);
 
     const handleSendMessage = async (message: string) => {
         const res = await fetch(`/api/classroom/${classroomId}/chat`, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({ message }),
         });
 
@@ -106,88 +121,106 @@ const ChatPage = () => {
             ...saved,
             sender: {
                 ...saved.sender,
-                image: currentUser?.image
-            }
-        }
+                image: currentUser?.image,
+            },
+        };
 
         setMessages((prev) =>
-            prev.some((m) => m.id === saved.id) ? prev : [...prev, messageWithImage]
+            prev.some((m) => m.id === saved.id)
+                ? prev
+                : [...prev, messageWithImage]
         );
-        socket.emit("message", { room, ...messageWithImage });
+
+        socket.emit("message", {
+            room,
+            ...messageWithImage,
+        });
     };
 
     const senderName = (sender: Sender | string) =>
         typeof sender === "string" ? sender : sender.name;
 
-    if (loading) return (
-        <div className="flex flex-col items-center justify-center min-h-[75vh] gap-3">
-            <div className="relative flex items-center justify-center">
-                <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
+    if (loading)
+        return (
+            <div className="flex min-h-[70vh] items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-blue-400" />
             </div>
-        
-        </div>
-    )
+        );
 
     return (
-        <div className="w-full py-6 px-4 md:px-6 text-white animate-in fade-in duration-300">
-            <div className="w-full max-w-7xl mx-auto space-y-6">
-                
-         
-                <div className='flex items-center gap-4 pl-0.5 pb-2 border-b border-white/10'>
-                    <div className='flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/15 text-blue-400 border border-blue-500/30 shadow-sm'>
-                        <MessageSquare size={22} />
+        <div className="w-full overflow-x-hidden px-2 py-3 sm:px-4 md:px-6 md:py-6 text-white animate-in fade-in duration-300">
+            <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 md:gap-6">
+              
+                <div className="flex items-center gap-3 border-b border-white/10 pb-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-blue-500/30 bg-blue-500/15 text-blue-400 shadow-sm sm:h-11 sm:w-11 md:h-12 md:w-12">
+                        <MessageSquare className="h-5 w-5 md:h-6 md:w-6" />
                     </div>
-                    <div>
-                        <h3 className='font-semibold text-2xl tracking-tight text-white'>
+
+                    <div className="min-w-0">
+                        <h3 className="truncate text-lg font-semibold tracking-tight sm:text-xl md:text-2xl">
                             Classroom Chat
                         </h3>
-                        <p className='text-xs text-white/50 mt-0.5'>
+
+                        <p className="text-xs text-white/60 sm:text-sm">
                             Real-time discussion board with your classmates and instructors
                         </p>
                     </div>
                 </div>
 
-       
-                <div 
-                    style={{ backgroundImage: "url('/bg3.webp')" }}
-                    className="flex flex-col h-[520px] overflow-y-auto p-5 rounded-xl border border-white/15 bg-cover bg-center bg-no-repeat shadow-md space-y-4 relative"
+        
+                <div
+                    style={{
+                        backgroundImage: "url('/bg3.webp')",
+                    }}
+                    className="relative flex h-[65vh] sm:h-[70vh] md:h-[520px] w-full overflow-hidden rounded-xl border border-white/15 bg-cover bg-center bg-no-repeat shadow-md"
                 >
-                   
-                    <div className="absolute inset-0 bg-black/30 pointer-events-none rounded-xl" />
+                    <div className="absolute inset-0 rounded-xl bg-black/35" />
 
-                    <div className="flex flex-col space-y-4 relative z-10 w-full h-full overflow-y-auto">
-                        {messages.length === 0 ? (
-                            <div className="flex flex-1 items-center justify-center h-full">
-                                <p className="text-xs text-white/60 bg-black/40 px-3 py-1.5 rounded-full backdrop-blur-xs italic">
-                                    No messages yet. Say hello to get the conversation started!
-                                </p>
-                            </div>
-                        ) : (
-                            messages.map((msg, i) => {
-                                const uniqueKey = msg.id ? `msg-${msg.id}` : `idx-${i}`;
-                                return (
-                                    <ChatMessage
-                                        key={uniqueKey}
-                                        sender={senderName(msg.sender)}
-                                        message={msg.message}
-                                        image={typeof msg.sender === "object" ? msg.sender.image : undefined}
-                                        isOwnMessage={senderName(msg.sender) === currentUser?.name}
-                                        timestamp={msg.created_at}
-                                    />
-                                );
-                            })
-                        )}
-                        <div ref={bottomRef} />
+                    <div className="relative z-10 flex flex-1 flex-col overflow-hidden">
+                        <div className="flex-1 overflow-y-auto px-3 py-4 md:px-5 space-y-4">
+                            {messages.length === 0 ? (
+                                <div className="flex h-full flex-1 items-center justify-center">
+                                    <p className="rounded-full bg-black/40 px-4 py-2 text-center text-xs italic text-white/60 backdrop-blur-sm">
+                                        No messages yet. Say hello to get the conversation
+                                        started!
+                                    </p>
+                                </div>
+                            ) : (
+                                messages.map((msg, i) => {
+                                    const uniqueKey = msg.id
+                                        ? `msg-${msg.id}`
+                                        : `idx-${i}`;
+
+                                    return (
+                                        <ChatMessage
+                                            key={uniqueKey}
+                                            sender={senderName(msg.sender)}
+                                            message={msg.message}
+                                            image={
+                                                typeof msg.sender === "object"
+                                                    ? msg.sender.image
+                                                    : undefined
+                                            }
+                                            isOwnMessage={
+                                                senderName(msg.sender) === currentUser?.name
+                                            }
+                                            timestamp={msg.created_at}
+                                        />
+                                    );
+                                })
+                            )}
+
+                            <div ref={bottomRef} />
+                        </div>
                     </div>
                 </div>
 
-                
-                <div className="p-4 rounded-xl border border-white/5 bg-white/5">
+               
+                <div className="rounded-xl border border-white/10 bg-white/5 p-3 md:p-4">
                     <ChatForm onSendMessage={handleSendMessage} />
                 </div>
             </div>
         </div>
     );
-}
-
+};
 export default ChatPage;

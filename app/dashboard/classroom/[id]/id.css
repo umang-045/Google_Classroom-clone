@@ -1,26 +1,80 @@
-.cardContainer{
+.cardContainer {
     margin: 10px;
     border-radius: 25px;
     min-height: 100vh;
-    border:2px solid ;
-    
+    border: 2px solid;
+    width: calc(100% - 20px);
+    overflow-x: hidden;
+    box-sizing: border-box;
 }
-.NameBox{
-    height: 150px;
-    background:linear-gradient(to bottom,rgb(103, 99, 99),rgb(39, 37, 37));
-    border-bottom:2px solid rgb(30, 31, 31);
+
+.NameBox {
+    min-height: 150px;
+    background: linear-gradient(to bottom, rgb(103, 99, 99), rgb(39, 37, 37));
+    border-bottom: 2px solid rgb(30, 31, 31);
     display: flex;
     justify-content: space-between;
-    padding-left: 25px;
     align-items: center;
+    gap: 20px;
+    padding: 20px 25px;
     border-radius: 25px 25px 0 0;
+    box-sizing: border-box;
+    overflow: hidden;
 }
-.NameBox h1{
-    font-size: 30px;    
+
+.NameBox h1 {
+    font-size: 30px;
     font-weight: bold;
     letter-spacing: 2px;
+    word-break: break-word;
 }
 
+.descBox {
+    flex: 1;
+    min-width: 0;
+}
 
+@media (max-width: 768px) {
+    .cardContainer {
+        margin: 6px;
+        width: calc(100% - 12px);
+        border-radius: 18px;
+    }
+
+    .NameBox {
+        flex-direction: column;
+        justify-content: center;
+        text-align: center;
+        padding: 16px;
+        gap: 12px;
+        border-radius: 18px 18px 0 0;
+    }
+
+    .NameBox h1 {
+        font-size: 22px;
+        letter-spacing: 1px;
+    }
+
+    .descBox {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .cardContainer {
+        margin: 4px;
+        width: calc(100% - 8px);
+        border-radius: 14px;
+    }
+
+    .NameBox {
+        padding: 12px;
+        border-radius: 14px 14px 0 0;
+    }
+
+    .NameBox h1 {
+        font-size: 18px;
+    }
+}
 
 

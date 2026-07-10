@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react'
+import { ChevronDown } from 'lucide-react';
 
 const FAQ_ITEMS = [
     {
@@ -70,9 +71,7 @@ export default function FAQs() {
                                     >
                                         <span className="text-white font-semibold text-base md:text-lg">{question}</span>
                                         <span className={`text-blue-400 transition-transform duration-300 transform ${isOpen ? 'rotate-180' : ''}`}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-5 h-5">
-                                                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                                            </svg>
+                                            <ChevronDown className="w-5 h-5" strokeWidth={2.5} />
                                         </span>
                                     </button>
                                     <div

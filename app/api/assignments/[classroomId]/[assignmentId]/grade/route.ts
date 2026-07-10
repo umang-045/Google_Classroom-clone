@@ -57,7 +57,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
                 userId: data.studentId,
                 classroomId: classroomId,
                 title: "Assignment Graded",
-                messgae: `Your submission for "${assignment.title}" has been graded. Marks: ${data.marks}`,
+                message: `Your submission for "${assignment.title}" has been graded. Marks: ${data.marks}`,
                 type: "GRADE", 
                 isRead: false
             }

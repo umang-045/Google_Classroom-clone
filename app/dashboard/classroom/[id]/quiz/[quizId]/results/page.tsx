@@ -4,7 +4,6 @@ import { useParams, useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
 import { Loader2, ArrowLeft, Users } from 'lucide-react'
 
-
 interface Student {
     id: number
     name: string
@@ -43,7 +42,7 @@ const QuizResultsPage = () => {
                     return
                 }
                 setSubmissions(data.submissions)
-            } catch (err) { 
+            } catch (err) {
                 toast.error("Something went wrong")
                 setLoadFailed(true)
             } finally {
@@ -62,66 +61,97 @@ const QuizResultsPage = () => {
         : "0"
 
     return (
-        <div className='py-4 px-2 sm:px-4 w-[90%] pb-24'>
+        <div className='w-full max-w-5xl mx-auto py-4 px-3 sm:px-6 pb-24 box-border'>
             <button
                 onClick={() => router.push(`/dashboard/classroom/${classroomId}/quiz/${quizId}`)}
-                className='flex items-center gap-1.5 text-sm text-white/50 hover:text-white/80 transition-colors mb-4'
+                className='flex items-center gap-1.5 text-xs sm:text-sm text-white/50 hover:text-white/80 transition-colors mb-4'
             >
-                <ArrowLeft className='w-4 h-4' />
+                <ArrowLeft className='w-3.5 h-3.5' />
                 Back to quiz
             </button>
 
-            <div className='flex items-center justify-between mb-6'>
+            <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6'>
                 <div>
-                    <h1 className='text-2xl font-bold text-white'>Results</h1>
-                    <p className='text-sm text-white/50 mt-1'>
-                        {submissions.length} submission{submissions.length !== 1 ? 's' : ''}
-                        {submissions.length > 0 && ` · average score ${average}`}
-                    </p>
+                    <h1 className='text-xl sm:text-2xl font-bold text-white tracking-tight'>Results</h1>
+                    <div className='text-xs sm:text-sm text-white/50 mt-1 flex flex-wrap gap-x-1.5 gap-y-0.5 items-center'>
+                        <span>{submissions.length} submission{submissions.length !== 1 ? 's' : ''}</span>
+                        {submissions.length > 0 && (
+                            <>
+                                <span className='text-white/30'>·</span>
+                                <span>average score {average}</span>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
 
             {loading ? (
                 <div className="flex items-center justify-center min-h-[50vh]">
-                     <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
+                    <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
                 </div>
             ) : submissions.length > 0 ? (
-                <div className='rounded-xl bg-white/5 border border-white/10 overflow-hidden'>
-                    <table className='w-full text-sm'>
+
+                <div className="block w-full overflow-x-auto rounded-xl bg-white/5 border border-white/10">
+                    <table className="w-full table-fixed text-left text-xs sm:text-sm">
                         <thead>
-                            <tr className='border-b border-white/10 text-left'>
-                                <th className='px-5 py-3 text-xs font-medium text-white/40'>Student</th>
-                                <th className='px-5 py-3 text-xs font-medium text-white/40'>Submitted</th>
-                                <th className='px-5 py-3 text-xs font-medium text-white/40 text-right'>Score</th>
+                            <tr className="border-b border-white/10">
+                                <th className="px-2 sm:px-4 py-3 text-[10px] sm:text-xs font-medium text-white/40 w-[50%]">
+                                    Student
+                                </th>
+                                <th className="px-2 sm:px-4 py-3 text-[10px] sm:text-xs font-medium text-white/40 w-[30%]">
+                                    Submitted
+                                </th>
+                                <th className="px-2 sm:px-4 py-3 text-[10px] sm:text-xs font-medium text-white/40 text-right w-[20%]">
+                                    Score
+                                </th>
                             </tr>
                         </thead>
+
                         <tbody>
                             {submissions.map((s) => (
-                                <tr key={s.id} className='border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition-colors'>
-                                    <td className='px-5 py-3'>
-                                        <div className='flex items-center gap-3'>
+                                <tr
+                                    key={s.id}
+                                    className="border-b border-white/5 last:border-0 hover:bg-white/[0.03] transition-colors"
+                                >
+                                    <td className="px-2 sm:px-4 py-3">
+                                        <div className="flex items-center gap-2 max-w-full">
                                             {s.student.image ? (
                                                 <img
                                                     src={s.student.image}
                                                     alt={s.student.name}
-                                                    className='w-8 h-8 rounded-full object-cover'
+                                                    className="w-7 h-7 rounded-full object-cover flex-shrink-0"
                                                 />
                                             ) : (
-                                                <div className='w-8 h-8 rounded-full bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-xs text-sky-400 font-medium'>
+                                                <div className="w-7 h-7 rounded-full bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-[10px] text-sky-400 font-medium flex-shrink-0">
                                                     {getInitials(s.student.name)}
                                                 </div>
                                             )}
-                                            <div>
-                                                <p className='text-white'>{s.student.name}</p>
-                                                <p className='text-xs text-white/40'>{s.student.email}</p>
+
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-white font-medium text-xs sm:text-sm truncate">
+                                                    {s.student.name}
+                                                </p>
+                                                <p className="text-[10px] sm:text-xs text-white/40 truncate">
+                                                    {s.student.email}
+                                                </p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td className='px-5 py-3 text-white/60 text-xs'>
-                                        {new Date(s.submitted_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+
+                                    <td className="px-2 sm:px-4 py-3 text-[10px] sm:text-xs text-white/60">
+                                        <span className="block truncate">
+                                            {new Date(s.submitted_at).toLocaleDateString()}
+                                        </span>
+                                        <span className="hidden sm:block text-[10px] text-white/40">
+                                            {new Date(s.submitted_at).toLocaleTimeString([], {
+                                                hour: "2-digit",
+                                                minute: "2-digit",
+                                            })}
+                                        </span>
                                     </td>
-                                    <td className='px-5 py-3 text-right'>
-                                        <span className='font-semibold text-white'>{s.marks}</span>
+
+                                    <td className="px-2 sm:px-4 py-3 text-right font-semibold text-white whitespace-nowrap">
+                                        {s.marks}
                                     </td>
                                 </tr>
                             ))}
@@ -129,9 +159,9 @@ const QuizResultsPage = () => {
                     </table>
                 </div>
             ) : (
-                <div className='flex flex-col items-center justify-center py-16 text-center'>
+                <div className='flex flex-col items-center justify-center py-16 px-4 text-center'>
                     <Users className='w-8 h-8 text-white/20 mb-3' />
-                    <p className='text-white/50'>
+                    <p className='text-xs sm:text-sm text-white/50 max-w-xs'>
                         {loadFailed ? "Couldn't load results. Try refreshing." : "No students have submitted this quiz yet."}
                     </p>
                 </div>

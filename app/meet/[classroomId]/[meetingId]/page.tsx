@@ -25,7 +25,6 @@ const MeetRoomComponent = () => {
 
         const initializeRoom = async () => {
             try {
-
                 const roleRes = await fetch(`/api/classroom/${classroomId}/role`)
                 const roleData = await roleRes.json()
                 if (!roleRes.ok) {
@@ -33,7 +32,6 @@ const MeetRoomComponent = () => {
                     return
                 }
                 if (isMounted) setRole(roleData.role)
-
 
                 const profileRes = await fetch(`/api/userprofile`)
                 const profileData = await profileRes.json()
@@ -86,35 +84,37 @@ const MeetRoomComponent = () => {
 
     if (loading || !token) {
         return (
-            <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white/70 gap-3">
+            <div className="flex flex-col items-center justify-center min-h-screen bg-slate-900 text-white/70 gap-3 p-4">
                 <Loader2 className="size-6 animate-spin" />
-                <p className="text-sm">Connecting to Meeting.....</p>
+                <p className="text-sm text-center">Connecting to Meeting.....</p>
             </div>
         )
     }
 
     return (
-        <div className="relative flex flex-col h-screen bg-slate-900 text-white" data-lk-theme="default">
+        <div className="relative flex flex-col h-screen bg-slate-900 text-white overflow-hidden" data-lk-theme="default">
 
-            <nav className="flex items-center justify-between px-6 py-3 bg-slate-950 border-b border-white/10 z-10">
-                <h1 className="text-lg font-bold">
+            <nav className="flex items-center justify-between px-4 md:px-6 py-3 bg-slate-950 border-b border-white/10 z-10 gap-2">
+                <h1 className="text-md md:text-lg font-bold shrink-0">
                     <span className="text-white">Digital</span>
                     <span className="text-blue-400">Classroom</span>
                 </h1>
 
-                <div className="flex items-center gap-2">
-                    <Button variant='destructive' size='sm' onClick={leaveMeeting} className='text-xs'>
-                            Leave Meeting
-                        </Button>
+                
+                <div className="flex items-center gap-1.5 md:gap-2 shrink-0">
+                    <Button variant='destructive' size='sm' onClick={leaveMeeting} className='text-[11px] md:text-xs px-2.5 md:px-3 h-8 md:h-9 cursor-pointer'>
+                        Leave Meeting
+                    </Button>
                     {role === "teacher" && (
-                        <Button variant='destructive' size='sm' onClick={endMeetingForEveryone} className='text-xs'>
+                        <Button variant='destructive' size='sm' onClick={endMeetingForEveryone} className='text-[11px] md:text-xs px-2.5 md:px-3 h-8 md:h-9 cursor-pointer'>
                             End for Everyone
                         </Button>
                     )}
                 </div>
             </nav>
 
-            <div className="flex-1 relative overflow-hidden">
+       
+            <div className="flex-1 relative overflow-hidden w-full">
                 <LiveKitRoom
                     key={token}
                     video={true}
@@ -122,9 +122,7 @@ const MeetRoomComponent = () => {
                     token={token}
                     serverUrl={process.env.NEXT_PUBLIC_LIVEKIT_URL}
                     connect={true}
-                   
                 >
-
                     <VideoConference />
                 </LiveKitRoom>
             </div>
@@ -132,4 +130,4 @@ const MeetRoomComponent = () => {
     )
 }
 
-export default MeetRoomComponent
+export default MeetRoomComponent;

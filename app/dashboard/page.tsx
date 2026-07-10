@@ -139,7 +139,7 @@ export default function Page() {
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-purple-500/40 transition-all duration-300 group-hover:w-1.5 group-hover:bg-purple-400" />
                         <div className="flex flex-col gap-0.5">
                           <span className="text-sm font-bold tracking-wide uppercase text-zinc-200 transition-colors group-hover:text-white">{c.className}</span>
-                          <span className="text-xs font-medium text-zinc-500 group-hover:text-zinc-400">Active Block · <span className="text-purple-400 font-semibold">{c.studentsCount} students</span></span>
+                          <span className="text-xs font-medium text-zinc-500 group-hover:text-zinc-400">Total Students · <span className="text-zinc-400 font-semibold">{c.studentsCount} students</span></span>
                         </div>
                       </div>
                     ))}

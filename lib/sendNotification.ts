@@ -30,7 +30,7 @@ export async function sendNotificationToClass({
       userId: student.userId,
       classroomId,
       title,
-      messgae: message, 
+      message, 
       type,
       isRead: false
     }));

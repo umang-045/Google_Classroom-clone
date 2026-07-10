@@ -55,7 +55,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
                     userId: joinRequest.userId,
                     classroomId: classId,
                     title: "Join Request Approved",
-                    messgae: `You have been accepted into the classroom "${classroom.className}".`,
+                    message: `You have been accepted into the classroom "${classroom.className}".`,
                     type: "ANNOUNCEMENT",
                     isRead: false
                 }
@@ -67,18 +67,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
             return NextResponse.json({ message: "Student approved and added to classroom" }, { status: 200 })
         } else {
-
-           
-
             await prisma.joinRequest.delete({ where: { id: reqId } })
-
-
+            
             await prisma.notification.create({
                 data: {
                     userId: joinRequest.userId,
                     classroomId: classId,
                     title: "Join Request Rejected",
-                    messgae: `Your request to join the classroom "${classroom.className}" was declined.`,
+                    message: `Your request to join the classroom "${classroom.className}" was declined.`,
                     type: "ANNOUNCEMENT",
                     isRead: false
                 }

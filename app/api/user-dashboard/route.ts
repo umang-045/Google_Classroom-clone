@@ -24,7 +24,7 @@ export async function GET(req: NextRequest) {
             },
             classroomAnnouncemnet: {
               orderBy: { created_at: "desc" },
-              take: 10, // Increased from 5 to 10
+              take: 10,
             },
             meeting: {
               orderBy: { scheduled_at: "asc" },
@@ -44,7 +44,7 @@ export async function GET(req: NextRequest) {
                 },
                 classroomAnnouncemnet: {
                   orderBy: { created_at: "desc" },
-                  take: 10, // Increased from 5 to 10
+                  take: 10, 
                 },
                 meeting: {
                   orderBy: { scheduled_at: "asc" },
@@ -62,7 +62,7 @@ export async function GET(req: NextRequest) {
 
     const now = new Date();
 
-    // ---- Upcoming assignments (both roles) ----
+
     const enrolledAssignments = user.enrolledClassrooms.flatMap(({ classroom }) =>
       classroom.assignments.map((a) => ({
         id: a.id,
@@ -91,9 +91,8 @@ export async function GET(req: NextRequest) {
     const upcomingAssignments = [...enrolledAssignments, ...teachingAssignments]
       .filter((a) => new Date(a.due_at) >= now)
       .sort((a, b) => new Date(a.due_at).getTime() - new Date(b.due_at).getTime())
-      .slice(0, 10); // Increased from 5 to 10
-
-    // ---- Teaching classrooms shaped, with pending grading count ----
+      .slice(0, 10);
+      
     const teachingClassroomsShaped = user.teachingClassrooms.map((c) => {
       const pendingGrading = c.assignments.reduce(
         (sum, a) => sum + a.submissions.filter((s) => s.marks === null).length,
@@ -109,7 +108,6 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // ---- Enrolled classrooms shaped, with "not yet submitted" pending count ----
     const enrolledClassroomsShaped = user.enrolledClassrooms.map(({ classroom }) => {
       const pending = classroom.assignments.filter(
         (a) => a.submissions.length === 0 && new Date(a.due_at) >= now
@@ -124,7 +122,7 @@ export async function GET(req: NextRequest) {
       };
     });
 
-    // ---- Announcements (merged, most recent first, now tagged with role) ----
+   
     const announcements = [
       ...user.teachingClassrooms.flatMap((c) =>
         c.classroomAnnouncemnet.map((a) => ({
@@ -148,7 +146,6 @@ export async function GET(req: NextRequest) {
       ),
     ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
 
-    // ---- Schedule: upcoming meetings across both roles ----
     const schedule = [
       ...user.teachingClassrooms.flatMap((c) =>
         c.meeting
@@ -174,7 +171,7 @@ export async function GET(req: NextRequest) {
       ),
     ]
       .sort((a, b) => new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime())
-      .slice(0, 10); // Increased from 8 to 10
+      .slice(0, 10); 
 
     const stats = {
       totalEnrolled: user.enrolledClassrooms.length,

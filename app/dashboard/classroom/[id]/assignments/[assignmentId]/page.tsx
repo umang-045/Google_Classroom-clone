@@ -2,12 +2,10 @@
 import React, { useState, useEffect } from 'react'
 import CreateAssignment from '@/app/components/Assignment/CreateAssignment'
 import { Button } from '@/components/ui/button'
-import SummarizeButton from '@/app/components/SummariseButton'
 import { TeacherWorkspace } from '@/app/components/Assignment/TeacherWorkspace'
 import { StudentWorkspace } from '@/app/components/Assignment/StudentWorkspace'
 import { useParams, useRouter } from 'next/navigation'
-import { Loader2, ArrowLeft } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { Loader2 } from 'lucide-react'
 
 interface Assignment {
     id: number
@@ -93,6 +91,7 @@ const AssignmentDetailPage = () => {
         role()
     }, [classroomId, assignmentId])
 
+
     const handleDelete = async () => {
         if (!assignment) return
         if (!confirm(`Delete "${assignment.title}"? This cannot be undone.`)) return
@@ -104,80 +103,48 @@ const AssignmentDetailPage = () => {
             })
             const data = await res.json()
             if (!res.ok) throw new Error(data.message || "Delete failed")
-            toast.success("Assignment deleted")   
-            router.push(`/dashboard/classroom/${classroomId}/assignments`)
-        } catch (err) {
-            const message = err instanceof Error ? err.message : "Something went wrong"
-            toast.error(message)
+            router.push(`/classroom/${classroomId}/assignments`)
+        } catch (err: any) {
+            alert(err.message || "Something went wrong")
         } finally {
             setDeleteLoading(false)
         }
     }
-
-    if (loading) return (
-        <div className="flex flex-col items-center justify-center min-h-[75vh] gap-3">
-            <div className="relative flex items-center justify-center">
-                <div className="absolute size-12 bg-zinc-500/10 rounded-full animate-ping pointer-events-none" />
-                <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
-            </div>
-            <span className="text-xs font-medium tracking-wider text-zinc-500 uppercase animate-pulse">
-                Loading Details...
-              </span>
-        </div>
-    )
-
-    if (error) return (
-        <div className="flex items-center justify-center min-h-[50vh]">
-            <div className='p-6 text-center max-w-sm rounded-xl border border-rose-950 bg-rose-500/5 text-rose-400 text-sm'>
-                {error}
-            </div>
-        </div>
-    )
-    
+    if (loading) return <div className="flex items-center justify-center min-h-[75vh]">
+       <Loader2 className="size-8 animate-spin text-blue-400 duration-1000" />
+    </div>
+    if (error) return <div className='p-8 text-center text-destructive'>{error}</div>
     if (!assignment) return null
 
     return (
-        <div className='w-full py-6 px-4 md:px-6 text-zinc-200 animate-in fade-in duration-300'>
-           
-            <div className='flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8 border-b border-zinc-800/60 pb-6'>
-                <div className="space-y-1 w-full max-w-2xl">
+        <div className='w-full py-4 px-2 text-white animate-fadeIn'>
+            <div className='flex flex-col sm:flex-row m-4 justify-between items-start sm:items-center gap-4 mb-6 border-b border-white/10 pb-8'>
+                <div>
                     <Button
                         variant='ghost'
                         onClick={() => router.push(`/dashboard/classroom/${classroomId}/assignments`)}
-                        className='text-zinc-400 hover:text-white p-0 h-auto mb-3 cursor-pointer bg-transparent hover:bg-transparent text-xs gap-1.5 font-medium transition-colors group'
+                        className='text-white/60 hover:text-white p-0 h-auto mb-2 cursor-pointer bg-transparent hover:bg-transparent'
                     >
-                        <ArrowLeft size={14} className="transition-transform group-hover:-translate-x-0.5" />
-                        Back to Assignments
+                        &larr; Back
                     </Button>
-                    <h2 className='text-2xl font-bold tracking-tight text-white'>{assignment.title}</h2>
-                    <p className='text-xs text-zinc-400 pt-0.5'>
-                        Due Date: <span className="text-zinc-300 font-medium">{new Date(assignment.due_at).toLocaleString()}</span>
+                    <h2 className='text-2xl font-bold tracking-tight'>{assignment.title}</h2>
+                    <p className='text-xs text-white/50 mt-0.5'>
+                        Due: {new Date(assignment.due_at).toLocaleString()}
                     </p>
-
-                    <div className="pt-2">
-                        <SummarizeButton
-                            type="assignment"
-                            sourceId={assignment.id}
-                            classroomId={Number(classroomId)}
-                            className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 mt-1"
-                        />
-                    </div>
                 </div>
 
                 {role === "teacher" && (
-                    <div className='flex items-center gap-3 max-sm:w-full shrink-0'>
+                    <div className='flex gap-3 max-sm:w-full'>
                         <Button
-                            type='button'
                             variant='outline'
-                            className='rounded-md border-zinc-700 bg-zinc-900/40 text-zinc-300 hover:bg-zinc-800 hover:text-white text-xs h-10 px-4 cursor-pointer transition-colors max-sm:flex-1'
+                            className='border-white/20 text-white hover:bg-white/10 bg-transparent cursor-pointer text-xs h-9'
                             onClick={() => setEditAssignment(assignment)}
                         >
                             Edit Details
                         </Button>
                         <Button
-                            type='button'
                             variant='destructive'
-                            className='rounded-md bg-rose-700 hover:bg-rose-800 text-white font-medium text-xs h-10 px-4 cursor-pointer transition-colors max-sm:flex-1'
+                            className='text-xs h-9 cursor-pointer'
                             onClick={handleDelete}
                             disabled={deleteLoading}
                         >
@@ -187,32 +154,23 @@ const AssignmentDetailPage = () => {
                 )}
             </div>
 
-        
-            <div className="w-full bg-zinc-950/20 border border-zinc-900 rounded-xl p-1">
-                {role === "teacher" && (
-                    <TeacherWorkspace 
-                        submissions={submissions} 
-                        classroomId={Number(classroomId)} 
-                        assignmentId={assignmentId} 
-                        onGraded={() => fetchAssignmentData(role)} 
-                    />
-                )}
+            {role === "teacher" && (
+                <TeacherWorkspace submissions={submissions} classroomId={Number(classroomId)} assignmentId={assignmentId} onGraded={() => fetchAssignmentData(role)} />
+            )}
 
-                {role === "student" && (
-                    <StudentWorkspace
-                        classroomId={Number(classroomId)}
-                        assignmentId={assignment.id}
-                        isSubmitted={isSubmitted}
-                        setIsSubmitted={setIsSubmitted}
-                        onSuccess={() => fetchAssignmentData(role)}
-                        marks={assignment.marks ?? null}
-                        feedback={assignment.feedback ?? null}
-                        submissionFileUrl={assignment.submissionFileUrl ?? null}
-                    />
-                )}
-            </div>
+            {role === "student" && (
+                <StudentWorkspace
+                    classroomId={Number(classroomId)}
+                    assignmentId={assignment.id}
+                    isSubmitted={isSubmitted}
+                    setIsSubmitted={setIsSubmitted}
+                    onSuccess={() => fetchAssignmentData(role)}
+                    marks={assignment.marks ?? null}
+                    feedback={assignment.feedback ?? null}
+                    submissionFileUrl={assignment.submissionFileUrl ?? null}
+                />
+            )}
 
-            {/* Custom Modal Sheet Fallback */}
             {editAssignment && (
                 <CreateAssignment
                     classroomId={Number(classroomId)}

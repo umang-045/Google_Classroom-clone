@@ -159,7 +159,7 @@ const Members = () => {
         </div>
       </div>
 
-      {/* Classmates Section - Standardized margin-top layout matches above perfectly */}
+   
       <div className='mt-16'>
         <div className='flex items-center justify-between mb-2'>
           <h2 className='text-xl text-white font-bold tracking-tight'>Classmates</h2>

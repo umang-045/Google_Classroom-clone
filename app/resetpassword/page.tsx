@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import toast from 'react-hot-toast'
+import { toastOptions } from '../components/toastOptions'
 
 const ResetPasswordPage = () => {
     const router = useRouter()
@@ -25,7 +26,7 @@ const ResetPasswordPage = () => {
     const handleReset = async (e: React.SyntheticEvent<HTMLFormElement>) => {
         e.preventDefault()
         if (password !== confirmPassword) {
-            toast.error("Passwords do not match.")
+            toast.error("Passwords do not match.",toastOptions)
             return
         }
         setLoading(true)
@@ -37,10 +38,10 @@ const ResetPasswordPage = () => {
         const data: { error?: string } = await res.json()
         setLoading(false)
         if (!res.ok) {
-            toast.error(data.error || "Something went wrong. Try again.")
+            toast.error(data.error || "Something went wrong. Try again.",toastOptions)
             return
         }
-        toast.success("Password reset successfully!")
+        toast.success("Password reset successfully!",toastOptions)
         sessionStorage.removeItem("reset_email")
         router.push('/login')
     }

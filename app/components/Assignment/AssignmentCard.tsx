@@ -41,7 +41,7 @@ export const AssignmentCard = ({ assignment, role, classroomId, isSubmittedByStu
     const isOverdue = new Date(assignment.due_at) < new Date()
 
     return (
-        <div onClick={() => onOpenWorkspace(assignment.id)} className="w-full rounded-xl bg-white/10 border border-white/15 border-l-4 border-l-blue-500/70 text-white p-6 shadow-sm cursor-pointer hover:bg-white/15 transition-all duration-200 group layout-card">
+        <div onClick={() => onOpenWorkspace(assignment.id)} className="w-full rounded-xl bg-white/10 border border-white/15 border-l-4 border-l-blue-500/70 text-white p-4 shadow-sm cursor-pointer hover:bg-white/15 transition-all duration-200 group layout-card">
             <div className='flex items-start gap-3'>
                 <div className='shrink-0 w-9 h-9 rounded-full bg-blue-500/15 border border-blue-500/30 flex items-center justify-center'>
                     <ClipboardList className='w-4 h-4 text-blue-400' />
@@ -51,7 +51,7 @@ export const AssignmentCard = ({ assignment, role, classroomId, isSubmittedByStu
                     <div className='flex items-start justify-between gap-4'>
                         <div className='min-w-0 flex-1'>
                             <div className='flex items-center gap-2'>
-                                <h3 className='text-base font-semibold text-white group-hover:font-bold transition-colors line-clamp-1'>
+                                <h3 className='text-base font-semibold text-white transition-colors line-clamp-1'>
                                     {assignment.title}
                                 </h3>
                                 {isNew && (
@@ -61,16 +61,16 @@ export const AssignmentCard = ({ assignment, role, classroomId, isSubmittedByStu
                                 )}
                             </div>
 
-                            <p className='mt-1 text-xs text-white/40'>
+                            <p className='text-[11px] text-white/40'>
                                 Created {getRelativeTime(assignment.created_at)}
                             </p>
 
-                            <p className='mt-2 text-sm text-white/70 line-clamp-2'>
+                            <p className='mt-1 text-sm text-white/70 line-clamp-2'>
                                 {assignment.description}
                             </p>
                         </div>
 
-                        <span className={`text-xs whitespace-nowrap mt-1 px-2.5 py-1 rounded-md border ${
+                        <span className={`text-xs whitespace-nowrap px-2.5 py-1 rounded-md border ${
                             isOverdue
                                 ? 'bg-white/5 border-white/10 text-white/40 line-through'
                                 : 'bg-red-500/10 border-red-500/30 text-red-400'
@@ -79,17 +79,16 @@ export const AssignmentCard = ({ assignment, role, classroomId, isSubmittedByStu
                         </span>
                     </div>
 
-              
-                    <div onClick={e => e.stopPropagation()}>
+                    <div className="mt-2" onClick={e => e.stopPropagation()}>
                         <SummarizeButton
                             type="assignment"
                             sourceId={assignment.id}
                             classroomId={classroomId}
-                            className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300"
+                            className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20 hover:text-blue-300 py-1 h-7 text-xs"
                         />
                     </div>
 
-                    <div className='mt-4 pt-4 border-t border-white/5 flex items-center justify-between gap-4' onClick={e => e.stopPropagation()}>
+                    <div className='mt-3 pt-3 border-t border-white/5 flex items-center justify-between gap-4' onClick={e => e.stopPropagation()}>
                         <div>
                             {assignment.fileUrl && (
                                 <a href={assignment.fileUrl} target='_blank' rel='noopener noreferrer' className='text-xs text-white/80 underline hover:text-blue-300 inline-flex items-center gap-1'>

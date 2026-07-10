@@ -1,5 +1,6 @@
 "use client"
 import { motion } from 'framer-motion'
+import { Star } from 'lucide-react';
 
 const TESTIMONIALS = [
   {
@@ -75,9 +76,7 @@ export default function Testimonials() {
           >
             <div className="flex gap-1 mb-6 text-blue-400">
               {Array.from({ length: 5 }).map((_, i) => (
-                <svg key={i} viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-                  <path d="M10 1.5l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" />
-                </svg>
+                <Star key={i} className="w-5 h-5" fill="currentColor" strokeWidth={0} />
               ))}
             </div>
 

@@ -112,7 +112,7 @@ const Page = () => {
                     ))}
                 </div>
             ) : (
-                <p className='text-center text-white/50 py-12'>
+                <p className='text-center text-white/50 py-12 px-4'>
                     {loadFailed ? "Couldn't load announcements. Try refreshing." : "No announcements published here yet."}
                 </p>
             )}
