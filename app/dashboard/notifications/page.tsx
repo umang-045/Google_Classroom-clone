@@ -8,7 +8,7 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 interface NotificationItem {
   id: number;
   title: string;
-  message: string; // Fixed typo from 'messgae'
+  message: string; 
   type: "ASSIGNMENT" | "ANNOUNCEMENT" | "GRADE" | "QUIZ";
   isRead: boolean;
   created_at: string;

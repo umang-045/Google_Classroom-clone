@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from "next/server";
 import prisma from "@/lib/db";
 import { getToken } from "next-auth/jwt";
 import { sendNotificationToClass } from "@/lib/sendNotification";
+import { getAnnouncementsForClassroom } from "@/lib/server/announcements";
 
 export async function POST(req: NextRequest, { params }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
@@ -66,36 +67,16 @@ export async function GET(req: NextRequest, { params }) {
             return NextResponse.json({ message: "Invalid classroom ID" }, { status: 400 })
         }
 
-        const existing = await prisma.classroom.findUnique({ where: { id: classId } })
-        if (!existing) {
-            return NextResponse.json({ message: "classroom not found" }, { status: 404 })
-        }
-
-        const teacherId = existing.teacherId
-
-        const studentId = await prisma.classroomStudent.findUnique({
-            where: {
-                userId_classroomId: {
-                    userId: Number(token.id),
-                    classroomId: classId
-                }
-            }
-        })
-        if (teacherId != Number(token.id) && !studentId) {
-            return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
-        }
-
-        const allAnnouncement = await prisma.announcement.findMany({
-            where: {
-                classroomId: classId,
-            },
-            orderBy: {
-                created_at: 'desc'
-            }
-        })
+        const { allAnnouncement } = await getAnnouncementsForClassroom(classId, Number(token.id))
         return NextResponse.json({ allAnnouncement }, { status: 200 })
 
     } catch (err) {
+        if (err instanceof Error && err.message === "CLASSROOM_NOT_FOUND") {
+            return NextResponse.json({ message: "classroom not found" }, { status: 404 })
+        }
+        if (err instanceof Error && err.message === "UNAUTHORIZED") {
+            return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
+        }
         console.log(err);
         return NextResponse.json({ messgae: "Internal Error" }, { status: 500 })
     }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import prisma from "@/lib/db"
 import { getToken } from "next-auth/jwt"
+import { getSubmissionsForAssignment } from "@/lib/server/assignments";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ classroomId: string; assignmentId: string }> }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
@@ -16,53 +17,15 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
         return NextResponse.json({ message: "Invalid IDs" }, { status: 400 })
     }
 
-
-    const classroom = await prisma.classroom.findUnique({
-        where: {
-            id: classroomId,
-            teacherId: Number(token.id),
-        },
-    })
-
-    if (!classroom) {
-        return NextResponse.json({ message: "Forbidden" }, { status: 403 })
+    try {
+        const { submissions } = await getSubmissionsForAssignment(classroomId, assignmentId, Number(token.id))
+        return NextResponse.json({ submissions })
+    } catch (err) {
+        if (err instanceof Error && err.message === "FORBIDDEN") {
+            return NextResponse.json({ message: "Forbidden" }, { status: 403 })
+        }
+        return NextResponse.json({ message: "Internal Server Error" }, { status: 500 })
     }
-
-    const enrolledStudents = await prisma.classroomStudent.findMany({
-        where: { classroomId },
-        include: {
-            user: {
-                select: { id: true, name: true, email: true }
-            }
-        }
-    })
-
-    const submissions = await prisma.submission.findMany({
-        where: { assignmentId },
-    })
-
-
-    const formatted = enrolledStudents.map((enrolled) => {
-        const student = enrolled.user
-        const submission = submissions.find((s) => s.studentId === student.id)
-
-        return {
-            id: submission?.id || `unsubmitted-${student.id}`,
-            studentId: student.id,
-            studentName: student.name || "Unknown Student",
-            studentEmail: student.email || "",
-            fileUrl: submission?.fileUrl || null,
-            submittedAt: submission?.submitted_at || null,
-            hasSubmitted: !!submission,
-            marks: submission?.marks ?? null,
-            feedback: submission?.feedback ?? null
-        }
-    })
-
-
-    formatted.sort((a, b) => (b.hasSubmitted ? 1 : 0) - (a.hasSubmitted ? 1 : 0))
-
-    return NextResponse.json({ submissions: formatted })
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ classroomId: string; assignmentId: string }> }) {

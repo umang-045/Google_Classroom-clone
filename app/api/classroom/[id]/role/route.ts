@@ -1,7 +1,6 @@
 import { NextResponse, NextRequest } from "next/server"
-import prisma from "@/lib/db"
 import { getToken } from "next-auth/jwt"
-
+import { getClassroomRole } from "@/lib/server/classroomDetails"
 
 async function individualPage(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -13,22 +12,17 @@ async function individualPage(req: NextRequest, { params }: { params: Promise<{ 
         const { id } = await params
         const classroomId = parseInt(id)
 
-        const classroom = await prisma.classroom.findUnique({ where: { id: classroomId },select:{teacherId:true}})
+        const { role } = await getClassroomRole(classroomId, Number(token.id))
 
-        if (!classroom) {
-            return NextResponse.json({ message: "Classroom Not Found" }, { status: 404 })
-        }
-
-        const isTeacher = classroom.teacherId === Number(token.id)
-        const isStudent = await prisma.classroomStudent.findUnique({ where: { userId_classroomId: { userId: Number(token.id), classroomId: classroomId } } })
-        if (!isTeacher && !isStudent) {
-            return NextResponse.json({ message: "Not enrolled" }, { status: 403 })
-        }
-
-        return NextResponse.json({ role: isTeacher ? "teacher" : "student" }, { status: 200 })
-
+        return NextResponse.json({ role }, { status: 200 })
 
     } catch (err) {
+        if (err instanceof Error && err.message === "CLASSROOM_NOT_FOUND") {
+            return NextResponse.json({ message: "Classroom Not Found" }, { status: 404 })
+        }
+        if (err instanceof Error && err.message === "NOT_ENROLLED") {
+            return NextResponse.json({ message: "Not enrolled" }, { status: 403 })
+        }
         console.error(err)
         return NextResponse.json({ message: "Internal error " }, { status: 500 })
     }

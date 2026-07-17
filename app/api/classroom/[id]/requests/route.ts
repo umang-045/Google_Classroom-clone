@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import prisma from "@/lib/db";
-import { getToken } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server"
+import { getToken } from "next-auth/jwt"
+import { getClassroomRequests } from "@/lib/server/classroomDetails"
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
@@ -15,27 +15,17 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
             return NextResponse.json({ message: "Invalid classroom ID" }, { status: 400 })
         }
 
-        const classroom = await prisma.classroom.findUnique({ where: { id: classId } })
-        if (!classroom) {
-            return NextResponse.json({ message: "Classroom not found" }, { status: 404 })
-        }
-        if (classroom.teacherId !== Number(token.id)) {
-            return NextResponse.json({ message: "You are not authorized to view this classroom's requests" }, { status: 403 })
-        }
-
-        const requests = await prisma.joinRequest.findMany({
-            where: { classroomId: classId },
-            include: {
-                user: {
-                    select: { name: true, email: true }
-                }
-            },
-            orderBy: { requested_at: 'desc' }
-        })
+        const { requests } = await getClassroomRequests(classId, Number(token.id))
 
         return NextResponse.json({ requests }, { status: 200 })
 
     } catch (err) {
+        if (err instanceof Error && err.message === "CLASSROOM_NOT_FOUND") {
+            return NextResponse.json({ message: "Classroom not found" }, { status: 404 })
+        }
+        if (err instanceof Error && err.message === "UNAUTHORIZED") {
+            return NextResponse.json({ message: "You are not authorized to view this classroom's requests" }, { status: 403 })
+        }
         console.error(err)
         return NextResponse.json({ message: "Internal Error" }, { status: 500 })
     }

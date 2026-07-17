@@ -65,7 +65,7 @@ model Classroom {
   joinRequest           JoinRequest[]      @relation("JoinRequestClassroom")
   meeting               Meeting[]          @relation("ClassroomMeeting")
   quiz                  Quiz[]             @relation("ClassroomQuiz")
-  notifications          Notification[]     @relation("ClassroomNotifications")
+  notifications         Notification[]     @relation("ClassroomNotifications")
 }
 
 model ClassroomStudent {
@@ -97,7 +97,7 @@ model Submission {
   id           Int        @id @default(autoincrement())
   fileUrl      String
   submitted_at DateTime   @default(now())
-  assignment   Assignment @relation("SubmitAssignment", fields: [assignmentId], references: [id])
+  assignment   Assignment @relation("SubmitAssignment", fields: [assignmentId], references: [id], onDelete: Cascade)
   assignmentId Int
   marks        Int?
   feedback     String?

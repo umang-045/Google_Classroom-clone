@@ -1,35 +1,20 @@
-import prisma from '../../../../lib/db'
 import { NextRequest, NextResponse } from 'next/server'
 import { getToken } from 'next-auth/jwt'
+import { getUserClassrooms } from '@/lib/server/classrooms'
 
-export async function GET(req:NextRequest){
-    try{
-        const token = await getToken({req:req,secret:process.env.NEXTAUTH_SECRET})
-        if(!token || !token.id){
-            return NextResponse.json({message:"Login and Try Again"},{status:401})
+export async function GET(req: NextRequest) {
+    try {
+        const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
+        if (!token || !token.id) {
+            return NextResponse.json({ message: "Login and Try Again" }, { status: 401 })
         }
-        const userId=parseInt(token.id as string);
-        const teachingClassroom=await prisma.classroom.findMany({
-            where:{
-                teacherId:userId
-            }
-        })
-        const enrolledClassroom=await prisma.classroomStudent.findMany({
-            where:{userId},
-            include:{classroom:true}
-        })
+        const userId = parseInt(token.id as string)
+        const { teachingClassroom, enrolledClassroom, pendingRequests } = await getUserClassrooms(userId)
 
-        const pendingRequests = await prisma.joinRequest.findMany({
-            where: { userId },
-            include: { classroom: true }
-        })
+        return NextResponse.json({ teachingClassroom, enrolledClassroom, pendingRequests }, { status: 200 })
 
-
-        return NextResponse.json({teachingClassroom,enrolledClassroom,pendingRequests},{status:200})
-
-    }catch(err){
+    } catch (err) {
         console.error(err)
-        return NextResponse.json({message:"Internal Error "},{status:500})
+        return NextResponse.json({ message: "Internal Error " }, { status: 500 })
     }
 }
-
