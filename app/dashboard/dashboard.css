@@ -1,11 +1,12 @@
 body {
-  background-color: rgb(30, 24, 24);
+  background-color: #111217 !important;
   margin: 0;
 }
 
 .DashboardContainer {
   display: flex;
-  background: linear-gradient(to bottom, #27272a, #151519);
+  background-color: #111217 !important;
+  background: #111217 !important;
 }
 
 .sidebar {
@@ -13,7 +14,8 @@ body {
   flex-direction: column;
   width: 300px;
   min-height: 100vh;
- background: linear-gradient(to right, #27272a, #151519);
+  background-color: #111217 !important;
+  background: #111217 !important;
   padding-bottom: 20px;
 }
 
@@ -76,7 +78,8 @@ body {
 }
 
 .Topbar {
-  background: linear-gradient(to top, #27272a, #151519);
+  background-color: #111217 !important;
+  background: #111217 !important;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -119,8 +122,11 @@ body {
   text-decoration: underline;
   color: #a3a5a9;
 }
+
 .mainContent {
   flex: 1;
   display: flex;
   flex-direction: column;
+  background-color: #111217 !important;
+  background: #111217 !important;
 }

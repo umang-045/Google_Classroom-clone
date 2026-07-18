@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/db";
+import { getQuizDetail } from "@/lib/server/quiz";
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ classroomId: string, quizId: string }> }) {
     try {
@@ -18,49 +19,20 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
         if (isNaN(quizId)) {
             return NextResponse.json({ message: "Invalid Quiz" }, { status: 400 });
         }
-        const classroom = await prisma.classroom.findUnique({
-            where: {
-                id: classId
-            },
-            select: {
-                teacherId: true,
-                students: {
-                    where: {
-                        userId: Number(token.id)
-                    }
-                }
-            }
-        })
-        if (!classroom) {
-            return NextResponse.json({ message: "Classroom not found" }, { status: 404 });
-        }
-        const isTeacher = classroom.teacherId === Number(token.id);
-        const isStudent = classroom.students.length > 0;
 
-        if (!isTeacher && !isStudent) {
-            return NextResponse.json({ message: "You are not enrolled in this classroom" }, { status: 403 });
-        }
-
-        const quizDetail = await prisma.quiz.findUnique({
-            where: {
-                id: quizId,
-            },
-        })
-        if (!quizDetail || quizDetail.classroomId !== classId) {
-            return NextResponse.json({ message: "Quiz not found in this classroom" }, { status: 404 });
-        }
-        const submission = await prisma.quizSubmission.findUnique({
-            where: {
-                quizId_studentId: {
-                    quizId: quizId,
-                    studentId: Number(token.id)
-                }
-            }
-        });
-
+        const { quizDetail, submission } = await getQuizDetail(classId, quizId, Number(token.id))
         return NextResponse.json({ quizDetail, submission }, { status: 200 });
 
     } catch (err) {
+        if (err instanceof Error && err.message === "CLASSROOM_NOT_FOUND") {
+            return NextResponse.json({ message: "Classroom not found" }, { status: 404 });
+        }
+        if (err instanceof Error && err.message === "NOT_ENROLLED") {
+            return NextResponse.json({ message: "You are not enrolled in this classroom" }, { status: 403 });
+        }
+        if (err instanceof Error && err.message === "QUIZ_NOT_FOUND") {
+            return NextResponse.json({ message: "Quiz not found in this classroom" }, { status: 404 });
+        }
         console.log(err);
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });
     }

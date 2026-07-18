@@ -12,13 +12,13 @@ const Dashboardlayout = ({ children }) => {
 
   return (
     <>
-      <div className='DashboardContainer'>
-        <SidebarProvider>
-        <AppSidebar />
-        
-        <div className='mainContent'>
-          {children}
-        </div>
+      <div className='DashboardContainer min-h-screen w-full text-zinc-100 bg-[#111217]'>
+        <SidebarProvider> 
+          <AppSidebar />
+          
+          <div className='mainContent min-h-screen overflow-y-auto bg-[#111217]'>
+            {children}
+          </div>
         </SidebarProvider>
       </div>
       {createclassbox && <CreateClass setcreateclassBox={setcreateclassBox} />}
@@ -28,4 +28,3 @@ const Dashboardlayout = ({ children }) => {
 }
 
 export default Dashboardlayout
-

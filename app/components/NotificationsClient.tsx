@@ -1,5 +1,6 @@
+// app/notifications/NotificationsClient.tsx
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Bell, BookOpen, MessageSquare, Award, HelpCircle, Trash2, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 import { Separator } from "@/components/ui/separator";
@@ -8,16 +9,19 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 interface NotificationItem {
   id: number;
   title: string;
-  message: string;
+  message: string; 
   type: "ASSIGNMENT" | "ANNOUNCEMENT" | "GRADE" | "QUIZ";
   isRead: boolean;
   created_at: string;
   classroom?: { className: string } | null;
 }
 
-export default function NotificationsPage() {
-  const [notifications, setNotifications] = useState<NotificationItem[]>([]);
-  const [loading, setLoading] = useState(true);
+interface NotificationsClientProps {
+  initialNotifications: NotificationItem[];
+}
+
+export default function NotificationsPage({ initialNotifications }: NotificationsClientProps) {
+  const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
   const [clearing, setClearing] = useState(false);
 
   const getIcon = (type: string) => {
@@ -29,31 +33,6 @@ export default function NotificationsPage() {
       default: return <Bell className="text-zinc-500 size-5" />;
     }
   };
-
-  const loadNotifications = async () => {
-    try {
-      const res = await fetch("/api/notifications");
-      const data = await res.json();
-
-      if (res.ok) {
-        setNotifications(data.notifications || []);
-        const unreadExists = data.notifications?.some((n: NotificationItem) => !n.isRead);
-        if (unreadExists) {
-          await fetch("/api/notifications", { method: "PUT" });
-        }
-      } else {
-        toast.error(data.message || "Failed to load notifications.");
-      }
-    } catch (err) {
-      console.error("Client fetch error:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadNotifications();
-  }, []);
 
   const handleClearAll = async () => {
     if (notifications.length === 0 || clearing) return;
@@ -77,23 +56,6 @@ export default function NotificationsPage() {
       setClearing(false);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-3 select-none">
-        <div className="relative flex items-center justify-center">
-
-          <div className="absolute size-12 bg-blue-400/20 rounded-full animate-ping opacity-75" />
-
-          <Loader2 className="size-8 animate-spin text-blue-500 dark:text-blue-400" />
-        </div>
-
-        <p className="text-sm font-medium text-slate-500 dark:text-slate-400 animate-pulse tracking-wide">
-          Loading...
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col min-h-screen w-full bg-zinc-950 text-white pb-10">

@@ -1,6 +1,7 @@
 import { NextResponse, NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 import prisma from "@/lib/db";
+import { getClassroomChatData } from "@/lib/server/chat";
 
 export async function POST(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
@@ -47,47 +48,19 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
     }
     try {
         const classId = (await params).id
-        const classroomId = Number(classId)
-        const userId = Number(token.id)
-        const [isMember, classroom] = await Promise.all([
-            prisma.classroomStudent.findUnique({
-                where: { userId_classroomId: { userId, classroomId } }
-            }),
-            prisma.classroom.findUnique({
-                where: { id: classroomId }
-            })
-        ]);
-        if (!isMember && classroom?.teacherId !== userId) {
+        const userId = String(token.id)
+        
+        const data = await getClassroomChatData(classId, userId);
+        return NextResponse.json(data, { status: 200 })
+
+    } catch (err: any) {
+        console.log(err);
+        if (err.message === "FORBIDDEN") {
             return NextResponse.json({ message: "Not a member" }, { status: 403 })
         }
-        const [allmessages, currentUser] = await Promise.all([
-            prisma.chat.findMany({
-                where:{
-                    classId:classroomId
-                },
-                select:{
-                    id:true,
-                    created_at:true,
-                    message:true,
-                    sender:{select:{
-                        name:true,
-                        email:true,
-                        image:true
-                    }}
-                },
-                orderBy: { created_at: 'desc' },
-                take:50
-            }),
-            prisma.users.findUnique({
-                where: { id: userId },
-                select: { id: true, name: true, email: true, image: true }
-            })
-        ])
-
-       return NextResponse.json({ messages: allmessages, currentUser }, { status: 200 })
-
-    } catch (err) {
-        console.log(err);
+        if (err.message === "NOT_FOUND") {
+            return NextResponse.json({ message: "User not found" }, { status: 404 })
+        }
         return NextResponse.json({ message: "Internal Error" }, { status: 500 })
     }
 }

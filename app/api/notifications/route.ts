@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
-import prisma from "@/lib/db";
 import { getToken } from "next-auth/jwt";
+import { getNotifications, markNotificationsRead } from "@/lib/server/notifications";
 
 
 export async function GET(req: NextRequest) {
@@ -11,23 +11,9 @@ export async function GET(req: NextRequest) {
         }
         const userId = Number(token.id);
 
-        const notifications = await prisma.notification.findMany({
-            where: {
-                userId
-            },
-            orderBy: {
-                created_at: "desc"
-            },
-            include: {
-                classroom: {
-                    select: {
-                        className: true
-                    }
-                }
-            }
-        });
+        const notifications = await getNotifications(userId);
 
-        return NextResponse.json({ notifications },{status:200});
+        return NextResponse.json({ notifications }, { status: 200 });
     } catch (error) {
         console.error("Error fetching notifications:", error);
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });
@@ -43,12 +29,9 @@ export async function PUT(req: NextRequest) {
         }
         const userId = Number(token.id);
 
-        await prisma.notification.updateMany({
-            where: { userId, isRead: false },
-            data: { isRead: true }
-        });
+        const result = await markNotificationsRead(userId);
 
-        return NextResponse.json({ success: true },{status:202});
+        return NextResponse.json(result, { status: 202 });
     } catch (error) {
         console.error("Error updating notifications:", error);
         return NextResponse.json({ message: "Internal server error" }, { status: 500 });

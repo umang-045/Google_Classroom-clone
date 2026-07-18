@@ -99,8 +99,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     avatar: avatarOverride || profile?.image || classphoto(profile?.name ?? userInfo?.user?.name ?? "")
   }
 
+  const activePillStyles = `
+    !bg-gradient-to-r !from-[#1d1f27] !to-[#14161d] 
+    !text-white font-semibold border border-white/[0.08] 
+    shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),0_8px_16px_-6px_rgba(0,0,0,0.5)] 
+    [&_svg]:!text-blue-400 [&_svg]:!opacity-100 scale-[1.02]
+  `.trim();
+
   return (
-    <Sidebar collapsible="icon" variant="inset" {...props}>
+    <Sidebar 
+      collapsible="icon" 
+      {...props}
+      /* Swapped out border-none for border-r border-white/[0.08] to align borders across components */
+      className="tracking-wide text-zinc-300 bg-[#111217] border-r border-white/[0.08]"
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -108,83 +120,98 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               className="data-[slot=sidebar-menu-button]:p-1.5!"
               render={<a href="/dashboard" />}
             >
-              <span className="text-base font-bold mt-2">
-                <span className="text-white text-2xl">Digital</span>
-                <span className="text-blue-500 text-2xl">Classroom</span>
+              <span className="text-base font-bold mt-2 tracking-wider">
+                <span className="text-white text-2xl font-extrabold">Digital</span>
+                <span className="text-blue-500 text-2xl font-extrabold">Classroom</span>
               </span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="mt-5">
+      <SidebarContent className="mt-5 tracking-wide px-2">
 
         <SidebarGroup>
-          <SidebarGroupLabel>General</SidebarGroupLabel>
+          <SidebarGroupLabel className="tracking-widest uppercase text-[10px] text-zinc-500 font-bold px-3 mb-1">General</SidebarGroupLabel>
           <SidebarGroupContent>
-            <SidebarMenu>
+            <SidebarMenu className="gap-1">
               <SidebarMenuItem>
                 <AIChatButton
                   trigger={(onClick) => (
-                    <SidebarMenuButton onClick={onClick}>
-                      <Sparkles />
+                    <SidebarMenuButton onClick={onClick} className="tracking-wide text-zinc-400 hover:text-white cursor-pointer transition-colors duration-200 hover:bg-white/[0.02]">
+                      <Sparkles className="text-blue-400/80" />
                       <span>Ask AI</span>
                     </SidebarMenuButton>
                   )}
                 />
               </SidebarMenuItem>
 
-              {data.general.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton isActive={isActive(item.url)} render={<a href={item.url} />}>
-                    <item.icon />
-                    <div className="flex items-center justify-between w-full">
-                      <span>{item.title}</span>
-                      {item.title === "Notifications" && unreadCount > 0 && (
-                        <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-amber-200 px-1.5 text-[11px] font-bold text-zinc-950 ring-1 ring-background">
-                          {unreadCount}
-                        </span>
-                      )}
-                    </div>
-
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {data.general.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton 
+                      isActive={active} 
+                      render={<a href={item.url} />} 
+                      className={`tracking-wide transition-all duration-300 rounded-xl px-3 h-10 cursor-pointer ${
+                        active 
+                          ? activePillStyles 
+                          : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
+                      }`}
+                    >
+                      <item.icon className="size-4 transition-transform duration-200 group-hover:scale-105" />
+                      <div className="flex items-center justify-between w-full">
+                        <span>{item.title}</span>
+                        {item.title === "Notifications" && unreadCount > 0 && (
+                          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-blue-500 px-1.5 text-[11px] font-bold text-white shadow-sm shadow-blue-500/20">
+                            {unreadCount}
+                          </span>
+                        )}
+                      </div>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarSeparator />
+        <SidebarSeparator className="my-2 bg-white/[0.04]" />
 
         <SidebarGroup>
           <SidebarMenu>
             <Collapsible className="group/collapsible">
               <SidebarMenuItem>
                 <CollapsibleTrigger render={
-                  <SidebarMenuButton tooltip="Enrolled">
-                    <School className="size-4" />
+                  <SidebarMenuButton tooltip="Enrolled" className="tracking-wide text-zinc-400 hover:text-white px-3 cursor-pointer hover:bg-white/[0.02]">
+                    <School className="size-4 text-zinc-500 group-hover:text-zinc-300" />
                     <span>Enrolled</span>
-                    <ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <ChevronRight className="ml-auto size-4 transition-transform duration-200 text-zinc-500 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 } />
                 <CollapsibleContent>
-                  <SidebarMenuSub className="mt-1">
+                  <SidebarMenuSub className="mt-1 ml-4 border-l border-white/[0.06] pl-2 gap-1 flex flex-col">
                     {enrolledClassrooms.length === 0 ? (
                       <SidebarMenuSubItem>
-                        <span className="text-xs text-zinc-500 italic px-2 py-1">No enrolled classes</span>
+                        <span className="text-xs text-zinc-600 italic px-3 py-1.5 tracking-wide">No enrolled classes</span>
                       </SidebarMenuSubItem>
                     ) : (
                       enrolledClassrooms.map((item) => {
                         const cls = item.classroom || item;
                         const classUrl = `/dashboard/classroom/${cls.id}`;
+                        const active = isActive(classUrl);
                         return (
                           <SidebarMenuSubItem key={cls.id}>
                             <SidebarMenuSubButton
-                              isActive={isActive(classUrl)}
+                              isActive={active}
                               render={<a href={classUrl} />}
-                              className="!flex !items-center !gap-2 !h-8 !px-2 group"
+                              className={`!flex !items-center !gap-2.5 !h-9 !px-3 tracking-wide rounded-xl transition-all duration-300 cursor-pointer group ${
+                                active 
+                                  ? activePillStyles 
+                                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
+                              }`}
                             >
-                              <School className="!size-3.5 !text-zinc-400 group-hover:!text-zinc-100 !opacity-100 !block shrink-0 transition-colors duration-200" />
-                              <span className="truncate">{String(cls.className).toUpperCase()}</span>
+                              <School className="!size-3.5 transition-colors duration-200 shrink-0 text-zinc-500 group-hover:text-zinc-300" />
+                              <span className="truncate tracking-wide text-xs">{String(cls.className).toUpperCase()}</span>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         );
@@ -197,37 +224,42 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
 
-        <SidebarSeparator />
+        <SidebarSeparator className="my-2 bg-white/[0.04]" />
 
         <SidebarGroup>
           <SidebarMenu>
             <Collapsible className="group/collapsible">
               <SidebarMenuItem>
                 <CollapsibleTrigger render={
-                  <SidebarMenuButton tooltip="Teaching">
-                    <BookOpen className="size-4" />
+                  <SidebarMenuButton tooltip="Teaching" className="tracking-wide text-zinc-400 hover:text-white px-3 cursor-pointer hover:bg-white/[0.02]">
+                    <BookOpen className="size-4 text-zinc-500 group-hover:text-zinc-300" />
                     <span>Teaching</span>
-                    <ChevronRight className="ml-auto size-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    <ChevronRight className="ml-auto size-4 transition-transform duration-200 text-zinc-500 group-data-[state=open]/collapsible:rotate-90" />
                   </SidebarMenuButton>
                 } />
                 <CollapsibleContent>
-                  <SidebarMenuSub className="mt-1">
+                  <SidebarMenuSub className="mt-1 ml-4 border-l border-white/[0.06] pl-2 gap-1 flex flex-col">
                     {teachingClassrooms.length === 0 ? (
                       <SidebarMenuSubItem>
-                        <span className="text-xs text-zinc-500 italic px-2 py-1">No teaching classes</span>
+                        <span className="text-xs text-zinc-600 italic px-3 py-1.5 tracking-wide">No teaching classes</span>
                       </SidebarMenuSubItem>
                     ) : (
                       teachingClassrooms.map((cls) => {
                         const classUrl = `/dashboard/classroom/${cls.id}`;
+                        const active = isActive(classUrl);
                         return (
                           <SidebarMenuSubItem key={cls.id}>
                             <SidebarMenuSubButton
-                              isActive={isActive(classUrl)}
+                              isActive={active}
                               render={<a href={classUrl} />}
-                              className="!flex !items-center !gap-2 !h-8 !px-2 group"
+                              className={`!flex !items-center !gap-2.5 !h-9 !px-3 tracking-wide rounded-xl transition-all duration-300 cursor-pointer group ${
+                                active 
+                                  ? activePillStyles 
+                                  : 'text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.02]'
+                              }`}
                             >
-                              <BookOpen className="!size-3.5 !text-zinc-400 group-hover:!text-zinc-100 !opacity-100 !block shrink-0 transition-colors duration-200" />
-                              <span className="truncate">{String(cls.className).toUpperCase()}</span>
+                              <BookOpen className="!size-3.5 transition-colors duration-200 shrink-0 text-zinc-500 group-hover:text-zinc-300" />
+                              <span className="truncate tracking-wide text-xs">{String(cls.className).toUpperCase()}</span>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         );
@@ -240,12 +272,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
 
-        <SidebarSeparator />
+        <SidebarSeparator className="my-2 bg-white/[0.04]" />
 
-        <NavSecondary items={data.navSecondary} className="mt-auto" />
+        <NavSecondary items={data.navSecondary} className="mt-auto tracking-wide px-1" />
       </SidebarContent>
 
-      <SidebarFooter>
+      <SidebarFooter className="tracking-wide p-2">
         <NavUser user={data.user} onAvatarChange={setAvatarOverride} />
       </SidebarFooter>
     </Sidebar>
