@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getToken } from "next-auth/jwt";
+import { sendClassNotificationEmail } from "@/lib/otp";
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string; requestid: string }> }) {
     const token = await getToken({ req: req, secret: process.env.NEXTAUTH_SECRET })
@@ -29,7 +30,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             return NextResponse.json({ message: "You are not authorized to manage this classroom" }, { status: 403 })
         }
 
-        const joinRequest = await prisma.joinRequest.findUnique({ where: { id: reqId } })
+        const joinRequest = await prisma.joinRequest.findUnique({ where: { id: reqId }, include: { user: { select: { email: true } } } })
         if (!joinRequest || joinRequest.classroomId !== classId) {
             return NextResponse.json({ message: "Join request not found in this classroom" }, { status: 404 })
         }
@@ -65,10 +66,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
                 io.to(`user-channel-${joinRequest.userId}`).emit("new-notification-alert");
             }
 
+            sendClassNotificationEmail(joinRequest.user.email, "Join Request Approved", `You have been accepted into the classroom "${classroom.className}".`, "ANNOUNCEMENT")
+                .catch((err) => console.error(`Failed to email user ${joinRequest.userId}:`, err))
+
             return NextResponse.json({ message: "Student approved and added to classroom" }, { status: 200 })
         } else {
             await prisma.joinRequest.delete({ where: { id: reqId } })
-            
             await prisma.notification.create({
                 data: {
                     userId: joinRequest.userId,
@@ -84,6 +87,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
             if (io) {
                 io.to(`user-channel-${joinRequest.userId}`).emit("new-notification-alert");
             }
+
+            sendClassNotificationEmail(joinRequest.user.email, "Join Request Rejected", `Your request to join the classroom "${classroom.className}" was declined.`, "ANNOUNCEMENT")
+                .catch((err) => console.error(`Failed to email user ${joinRequest.userId}:`, err))
 
             return NextResponse.json({ message: "Join request rejected" }, { status: 200 })
         }

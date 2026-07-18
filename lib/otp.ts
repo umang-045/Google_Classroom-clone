@@ -28,3 +28,25 @@ export const sendOTPEmail = async (email: string, otp: string) => {
         console.log("Error while sending email:",err);
     }
 }
+
+export const sendClassNotificationEmail = async (
+  email: string,
+  title: string,
+  message: string,
+  type: "ASSIGNMENT" | "ANNOUNCEMENT" | "GRADE" | "QUIZ"
+) => {
+  try {
+    await transporter.sendMail({
+      from: process.env.SMTP_USER,
+      to: email,
+      subject: title,
+      html: `
+        <p><b>${type}</b></p>
+        <h2>${title}</h2>
+        <p>${message}</p>
+      `,
+    })
+  } catch (err) {
+    console.log(`Error sending notification email to ${email}:`, err);
+  }
+}

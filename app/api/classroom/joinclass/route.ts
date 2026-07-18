@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../lib/db";
 import { getToken } from "next-auth/jwt";
+import { sendClassNotificationEmail } from "../../../../lib/otp";
 
 
 async function joinclass(req: NextRequest) {
@@ -16,7 +17,10 @@ async function joinclass(req: NextRequest) {
             select: {
                 id: true,
                 teacherId: true,
-                className: true
+                className: true,
+                teacher: {
+                    select: { email: true }
+                }
             }
         })
         if (!existing) {
@@ -56,12 +60,15 @@ async function joinclass(req: NextRequest) {
                 }
             }
         })
+        const title = "New Join Request"
+        const message = `${token.name || "A student"} requested to join your class "${existing.className}".`
+
         await prisma.notification.create({
             data: {
                 userId: existing.teacherId,
                 classroomId: existing.id,
-                title: "New Join Request",
-                message: `${token.name || "A student"} requested to join your class "${existing.className}".`,
+                title,
+                message,
                 type: "ANNOUNCEMENT",
                 isRead: false
             }
@@ -70,6 +77,10 @@ async function joinclass(req: NextRequest) {
         if (io) {
             io.to(`user-channel-${existing.teacherId}`).emit("new-notification-alert");
         }
+
+        sendClassNotificationEmail(existing.teacher.email, title, message, "ANNOUNCEMENT")
+            .catch((err) => console.error(`Failed to email teacher ${existing.teacherId}:`, err))
+
         return NextResponse.json({ message: "Join Request Created Successfully" }, { status: 201 })
     } catch (err) {
         console.error(err)
