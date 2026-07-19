@@ -6,7 +6,7 @@
     "dev": "next dev",
     "dev:socket": "NODE_OPTIONS='--loader ts-node/esm --trace-warnings --no-warnings' ts-node server.mts",
     "build": "next build",
-    "build:server": "esbuild server.mts --bundle --platform=node --format=esm --target=node22 --outfile=dist/server.mjs --external:next --external:@prisma/client",
+    "build:server": "esbuild server.mts --bundle --platform=node --format=cjs --target=node22 --outfile=dist/server.js --external:next --external:@prisma/client",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate"

@@ -125,7 +125,11 @@ COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
 # Overwrite the auto-generated server.js with our bundled custom server
 # (Next request handler + socket.io on the same HTTP server/port).
-COPY --from=builder --chown=node:node /app/dist/server.mjs ./server.mjs
+# NOTE: bundled as CommonJS, not ESM - esbuild's ESM output wraps require()
+# calls to Node builtins (socket.io -> engine.io/ws use require('http')) in a
+# shim that throws "Dynamic require of ... is not supported" at runtime. CJS
+# doesn't have this problem since require() is native there.
+COPY --from=builder --chown=node:node /app/dist/server.js ./server.js
 
 # Switch to non-root user for security best practices
 USER node
@@ -134,4 +138,4 @@ USER node
 EXPOSE 3000
 
 # Start the custom server (Next.js + socket.io combined)
-CMD ["node", "server.mjs"]
+CMD ["node", "server.js"]
