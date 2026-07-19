@@ -6,6 +6,7 @@
     "dev": "next dev",
     "dev:socket": "NODE_OPTIONS='--loader ts-node/esm --trace-warnings --no-warnings' ts-node server.mts",
     "build": "next build",
+    "build:server": "esbuild server.mts --bundle --platform=node --format=esm --target=node22 --outfile=dist/server.mjs --external:next --external:@prisma/client",
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma generate"
@@ -73,6 +74,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
     "tailwindcss": "^4",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "esbuild": "^0.24.0"
   }
 }
