@@ -119,6 +119,13 @@ RUN chown node:node .next
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
+# Standalone mode's file tracer has no visibility into custom server files,
+# so it ships a trimmed node_modules/next that's missing files needed just
+# to load next.config.js (e.g. next/dist/compiled/webpack) - this overwrites
+# it with the full version from the builder stage to fix that gap.
+# See: https://nextjs.org/docs/pages/building-your-application/configuring/custom-server
+COPY --from=builder --chown=node:node /app/node_modules/next ./node_modules/next
+
 # If you want to persist the fetch cache generated during the build so that
 # cached responses are available immediately on startup, uncomment this line:
 # COPY --from=builder --chown=node:node /app/.next/cache ./.next/cache
