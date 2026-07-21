@@ -10,8 +10,8 @@ type SummaryType = "announcement" | "assignment" | "chat";
 interface SummarizeButtonProps {
   type: SummaryType;
   classroomId: number;
-  sourceId?: number; 
-  className?: string; 
+  sourceId?: number;
+  className?: string;
 }
 
 export default function SummarizeButton({
@@ -48,8 +48,12 @@ export default function SummarizeButton({
     }
   }
 
+  // NOTE: no wrapping div with margin here anymore — the button now sits
+  // exactly where its parent's flex layout places it, with zero extra
+  // offset. Spacing for the summary/error panel is applied to that panel
+  // itself (below), not to a shared wrapper around the button.
   return (
-    <div className="mt-3">
+    <>
       <Button
         variant="outline"
         size="sm"
@@ -73,13 +77,13 @@ export default function SummarizeButton({
         )}
       </Button>
 
-      {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
+      {error && <p className="text-xs text-red-400 mt-2 w-full basis-full">{error}</p>}
 
       {summary && (
-        <div className="mt-3 p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/80 text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap animate-in fade-in-50 duration-200">
+        <div className="mt-3 w-full p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/80 text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap animate-in fade-in-50 duration-200 basis-full">
           {summary}
         </div>
       )}
-    </div>
+    </>
   );
 }

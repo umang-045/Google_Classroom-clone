@@ -2,7 +2,6 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
-import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
 import { useSession } from "next-auth/react"
 import { ChevronRight } from "lucide-react"
@@ -31,7 +30,7 @@ import {
   School,
   BookOpen,
   Sparkles,
-  CircleHelp as CircleHelpIcon,
+  HelpCircle,
 } from "lucide-react"
 
 import { classphoto } from "@/app/components/ClassroomCard"
@@ -49,8 +48,8 @@ const data = {
     { title: "All Classes", icon: Library, url: "/dashboard/allclasses" },
   ],
   navSecondary: [
-    { title: "Get Help", url: "/#faqs", icon: <CircleHelpIcon /> },
-    { title: "Contact Us", url: "/#contact", icon: <CircleHelpIcon /> },
+    { title: "Get Help", url: "/#faqs", icon: HelpCircle },
+    { title: "Contact Us", url: "/#contact", icon: HelpCircle },
   ],
 }
 
@@ -110,7 +109,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar 
       collapsible="icon" 
       {...props}
-      /* Swapped out border-none for border-r border-white/[0.08] to align borders across components */
       className="tracking-wide text-zinc-300 bg-[#111217] border-r border-white/[0.08]"
     >
       <SidebarHeader>
@@ -129,8 +127,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
 
-      <SidebarContent className="mt-5 tracking-wide px-2">
-
+      <SidebarContent className="mt-5 tracking-wide px-2 flex-1">
         <SidebarGroup>
           <SidebarGroupLabel className="tracking-widest uppercase text-[10px] text-zinc-500 font-bold px-3 mb-1">General</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -175,6 +172,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
         <SidebarSeparator className="my-2 bg-white/[0.04]" />
 
         <SidebarGroup>
@@ -271,14 +269,30 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             </Collapsible>
           </SidebarMenu>
         </SidebarGroup>
-
-        <SidebarSeparator className="my-2 bg-white/[0.04]" />
-
-        <NavSecondary items={data.navSecondary} className="mt-auto tracking-wide px-1" />
       </SidebarContent>
 
-      <SidebarFooter className="tracking-wide p-2">
-        <NavUser user={data.user} onAvatarChange={setAvatarOverride} />
+      {/* Styled Footer Container matching image theme */}
+      <SidebarFooter className="tracking-wide p-2 border-t border-white/[0.06] flex flex-col gap-1">
+        {/* Help & Support Actions */}
+        <SidebarMenu className="gap-0.5">
+          {data.navSecondary.map((item) => (
+            <SidebarMenuItem key={item.title}>
+              <SidebarMenuButton
+                render={<a href={item.url} />}
+                className="text-zinc-400 hover:text-white hover:bg-white/[0.03] text-sm h-9 px-3 rounded-lg transition-colors cursor-pointer"
+                tooltip={item.title}
+              >
+                <item.icon className="size-4 text-zinc-400" />
+                <span className="text-xs font-medium">{item.title}</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+        </SidebarMenu>
+
+        {/* User Card */}
+        <div className="pt-1 mt-1 border-t border-white/[0.04]">
+          <NavUser user={data.user} onAvatarChange={setAvatarOverride} />
+        </div>
       </SidebarFooter>
     </Sidebar>
   )

@@ -34,38 +34,53 @@ export const QuizCard = ({ quiz, role, onOpenQuiz }: QuizCardProps) => {
     const isNew = Date.now() - new Date(quiz.created_at).getTime() < 86400000
 
     return (
-        <div className='w-full rounded-xl bg-white/5 border border-white/10 border-l-4 border-l-emerald-500/70 text-white p-5 shadow-sm hover:bg-white/[0.07] transition-colors'>
-            <div className='flex items-start gap-3'>
-                <div className='shrink-0 w-9 h-9 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center'>
-                    <FileQuestion className='w-4 h-4 text-emerald-400' />
+        <div 
+            onClick={() => onOpenQuiz(quiz.id)}
+            className='w-full rounded-xl bg-white/[0.04] border border-white/10 border-l-4 border-l-blue-500/80 text-white p-4 shadow-sm hover:bg-white/[0.07] hover:border-white/20 transition-all duration-200 cursor-pointer flex flex-col justify-between gap-4'
+        >
+            <div className='flex items-start gap-3.5'>
+                {/* Icon Container */}
+                <div className='shrink-0 w-9 h-9 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center'>
+                    <FileQuestion className='w-4 h-4 text-blue-400' />
                 </div>
 
-                <div className='min-w-0 flex-1'>
-                    <div className='flex items-center justify-between gap-3'>
-                        <div className='flex items-center gap-2 min-w-0'>
-                            <h3 className='text-base font-semibold text-white truncate'>{quiz.title}</h3>
-                            {isNew && (
-                                <span className='text-[10px] font-medium px-1.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0'>
-                                    New
-                                </span>
-                            )}
-                        </div>
-                        <Button
-                            size='sm'
-                            className='text-xs h-7 shrink-0 p-4 cursor-pointer hover:brightness-80 bg-emerald-500/15 text-emerald-400 '
-                            onClick={() => onOpenQuiz(quiz.id)}>
-                            View Quiz 
-                        </Button>
+                {/* Content Area */}
+                <div className='min-w-0 flex-1 space-y-1.5'>
+                    <div className='flex items-center justify-between gap-2'>
+                        <h3 className='text-base font-semibold text-white tracking-tight truncate'>
+                            {quiz.title}
+                        </h3>
+                        {isNew && (
+                            <span className='text-[10px] font-medium px-2 py-0.5 rounded-full bg-blue-500/15 text-blue-400 border border-blue-500/30 shrink-0'>
+                                New
+                            </span>
+                        )}
                     </div>
 
-                    <p className='mt-1 text-xs text-white/40'>
-                        {getRelativeTime(quiz.created_at)}
+                    <p className='text-xs text-zinc-400 font-medium'>
+                        Created {getRelativeTime(quiz.created_at)}
                     </p>
 
-                    <p className='mt-3 text-sm text-white/70 leading-relaxed whitespace-pre-wrap'>
-                        {quiz.description}
-                    </p>
+                    {quiz.description && (
+                        <p className='text-sm text-zinc-300 leading-relaxed line-clamp-2 pt-0.5'>
+                            {quiz.description}
+                        </p>
+                    )}
                 </div>
+            </div>
+
+            {/* Separated Action Footer */}
+            <div className='flex items-center justify-end w-full pt-3 border-t border-white/5'>
+                <Button
+                    size='sm'
+                    className='bg-blue-600 hover:bg-blue-500 text-white text-xs h-8 px-3.5 rounded-md cursor-pointer shrink-0 font-medium'
+                    onClick={(e) => {
+                        e.stopPropagation()
+                        onOpenQuiz(quiz.id)
+                    }}
+                >
+                    View Quiz
+                </Button>
             </div>
         </div>
     )

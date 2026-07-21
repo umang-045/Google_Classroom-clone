@@ -1,4 +1,3 @@
-// app/notifications/NotificationsClient.tsx
 "use client";
 import React, { useState } from "react";
 import { Bell, BookOpen, MessageSquare, Award, HelpCircle, Trash2, Loader2 } from "lucide-react";

@@ -80,20 +80,22 @@ const MembersClient = ({ classroomId, initialClassroomDetails, initialRole, init
 
                     <div className="divide-y divide-white/10">
                         {requests.map((req) => {
-                            const hasImage = req.user.image && !brokenImages[req.user.image];
+                            const imageUrl = req.user.image
+                            const isImageBroken = !imageUrl || brokenImages[imageUrl]
+
                             return (
                                 <div key={req.id} className='flex items-center justify-between gap-4 py-3 border-b border-white/5'>
                                     <div className='flex items-center gap-4'>
-                                        {hasImage ? (
+                                        {!isImageBroken ? (
                                             <img
-                                                src={req.user.image}
+                                                src={imageUrl}
                                                 alt={req.user.name}
-                                                onError={() => handleImageError(req.user.image)}
+                                                onError={() => handleImageError(imageUrl)}
                                                 className='w-9 h-9 rounded-full object-cover shrink-0 ring-1 ring-white/10'
                                             />
                                         ) : (
                                             <div className='w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white font-medium text-sm shrink-0'>
-                                                {classphoto(req.user.name) || <User size={16} />}
+                                                <User size={18} className='text-white/70' />
                                             </div>
                                         )}
                                         <div>
@@ -138,7 +140,7 @@ const MembersClient = ({ classroomId, initialClassroomDetails, initialRole, init
                         />
                     ) : (
                         <div className='w-9 h-9 rounded-full bg-white/10 border border-white/15 flex items-center justify-center text-white font-medium text-sm shrink-0'>
-                            {classphoto(classroomDetails.teacher.name) || <User size={16} />}
+                            <User size={18} className='text-white/70' />
                         </div>
                     )}
                     <p className='text-[16px] text-white/80 font-medium'>{classroomDetails.teacher.name}</p>
@@ -157,11 +159,12 @@ const MembersClient = ({ classroomId, initialClassroomDetails, initialRole, init
 
                 <div className="divide-y divide-white/5">
                     {classroomDetails.students.map((s: any, i: number) => {
-                        const studentImg = s.user.image;
-                        const hasImage = studentImg && !brokenImages[studentImg];
+                        const studentImg = s.user.image
+                        const isImageBroken = !studentImg || brokenImages[studentImg]
+
                         return (
                             <div key={i} className='flex items-center gap-4 py-3 border-b border-white/5'>
-                                {hasImage ? (
+                                {!isImageBroken ? (
                                     <img
                                         src={studentImg}
                                         alt={s.user.name}
@@ -170,7 +173,7 @@ const MembersClient = ({ classroomId, initialClassroomDetails, initialRole, init
                                     />
                                 ) : (
                                     <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white font-medium text-sm shrink-0 shadow-inner ${AVATAR_COLORS[i % AVATAR_COLORS.length]}`}>
-                                        {classphoto(s.user.name) || <User size={16} />}
+                                        <User size={18} className='text-white/80' />
                                     </div>
                                 )}
                                 <p className='text-[16px] text-white/80 font-medium'>{s.user.name}</p>

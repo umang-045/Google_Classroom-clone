@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
+import { createPortal } from "react-dom"
 import { Button } from "@/components/ui/button"
 import { X, Upload, Loader2, ImagePlus } from "lucide-react"
 import toast from "react-hot-toast"
@@ -11,13 +12,18 @@ interface EditPhotoProps {
 }
 
 const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
+  const [mounted, setMounted] = useState(false)
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
+  // Prevent SSR mismatch & block background scrolling
   useEffect(() => {
+    setMounted(true)
+    document.body.style.overflow = "hidden"
     return () => {
+      document.body.style.overflow = "unset"
       if (preview) {
         URL.revokeObjectURL(preview)
       }
@@ -75,28 +81,32 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
     }
   }
 
-  return (
+  if (!mounted) return null
+
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-6 backdrop-blur-xs"
-      onClick={onClose}
+      className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/85 backdrop-blur-md p-6 pointer-events-auto"
+      onClick={(e) => {
+        e.stopPropagation()
+        onClose()
+      }}
     >
       <div
-        style={{ background: 'linear-gradient(to top, #27272a, #151519)' }}
-        className="relative w-full max-w-md rounded-xl border border-zinc-800/80 p-8 shadow-2xl space-y-7 animate-in fade-in-50 zoom-in-95 duration-150 text-zinc-200"
+        className="relative w-full max-w-md rounded-2xl bg-[#151519] border border-white/10 p-8 shadow-2xl space-y-7 text-zinc-200 pointer-events-auto"
         onClick={(e) => e.stopPropagation()}
       >
- 
+        {/* Close Button */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute top-5 right-5 text-zinc-400 hover:text-red-400 cursor-pointer transition-colors"
+          className="absolute top-5 right-5 text-zinc-400 hover:text-white cursor-pointer transition-colors p-1 rounded-lg hover:bg-white/[0.06]"
         >
           <X size={20} />
         </button>
 
-      
+        {/* Header */}
         <div className="flex items-center gap-4 pl-0.5">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-800/70 text-cyan-400 border border-zinc-700/60 shadow-inner">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-inner">
             <ImagePlus size={22} />
           </div>
           <div>
@@ -109,9 +119,9 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
           </div>
         </div>
 
-      
+        {/* Preview & File Picker */}
         <div className="flex flex-col items-center justify-center gap-5 py-2">
-          <div className="relative size-28 rounded-full overflow-hidden border-2 border-zinc-700/80 bg-zinc-900/60 p-1 flex items-center justify-center shadow-2xl">
+          <div className="relative size-28 rounded-full overflow-hidden border-2 border-white/10 bg-zinc-900 p-1 flex items-center justify-center shadow-2xl">
             {preview || currentAvatar?.startsWith("http") ? (
               <img
                 src={preview !== null ? preview : currentAvatar}
@@ -135,21 +145,21 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
             type="button"
             variant="ghost"
             onClick={() => fileInputRef.current?.click()}
-            className="h-10 px-4 rounded-md border border-zinc-700 bg-zinc-900/20 text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors text-xs"
+            className="h-10 px-4 rounded-xl border border-white/10 bg-white/[0.03] text-zinc-300 hover:bg-white/[0.08] hover:text-white transition-colors text-xs cursor-pointer"
           >
             <Upload className="mr-2 size-4 text-zinc-400" />
             Choose image file
           </Button>
         </div>
 
-       
-        <div className="flex items-center justify-end gap-3 pt-4 border-t border-zinc-800/60 max-sm:flex-col-reverse">
+        {/* Footer Actions */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/[0.08] max-sm:flex-col-reverse">
           <Button
             type="button"
             variant="ghost"
             onClick={onClose}
             disabled={isUploading}
-            className="rounded-md px-5 bg-zinc-800/80 text-zinc-300 hover:bg-zinc-700 hover:text-white border-0 text-xs h-10 max-sm:w-full"
+            className="rounded-xl px-5 bg-white/[0.04] text-zinc-300 hover:bg-white/[0.08] hover:text-white border-0 text-xs h-10 max-sm:w-full cursor-pointer"
           >
             Cancel
           </Button>
@@ -157,14 +167,15 @@ const EditPhoto = ({ currentAvatar, onClose, onSuccess }: EditPhotoProps) => {
             type="button"
             onClick={handleSave}
             disabled={!file || isUploading}
-            className="rounded-md cursor-pointer px-5 bg-blue-700 hover:bg-blue-800 text-white font-medium border-0 text-xs h-10 max-sm:w-full"
+            className="rounded-xl cursor-pointer px-5 bg-blue-600 hover:bg-blue-500 text-white font-medium border-0 text-xs h-10 max-sm:w-full disabled:opacity-50"
           >
             {isUploading && <Loader2 className="mr-2 size-3.5 animate-spin" />}
             {isUploading ? "Saving..." : "Save"}
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
 
