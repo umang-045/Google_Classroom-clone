@@ -82,11 +82,9 @@ const ClassroomCard = ({ Classroomdetails, colorIndex, role, pending = false }) 
           : 'cursor-pointer hover:border-white/[0.15] hover:bg-[#15161c] hover:-translate-y-1 hover:shadow-[0_22px_40px_-15px_rgba(0,0,0,0.7)]'
       }`}
     >
-      {/* Light sweep sheen on hover */}
+     
       <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.01] to-white/[0.04] opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
-      {/* Header Banner Content */}
-      {/* Expanded bottom padding here (pb-12 sm:pb-14) to lift text safely out of the avatar's zone */}
       <div 
         className='w-full pt-4 px-4 pb-12 sm:pt-5 sm:px-5 sm:pb-14 border-b border-white/[0.05] rounded-t-2xl overflow-hidden relative'
         style={{ background: gradient }}
@@ -106,7 +104,6 @@ const ClassroomCard = ({ Classroomdetails, colorIndex, role, pending = false }) 
           </div>
         </div>
 
-        {/* Reverted side padding to standard max-width spacing */}
         <div className="relative z-10 mt-2 space-y-0.5 max-w-[85%]">
           {Classroomdetails.description && (
             <p title={Classroomdetails.description} className='text-xs text-white/70 truncate transition-colors group-hover:text-white/90'>
@@ -126,7 +123,7 @@ const ClassroomCard = ({ Classroomdetails, colorIndex, role, pending = false }) 
         </div>
       </div>
 
-      {/* Left-Aligned, Vertically Centered Avatar Component Area */}
+     
       <div className='relative h-6 sm:h-8'>
         <div
           aria-hidden="true"
@@ -139,7 +136,6 @@ const ClassroomCard = ({ Classroomdetails, colorIndex, role, pending = false }) 
         </div>
       </div>
 
-      {/* Access Code Footer Container */}
       <div className='relative p-3 flex justify-end items-center mt-auto'>
         {Classroomdetails.joinCode && (
           <button
@@ -156,7 +152,6 @@ const ClassroomCard = ({ Classroomdetails, colorIndex, role, pending = false }) 
         )}
       </div>
 
-      {/* State View Guard Overlay */}
       {pending && (
         <div className='absolute inset-0 bg-black/70 backdrop-blur-[2px] rounded-2xl flex items-center justify-center z-20 transition-all duration-300'>
           <span className='text-xs font-semibold uppercase tracking-wider text-white bg-white/[0.06] px-4 py-2 rounded-full border border-white/10 shadow-xl backdrop-blur-md animate-fade-in'>
