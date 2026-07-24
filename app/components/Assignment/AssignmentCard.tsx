@@ -59,7 +59,7 @@ export const AssignmentCard = ({
                 </div>
 
                 <div className='min-w-0 flex-1 space-y-2'>
-                    {/* Header Row */}
+    
                     <div className='flex items-start justify-between gap-4'>
                         <div className='min-w-0 flex-1 space-y-1'>
                             <div className='flex items-center gap-2.5'>
@@ -77,7 +77,7 @@ export const AssignmentCard = ({
                             </p>
                         </div>
 
-                        {/* Due Badge */}
+                  
                         <span
                             className={`shrink-0 text-xs whitespace-nowrap px-3 py-1.5 rounded-lg border font-medium ${
                                 isOverdue
@@ -89,14 +89,13 @@ export const AssignmentCard = ({
                         </span>
                     </div>
 
-                    {/* Description */}
+                
                     <p className='pt-1 text-sm text-white/70 leading-relaxed line-clamp-2 tracking-wide'>
                         {assignment.description}
                     </p>
                 </div>
             </div>
 
-            {/* Footer / Actions Divider */}
             <div className='pt-4 border-t border-white/10 flex items-center justify-between gap-3 flex-wrap'>
                 <div 
                     className='flex items-center gap-2.5 flex-wrap' 
