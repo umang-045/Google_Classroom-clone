@@ -6,6 +6,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import toast from 'react-hot-toast'
 import { Megaphone, X } from 'lucide-react'
+import { toastOptions } from '../toastOptions'
 
 interface CreateAnnouncementProps {
     classroomId: number
@@ -24,7 +25,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
 
     const handleSubmit = async () => {
         if (!form.title || !form.content) {
-            toast.error("Title and content are required.")
+            toast.error("Title and content are required.",toastOptions)
             return
         }
         
@@ -39,12 +40,12 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
             const data = await res.json()
 
             if (!res.ok) {
-                toast.error(data.message || "Something went wrong.")
+                toast.error(data.message || "Something went wrong.",toastOptions)
                 setLoading(false)
                 return
             }
 
-            toast.success("Announcement posted!")
+            toast.success("Announcement posted!",toastOptions)
             setLoading(false)
             
             setTimeout(() => {
@@ -54,7 +55,7 @@ export default function CreateAnnouncement({ classroomId, setCreateAnnouncementB
             
         } catch (err) {
             console.error(err)
-            toast.error("Network error. Please try again.")
+            toast.error("Network error. Please try again.",toastOptions)
             setLoading(false)
         }
     }

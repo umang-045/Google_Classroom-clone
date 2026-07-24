@@ -31,7 +31,6 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
                 }
             }
         })
-        
         if (!studentEnrollment) {
             return NextResponse.json({ message: "Unauthorized" }, { status: 403 })
         }
@@ -44,8 +43,25 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
             return NextResponse.json({ message: "Assignment not found" }, { status: 404 })
         }
 
-        if (assignment.due_at && new Date(assignment.due_at) < new Date()) {
-            return NextResponse.json({ message: "Due date has passed. Submission not allowed." }, { status: 400 })
+        const reuploadRequest = await prisma.reuploadRequest.findUnique({
+            where: {
+                studentId_assignmentId: {
+                    studentId: Number(token.id),
+                    assignmentId: data.assignmentId
+                }
+            }
+        })
+        const hasApprovedReupload = reuploadRequest?.status === "APPROVED"
+
+        const isPastOriginalDeadline = assignment.due_at && new Date(assignment.due_at) < new Date()
+
+        if (isPastOriginalDeadline) {
+            if (!hasApprovedReupload) {
+                return NextResponse.json({ message: "Due date has passed. Submission not allowed." }, { status: 400 })
+            }
+            if (reuploadRequest?.extended_deadline && new Date(reuploadRequest.extended_deadline) < new Date()) {
+                return NextResponse.json({ message: "Your extended deadline has passed. Please request another extension." }, { status: 400 })
+            }
         }
 
         const alreadySubmitted = await prisma.submission.findUnique({
@@ -68,6 +84,13 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cla
                 studentId: Number(token.id)
             }
         })
+
+        if (hasApprovedReupload) {
+            await prisma.reuploadRequest.update({
+                where: { id: reuploadRequest!.id },
+                data: { status: "COMPLETED" }
+            })
+        }
 
         return NextResponse.json({ message: "Submitted", submission: newSubmission }, { status: 200 })
 

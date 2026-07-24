@@ -1,4 +1,5 @@
 "use client"
+
 import React, { useState } from 'react'
 import CreateAssignment from '@/app/components/Assignment/CreateAssignment'
 import { Button } from '@/components/ui/button'
@@ -16,18 +17,30 @@ interface Assignment {
     marks?: number | null
     feedback?: string | null
     submissionFileUrl?: string | null
+    canReupload?: boolean
+    reuploadDeadline?: string | null
 }
 
 interface Submission {
-    id: number | string
+    id: number
     studentName: string
     studentId: number
-    studentEmail: string
+    studentEmail?: string
     fileUrl: string | null
-    submittedAt: string | null
-    hasSubmitted: boolean
-    marks: number | null,
+    submittedAt?: string | null
+    hasSubmitted?: boolean
+    marks: number | null
     feedback: string | null
+    createdAt: string
+}
+
+interface ExtensionRequestItem {
+    id: number
+    studentName: string
+    studentEmail: string
+    studentImage?: string | null
+    reason?: string
+    createdAt: string
 }
 
 interface AssignmentDetailClientProps {
@@ -35,9 +48,16 @@ interface AssignmentDetailClientProps {
     initialRole: string
     initialAssignment: Assignment
     initialSubmissions: Submission[]
+    initialRequests?: ExtensionRequestItem[]
 }
 
-const AssignmentDetailClient = ({ classroomId, initialRole, initialAssignment, initialSubmissions }: AssignmentDetailClientProps) => {
+const AssignmentDetailClient = ({ 
+    classroomId, 
+    initialRole, 
+    initialAssignment, 
+    initialSubmissions,
+    initialRequests = []
+}: AssignmentDetailClientProps) => {
     const params = useParams()
     const router = useRouter()
     const assignmentId = Number(params.assignmentId)
@@ -45,6 +65,7 @@ const AssignmentDetailClient = ({ classroomId, initialRole, initialAssignment, i
     const [role] = useState<string>(initialRole)
     const [assignment, setAssignment] = useState<Assignment | null>(initialAssignment)
     const [submissions, setSubmissions] = useState<Submission[]>(initialSubmissions)
+    const [requests, setRequests] = useState<ExtensionRequestItem[]>(initialRequests)
     const [isSubmitted, setIsSubmitted] = useState(!!initialAssignment.submitted)
     const [editAssignment, setEditAssignment] = useState<Assignment | null>(null)
     const [deleteLoading, setDeleteLoading] = useState(false)
@@ -66,13 +87,14 @@ const AssignmentDetailClient = ({ classroomId, initialRole, initialAssignment, i
                 const subRes = await fetch(`/api/assignments/${classroomId}/${assignmentId}`)
                 const subData = await subRes.json()
                 if (!subRes.ok) throw new Error(subData.message || "Failed to load submissions")
+                
                 setSubmissions(subData.submissions || [])
+                setRequests(subData.requests || [])
             }
         } catch (err: any) {
             console.log(err.message || "Something went wrong loading assignment")
         }
     }
-
 
     const handleDelete = async () => {
         if (!assignment) return
@@ -92,6 +114,7 @@ const AssignmentDetailClient = ({ classroomId, initialRole, initialAssignment, i
             setDeleteLoading(false)
         }
     }
+
     if (!assignment) return null
 
     return (
@@ -133,7 +156,13 @@ const AssignmentDetailClient = ({ classroomId, initialRole, initialAssignment, i
             </div>
 
             {role === "teacher" && (
-                <TeacherWorkspace submissions={submissions} classroomId={Number(classroomId)} assignmentId={assignmentId} onGraded={() => fetchAssignmentData(role)} />
+                <TeacherWorkspace 
+                    submissions={submissions} 
+                    requests={requests}
+                    classroomId={Number(classroomId)} 
+                    assignmentId={assignmentId} 
+                    onSuccess={() => fetchAssignmentData(role)} 
+                />
             )}
 
             {role === "student" && (
@@ -146,6 +175,9 @@ const AssignmentDetailClient = ({ classroomId, initialRole, initialAssignment, i
                     marks={assignment.marks ?? null}
                     feedback={assignment.feedback ?? null}
                     submissionFileUrl={assignment.submissionFileUrl ?? null}
+                    due_at={assignment.due_at}
+                    canReupload={!!assignment.canReupload}
+                    reuploadDeadline={assignment.reuploadDeadline ?? null}
                 />
             )}
 

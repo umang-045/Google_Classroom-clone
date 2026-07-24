@@ -25,9 +25,11 @@ const AssignmentDetailServer = async ({ classroomId, assignmentId }: { classroom
         }
 
         let submissions: any[] = []
+        let requests: any[] = []
         if (role === "teacher") {
             const result = await getSubmissionsForAssignment(classId, assignId, userId)
             submissions = result.submissions
+            requests = result.requests
         }
 
         const serializedAssignment = {
@@ -40,12 +42,18 @@ const AssignmentDetailServer = async ({ classroomId, assignmentId }: { classroom
             submittedAt: s.submittedAt ? s.submittedAt.toISOString() : null,
         }))
 
+        const serializedRequests = requests.map((r) => ({
+            ...r,
+            createdAt: r.createdAt instanceof Date ? r.createdAt.toISOString() : r.createdAt,
+        }))
+
         return (
             <AssignmentDetailClient
                 classroomId={classroomId}
                 initialRole={role}
                 initialAssignment={serializedAssignment}
                 initialSubmissions={serializedSubmissions}
+                initialRequests={serializedRequests}
             />
         )
     } catch (err) {

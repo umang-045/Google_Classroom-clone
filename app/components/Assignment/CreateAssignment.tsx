@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import toast from 'react-hot-toast'
-import { Clipboard, X } from 'lucide-react'
+import { Clipboard, X, FileText } from 'lucide-react'
 
 interface AssignmentData {
     id?: number
@@ -84,6 +84,11 @@ function CreateAssignment({ classroomId, setcreateAssignmentBox, editData }: { c
             setcreateAssignmentBox(false)
             router.refresh()
         }, 800)
+    }
+
+    const removeFile = () => {
+        setfile(null)
+        setFileKey((k) => k + 1)
     }
 
     const modalContent = (
@@ -175,9 +180,29 @@ function CreateAssignment({ classroomId, setcreateAssignmentBox, editData }: { c
                             className='w-full h-11 flex items-center rounded-xl border border-zinc-800 bg-zinc-900/60 text-zinc-400 file:bg-zinc-800 file:text-zinc-200 file:border-0 file:border-r file:border-zinc-700 file:mr-4 file:px-5 file:h-full file:flex file:items-center file:justify-center file:text-xs file:font-semibold transition-colors p-0 cursor-pointer'
                             onChange={(e) => setfile(e.target.files?.[0] || null)}
                         />
+
+                        {file && (
+                            <div className='flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-zinc-900/60 border border-zinc-800 mt-1.5'>
+                                <div className='flex items-center gap-2 min-w-0'>
+                                    <FileText size={14} className='text-sky-400 shrink-0' />
+                                    <span className='text-xs text-zinc-300 truncate'>{file.name}</span>
+                                    <span className='text-[10px] text-zinc-500 shrink-0'>
+                                        ({(file.size / 1024 / 1024).toFixed(2)} MB)
+                                    </span>
+                                </div>
+                                <button
+                                    type='button'
+                                    onClick={removeFile}
+                                    className='text-zinc-500 hover:text-rose-400 transition-colors shrink-0 cursor-pointer'
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        )}
+
                         <div className='flex items-center justify-between px-0.5 text-xs text-zinc-500 mt-1.5'>
                             <span>Max size: 10MB</span>
-                            {isEditing && editData?.fileUrl && (
+                            {isEditing && editData?.fileUrl && !file && (
                                 <a href={editData.fileUrl} target='_blank' rel='noopener noreferrer' className='text-sky-400 underline hover:text-sky-300 transition-colors font-medium'>
                                     View attached file
                                 </a>

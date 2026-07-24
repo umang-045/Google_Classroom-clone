@@ -1,6 +1,6 @@
 "use client"
 import React from 'react'
-import { VideoIcon } from 'lucide-react'
+import { VideoIcon, Lock, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Meeting {
@@ -15,9 +15,13 @@ interface MeetingCardProps {
     role: string
     onStart: (id: number) => void
     onJoin: (id: number) => void
+    onDelete: (id: number) => void
 }
 
-export const MeetingCard = ({ meeting, role, onStart, onJoin }: MeetingCardProps) => {
+export const MeetingCard = ({ meeting, role, onStart, onJoin, onDelete }: MeetingCardProps) => {
+    const scheduledTime = new Date(meeting.scheduled_at)
+    const isBeforeScheduledTime = new Date() < scheduledTime
+
     return (
         <div className="w-full rounded-xl bg-white/[0.04] border border-white/10 border-l-4 border-l-blue-500/80 text-white p-4 shadow-sm hover:bg-white/[0.07] transition-all duration-200 flex flex-col justify-between gap-3">
             <div className='flex items-start gap-3'>
@@ -31,40 +35,62 @@ export const MeetingCard = ({ meeting, role, onStart, onJoin }: MeetingCardProps
                             {meeting.title}
                         </h3>
 
-                        {meeting.status === "LIVE" && (
-                            <span className='text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border font-medium bg-green-500/10 border-green-500/30 text-green-400 shrink-0 flex items-center gap-1.5'>
-                                <span className='inline-block w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse' />
-                                LIVE
-                            </span>
-                        )}
-                        {meeting.status === "ENDED" && (
-                            <span className='text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border font-medium bg-white/5 border-white/10 text-zinc-400 shrink-0'>
-                                ENDED
-                            </span>
-                        )}
-                        {meeting.status === "SCHEDULED" && (
-                            <span className='text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border font-medium bg-amber-500/10 border-amber-500/30 text-amber-400 shrink-0'>
-                                SCHEDULED
-                            </span>
-                        )}
+                        <div className='flex items-center gap-2 shrink-0'>
+                            {meeting.status === "LIVE" && (
+                                <span className='text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border font-medium bg-green-500/10 border-green-500/30 text-green-400 flex items-center gap-1.5'>
+                                    <span className='inline-block w-1.5 h-1.5 bg-green-400 rounded-full animate-pulse' />
+                                    LIVE
+                                </span>
+                            )}
+                            {meeting.status === "ENDED" && (
+                                <span className='text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border font-medium bg-white/5 border-white/10 text-zinc-400'>
+                                    ENDED
+                                </span>
+                            )}
+                            {meeting.status === "SCHEDULED" && (
+                                <span className='text-[10px] whitespace-nowrap px-2 py-0.5 rounded-full border font-medium bg-amber-500/10 border-amber-500/30 text-amber-400'>
+                                    SCHEDULED
+                                </span>
+                            )}
+
+                            {role === "teacher" && meeting.status !== "LIVE" && (
+                                <button
+                                    title="Delete meeting"
+                                    onClick={() => onDelete(meeting.id)}
+                                    className='text-zinc-500 hover:text-rose-400 transition-colors cursor-pointer p-0.5'
+                                >
+                                    <Trash2 className='w-3.5 h-3.5' />
+                                </button>
+                            )}
+                        </div>
                     </div>
 
                     <p className='text-xs text-zinc-400 font-medium'>
-                        {new Date(meeting.scheduled_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                        {scheduledTime.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
                     </p>
                 </div>
             </div>
 
-            {/* Action Bar (No Separator Line) */}
+            
             <div className='flex items-center justify-end gap-3 pt-0.5'>
                 {role === "teacher" && meeting.status === "SCHEDULED" && (
-                    <Button
-                        size='sm'
-                        className='bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-300 text-xs h-7 px-3 rounded-md cursor-pointer'
-                        onClick={() => onStart(meeting.id)}
-                    >
-                        Start Meeting
-                    </Button>
+                    isBeforeScheduledTime ? (
+                        <span
+                            title={`Available at ${scheduledTime.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}`}
+                            className='flex items-center gap-1.5 text-[11px] text-zinc-500 italic cursor-not-allowed'
+                        >
+                            <Lock className='w-3 h-3' />
+                            Starts {scheduledTime.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}
+                        </span>
+                    ) : (
+                        <Button
+                            size='sm'
+                            className='bg-blue-500/15 hover:bg-blue-500/25 border border-blue-500/30 text-blue-300 text-xs h-7 px-3 rounded-md cursor-pointer'
+                            onClick={() => onStart(meeting.id)}
+                        >
+                            Start Meeting
+                        </Button>
+                    )
                 )}
 
                 {role === "student" && meeting.status === "LIVE" && (

@@ -20,7 +20,7 @@ export default function JoinClass({ setjoinclassBox }: JoinClassProps) {
     const [form, setForm] = useState<JoinClassForm>({ joinCode: "" })
     const [loading, setLoading] = useState<boolean>(false)
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         setLoading(true)
 
@@ -38,8 +38,9 @@ export default function JoinClass({ setjoinclassBox }: JoinClassProps) {
                 return
             }
 
-            toast.success("Joined classroom!")
+            toast.success("Join Request Sent.Wait For Approval")
             setjoinclassBox(false)
+            router.refresh()
             router.push('/dashboard/allclasses')
         } catch (err) {
             console.error(err)

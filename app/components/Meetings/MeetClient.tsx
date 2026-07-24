@@ -2,8 +2,10 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
+import toast from 'react-hot-toast'
 import ScheduleMeeting from '@/app/components/Meetings/ScheduleMeeting'
 import { MeetingCard } from '@/app/components/Meetings/MeetingCard'
+import { toastOptions } from '../toastOptions'
 
 interface Meeting {
     id: number
@@ -39,6 +41,15 @@ const MeetClient = ({ classroomId, initialRole, initialMeetings }: MeetClientPro
     }
 
     const handleStart = async (meetingId: number) => {
+        const meeting = meetings.find((m) => m.id === meetingId)
+
+        if (meeting && new Date() < new Date(meeting.scheduled_at)) {
+            toast.error(
+                `This meeting is scheduled for ${new Date(meeting.scheduled_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' })}. You can't start it early.`,toastOptions
+            )
+            return
+        }
+
         const newTab = window.open('', '_blank')
         setActionLoading(meetingId)
         try {
@@ -51,15 +62,39 @@ const MeetClient = ({ classroomId, initialRole, initialMeetings }: MeetClientPro
             if (!res.ok) throw new Error(data.message || "Failed to start meeting")
             router.push(`/meet/${classroomId}/${meetingId}`)
             if (newTab) newTab.location.href = `/meet/${classroomId}/${meetingId}`
-        } catch (err) {
+        } catch (err: any) {
             if (newTab) newTab.close()
-            console.log(err.message || "Something went wrong")
+            toast.error(err.message || "Something went wrong",toastOptions)
         } finally {
             setActionLoading(null)
         }
     }
+
     const handleJoin = (meetingId: number) => {
         window.open(`/meet/${classroomId}/${meetingId}`, '_blank')
+    }
+
+    const handleDelete = async (meetingId: number) => {
+        const meeting = meetings.find((m) => m.id === meetingId)
+        if (!meeting) return
+
+        const confirmed = window.confirm(`Delete "${meeting.title}"? This cannot be undone.`)
+        if (!confirmed) return
+
+        const previousMeetings = meetings
+        setMeetings((prev) => prev.filter((m) => m.id !== meetingId))
+
+        try {
+            const res = await fetch(`/api/meetings/${classroomId}/${meetingId}`, {
+                method: "DELETE",
+            })
+            const data = await res.json()
+            if (!res.ok) throw new Error(data.message || "Failed to delete meeting")
+            toast.success("Meeting deleted",toastOptions)
+        } catch (err: any) {
+            setMeetings(previousMeetings)
+            toast.error(err.message || "Something went wrong",toastOptions)
+        }
     }
 
     return (
@@ -90,6 +125,7 @@ const MeetClient = ({ classroomId, initialRole, initialMeetings }: MeetClientPro
                             role={role}
                             onStart={handleStart}
                             onJoin={handleJoin}
+                            onDelete={handleDelete}
                         />
                     ))}
                 </div>

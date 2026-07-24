@@ -55,27 +55,27 @@ const ForgotPasswordPage = () => {
     return (
         <div className="relative overflow-hidden min-h-screen bg-gradient-to-br from-zinc-950 to-zinc-800 flex items-center justify-center p-4">
             <Image
-                src="/bg3.jpg"
+                src="/bg3.webp"
                 alt=""
                 fill
                 className="object-cover"
                 priority
             />
-            <div className='absolute inset-0 bg-black/30' />
+            <div className="absolute inset-0 bg-black/30" />
 
             <div className="relative z-10 w-full max-w-md md:max-w-4xl rounded-3xl flex flex-col md:flex-row overflow-hidden justify-center bg-white/80 backdrop-blur-sm shadow-2xl">
 
                 <div className="p-6 md:p-8 w-full md:w-1/2 flex flex-col justify-center">
                     <div className="mb-6">
-                        <div className="text-xs font-extrabold text-zinc-800">
-                            Digital<span className="text-blue-700">Classroom</span>
+                        <div className="text-sm font-black tracking-tight text-zinc-900">
+                            Digital<span className="text-blue-600">Classroom</span>
                         </div>
                     </div>
 
                     {!sent ? (
                         <>
                             <h1 className="text-2xl md:text-3xl font-extrabold text-zinc-900">Forgot Password?</h1>
-                            <p className="text-sm text-gray-500 mt-1 mb-6 md:mb-8">
+                            <p className="text-sm text-zinc-500 mt-1 mb-6 md:mb-8">
                                 Enter your email and we will send you an OTP to reset your password.
                             </p>
 
@@ -83,7 +83,7 @@ const ForgotPasswordPage = () => {
                                 <div className="flex flex-col gap-1">
                                     <label className="text-xs font-medium text-zinc-700">Email address</label>
                                     <input
-                                        className="bg-gray-100 border border-gray-200 p-3 rounded-xl text-zinc-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-zinc-300 w-full"
+                                        className="bg-zinc-100 border border-zinc-200 p-3 rounded-xl text-zinc-900 placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-zinc-400 w-full"
                                         type="email"
                                         placeholder="Enter your email address"
                                         value={email}
@@ -94,30 +94,30 @@ const ForgotPasswordPage = () => {
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="bg-zinc-900 hover:bg-gray-800 text-white py-3 rounded-xl font-medium disabled:opacity-60 transition-colors cursor-pointer"
+                                    className="bg-zinc-900 hover:bg-zinc-800 text-white py-3 rounded-xl font-medium disabled:opacity-60 transition-colors cursor-pointer"
                                 >
                                     {loading ? "Sending OTP..." : "Send OTP"}
                                 </button>
                             </form>
 
-                            <p className="text-sm text-gray-500 text-center mt-6">
-                                <Link href="/login" className="text-purple-600 font-medium hover:underline flex items-center justify-center gap-1">
+                            <p className="text-sm text-zinc-500 text-center mt-6">
+                                <Link href="/login" className="text-blue-600 font-medium hover:underline flex items-center justify-center gap-1">
                                     <span>←</span> Back to login
                                 </Link>
                             </p>
                         </>
                     ) : (
                         <form onSubmit={verifyOtp}>
-                            <Card className="p-4 md:p-10 bg-white/70">
-                                <CardHeader className="p-2 md:p-6">
-                                    <CardTitle className="text-xl md:text-2xl font-bold">Verify your email</CardTitle>
-                                    <CardDescription>
+                            <Card className="p-4 md:p-6 bg-white/70 border-zinc-200 shadow-none">
+                                <CardHeader className="p-2 md:p-4">
+                                    <CardTitle className="text-xl md:text-2xl font-bold text-zinc-900">Verify your email</CardTitle>
+                                    <CardDescription className="text-zinc-500">
                                         Enter the verification code we sent to{" "}
                                         <span className="font-medium text-zinc-800 break-all">{email}</span>.
                                     </CardDescription>
                                 </CardHeader>
 
-                                <CardContent className="p-2 md:p-6 overflow-x-auto">
+                                <CardContent className="p-2 md:p-4 overflow-x-auto">
                                     <Field>
                                         <FieldLabel htmlFor="otp-verification" className="text-xs font-medium text-zinc-700 mb-2 block">
                                             Verification code
@@ -135,17 +135,17 @@ const ForgotPasswordPage = () => {
                                                 <InputOTPSlot index={5} />
                                             </InputOTPGroup>
                                         </InputOTP>
-                                        <FieldDescription className="py-2 text-xs text-gray-400">
+                                        <FieldDescription className="py-2 text-xs text-zinc-400">
                                             Check your spam folder if you did not receive it.
                                         </FieldDescription>
                                     </Field>
                                 </CardContent>
 
-                                <CardFooter className="p-2 md:p-6 flex gap-3">
-                                    <Button type="submit" disabled={loading || otp.length < 6} className="cursor-pointer">
+                                <CardFooter className="p-2 md:p-4 flex gap-3">
+                                    <Button type="submit" disabled={loading || otp.length < 6} className="bg-zinc-900 hover:bg-zinc-800 text-white rounded-xl cursor-pointer">
                                         {loading ? "Verifying..." : "Verify OTP"}
                                     </Button>
-                                    <Button type="button" variant="outline" onClick={() => { setSent(false); setOtp("") }} className="cursor-pointer">
+                                    <Button type="button" variant="outline" onClick={() => { setSent(false); setOtp("") }} className="border-zinc-200 text-zinc-700 hover:bg-zinc-100 rounded-xl cursor-pointer">
                                         Go back
                                     </Button>
                                 </CardFooter>
@@ -154,7 +154,7 @@ const ForgotPasswordPage = () => {
                     )}
                 </div>
 
-                <div className="hidden md:flex relative md:w-1/2 min-h-[500px] flex-col">
+                <div className="relative hidden md:flex md:w-1/2 min-h-[31.25rem] flex-col">
                     <img
                         className="w-full h-full object-cover"
                         src="/poster.png"
@@ -162,7 +162,7 @@ const ForgotPasswordPage = () => {
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-black/30 flex flex-col justify-end p-12 text-center">
                         <h3 className="text-xl font-bold text-white mb-2">Manage your Learning Anywhere</h3>
-                        <p className="text-xs text-gray-300 max-w-xs mx-auto">
+                        <p className="text-xs text-zinc-300 max-w-xs mx-auto">
                             Access assignments, dynamic streams, and code sandboxes directly.
                         </p>
                     </div>

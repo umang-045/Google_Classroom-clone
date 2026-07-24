@@ -18,8 +18,8 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ clas
     }
 
     try {
-        const { submissions } = await getSubmissionsForAssignment(classroomId, assignmentId, Number(token.id))
-        return NextResponse.json({ submissions })
+        const { submissions, requests } = await getSubmissionsForAssignment(classroomId, assignmentId, Number(token.id))
+        return NextResponse.json({ submissions, requests })
     } catch (err) {
         if (err instanceof Error && err.message === "FORBIDDEN") {
             return NextResponse.json({ message: "Forbidden" }, { status: 403 })

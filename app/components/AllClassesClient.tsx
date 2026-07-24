@@ -29,6 +29,12 @@ const AllClassesClient = ({ initialTeachingClassroom, initialEnrolledClassroom, 
     }, [])
 
     useEffect(() => {
+        setTeachingClassroom(initialTeachingClassroom)
+        setEnrolledClassroom(initialEnrolledClassroom)
+        setPendingRequests(initialPendingRequests)
+    }, [initialTeachingClassroom, initialEnrolledClassroom, initialPendingRequests])
+
+    useEffect(() => {
         if (isFirstRender.current) {
             isFirstRender.current = false
             return
@@ -48,8 +54,7 @@ const AllClassesClient = ({ initialTeachingClassroom, initialEnrolledClassroom, 
             <TopBar />
             
             <div className={`w-full flex flex-col gap-8 px-6 pb-12 transition-all duration-700 ease-out ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-3'}`}>
-                
-                {/* Section: Enrolled as Teacher */}
+          
                 <div className='w-full'>
                     <div className='flex items-center gap-2 mb-4 border-b border-white/[0.04] pb-2'>
                         <Briefcase className="size-5 text-blue-400" />
@@ -76,7 +81,7 @@ const AllClassesClient = ({ initialTeachingClassroom, initialEnrolledClassroom, 
                     </div>
                 </div>
 
-                {/* Section: Enrolled as Student */}
+                
                 <div className='w-full'>
                     <div className='flex items-center gap-2 mb-4 border-b border-white/[0.04] pb-2'>
                         <GraduationCap className="size-5 text-indigo-400" />
@@ -103,7 +108,7 @@ const AllClassesClient = ({ initialTeachingClassroom, initialEnrolledClassroom, 
                     </div>
                 </div>
 
-                {/* Section: Pending Approval */}
+             
                 {pendingRequests.length > 0 && (
                     <div className='w-full relative mt-2'>
                         <div className='flex items-center gap-2 mb-4 border-b border-white/[0.04] pb-2'>

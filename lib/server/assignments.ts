@@ -32,13 +32,27 @@ export async function getAssignmentsForClassroom(classroomId: number, userId: nu
                     studentId: userId
                 }
             })
+            const approvedRequest = await prisma.reuploadRequest.findUnique({
+                where: {
+                    studentId_assignmentId: {
+                        studentId: userId,
+                        assignmentId: assignment.id
+                    }
+                }
+            })
+
+            const canReupload = !submission && approvedRequest?.status === "APPROVED"
 
             return {
                 ...assignment,
                 submitted: !!submission,
                 marks: submission?.marks ?? null,
                 feedback: submission?.feedback ?? null,
-                submissionFileUrl: submission?.fileUrl ?? null
+                submissionFileUrl: submission?.fileUrl ?? null,
+                canReupload,
+                reuploadDeadline: approvedRequest?.extended_deadline
+                    ? approvedRequest.extended_deadline.toISOString()
+                    : null
             }
         })
     )
@@ -73,7 +87,6 @@ export async function getSubmissionsForAssignment(classroomId: number, assignmen
         where: { assignmentId },
     })
 
-
     const formatted = enrolledStudents.map((enrolled) => {
         const student = enrolled.user
         const submission = submissions.find((s) => s.studentId === student.id)
@@ -91,8 +104,31 @@ export async function getSubmissionsForAssignment(classroomId: number, assignmen
         }
     })
 
-
     formatted.sort((a, b) => (b.hasSubmitted ? 1 : 0) - (a.hasSubmitted ? 1 : 0))
 
-    return { submissions: formatted }
+   
+    const reuploadRequests = await prisma.reuploadRequest.findMany({
+        where: {
+            assignmentId,
+            status: "PENDING",
+        },
+        include: {
+            student: {
+                select: { id: true, name: true, email: true, image: true }
+            }
+        },
+        orderBy: { created_at: "desc" }
+    })
+
+    const requests = reuploadRequests.map((r) => ({
+        id: r.id,
+        studentId: r.student.id,
+        studentName: r.student.name || "Unknown Student",
+        studentEmail: r.student.email || "",
+        studentImage: r.student.image ?? null,
+        reason: r.reason,
+        createdAt: r.created_at,
+    }))
+
+    return { submissions: formatted, requests }
 }

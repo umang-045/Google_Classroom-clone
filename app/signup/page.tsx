@@ -120,33 +120,33 @@ const SignUpPage = () => {
                         <form onSubmit={verifyOtp} className="w-full">
                             <Card className="p-4 md:p-6 bg-transparent border-none shadow-none">
                                 <CardHeader className="p-0 mb-4">
-                                    <CardTitle className='text-xl md:text-2xl font-bold'>Verify your login</CardTitle>
-                                    <CardDescription>
+                                    <CardTitle className='text-xl md:text-2xl font-bold text-zinc-900'>Verify your login</CardTitle>
+                                    <CardDescription className="text-zinc-600">
                                         Enter the verification code we sent to your email address:{" "}
-                                        <span className="font-medium break-all">{form.email}</span>.
+                                        <span className="font-medium break-all text-zinc-800">{form.email}</span>.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="p-0 mb-6 overflow-x-auto">
                                     <Field>
-                                        <div className="flex items-center justify-between text-black mb-2">
+                                        <div className="flex items-center justify-between text-zinc-900 mb-2">
                                             <FieldLabel htmlFor="otp-verification">
                                                 Verification code
                                             </FieldLabel>
                                         </div>
                                         <InputOTP maxLength={6} id="otp-verification" required value={otp} onChange={(value) => setOtp(value)}>
-                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-10 md:*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-9 md:*:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-lg md:*:data-[slot=input-otp-slot]:text-xl">
+                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-11 md:*:data-[slot=input-otp-slot]:h-13 *:data-[slot=input-otp-slot]:w-10 md:*:data-[slot=input-otp-slot]:w-12 *:data-[slot=input-otp-slot]:text-xl md:*:data-[slot=input-otp-slot]:text-2xl *:data-[slot=input-otp-slot]:font-bold *:data-[slot=input-otp-slot]:text-zinc-900 *:data-[slot=input-otp-slot]:border-zinc-300 *:data-[slot=input-otp-slot]:bg-white *:data-[slot=input-otp-slot]:rounded-lg *:data-[slot=input-otp-slot]:shadow-sm">
                                                 <InputOTPSlot index={0} />
                                                 <InputOTPSlot index={1} />
                                                 <InputOTPSlot index={2} />
                                             </InputOTPGroup>
-                                            <InputOTPSeparator className="mx-1 md:mx-2" />
-                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-10 md:*:data-[slot=input-otp-slot]:h-12 *:data-[slot=input-otp-slot]:w-9 md:*:data-[slot=input-otp-slot]:w-11 *:data-[slot=input-otp-slot]:text-lg md:*:data-[slot=input-otp-slot]:text-xl">
+                                            <InputOTPSeparator className="mx-1 md:mx-2 text-zinc-400" />
+                                            <InputOTPGroup className="bg-white *:data-[slot=input-otp-slot]:h-11 md:*:data-[slot=input-otp-slot]:h-13 *:data-[slot=input-otp-slot]:w-10 md:*:data-[slot=input-otp-slot]:w-12 *:data-[slot=input-otp-slot]:text-xl md:*:data-[slot=input-otp-slot]:text-2xl *:data-[slot=input-otp-slot]:font-bold *:data-[slot=input-otp-slot]:text-zinc-900 *:data-[slot=input-otp-slot]:border-zinc-300 *:data-[slot=input-otp-slot]:bg-white *:data-[slot=input-otp-slot]:rounded-lg *:data-[slot=input-otp-slot]:shadow-sm">
                                                 <InputOTPSlot index={3} />
                                                 <InputOTPSlot index={4} />
                                                 <InputOTPSlot index={5} />
                                             </InputOTPGroup>
                                         </InputOTP>
-                                        <FieldDescription className="py-2 text-xs">
+                                        <FieldDescription className="py-2 text-xs text-zinc-500">
                                             <a href="/dashboard/signup" className="hover:underline">I no longer have access to this email address.</a>
                                         </FieldDescription>
                                     </Field>

@@ -24,6 +24,7 @@ model Users {
   quiz               Quiz[]             @relation("TeacherQuiz")
   quizSubmission     QuizSubmission[]   @relation("StudentQuiz")
   notification       Notification[]     @relation("UserNotifications")
+  reuploadRequests   ReuploadRequest[]  @relation("StudentReuploadRequests")
 }
 
 model VerificationTable {
@@ -80,17 +81,18 @@ model ClassroomStudent {
 }
 
 model Assignment {
-  id          Int          @id @default(autoincrement())
-  title       String
-  description String
-  fileUrl     String
-  created_at  DateTime     @default(now())
-  due_at      DateTime
-  classroom   Classroom    @relation("Assignment", fields: [classId], references: [id], onDelete: Cascade)
-  classId     Int
-  teacher     Users        @relation("Teacher", fields: [teacherId], references: [id])
-  teacherId   Int
-  submissions Submission[] @relation("SubmitAssignment")
+  id               Int               @id @default(autoincrement())
+  title            String
+  description      String
+  fileUrl          String
+  created_at       DateTime          @default(now())
+  due_at           DateTime
+  classroom        Classroom         @relation("Assignment", fields: [classId], references: [id], onDelete: Cascade)
+  classId          Int
+  teacher          Users             @relation("Teacher", fields: [teacherId], references: [id])
+  teacherId        Int
+  submissions      Submission[]      @relation("SubmitAssignment")
+  reuploadRequests ReuploadRequest[]
 }
 
 model Submission {
@@ -189,4 +191,19 @@ model Notification {
   userId      Int
   classroom   Classroom? @relation("ClassroomNotifications", fields: [classroomId], references: [id], onDelete: Cascade)
   classroomId Int?
+}
+
+model ReuploadRequest {
+  id                Int        @id @default(autoincrement())
+  reason            String
+  status            String     @default("PENDING")
+  teacherNote       String?
+  extended_deadline DateTime?
+  created_at        DateTime   @default(now())
+  assignment        Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  assignmentId      Int
+  student           Users      @relation("StudentReuploadRequests", fields: [studentId], references: [id], onDelete: Cascade)
+  studentId         Int
+
+  @@unique([studentId, assignmentId])
 }
