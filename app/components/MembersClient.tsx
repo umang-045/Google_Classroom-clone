@@ -29,7 +29,13 @@ const MembersClient = ({ classroomId, initialClassroomDetails, initialRole, init
             const res = await fetch(`/api/classroom/${id}`)
             if (!res.ok) return
             const data = await res.json()
-            setClassroomDetails(data) 
+            // API route returns { classroom, role }, not the classroom object directly.
+            // Unwrap it here so the shape matches what the server component passes in.
+            if (!data?.classroom?.teacher || !Array.isArray(data.classroom.students)) {
+                console.error("Unexpected classroom details shape:", data)
+                return
+            }
+            setClassroomDetails(data.classroom)
         } catch (error) {
             console.error("Failed to fetch classroom details:", error)
         }
@@ -69,7 +75,15 @@ const MembersClient = ({ classroomId, initialClassroomDetails, initialRole, init
         }
     }
 
-    if (!classroomDetails) return null
+    // Defensive guard: don't attempt to render until we have a well-formed
+    // classroom object with a teacher and a students array.
+    if (!classroomDetails || !classroomDetails.teacher || !Array.isArray(classroomDetails.students)) {
+        return (
+            <div className='mx-auto px-4 py-6 text-white max-w-[90rem]'>
+                <p className='text-white/60'>Couldn't load classroom members.</p>
+            </div>
+        )
+    }
 
     return (
         <div className='mx-auto px-4 py-6 text-white max-w-[90rem] animate-in fade-in duration-300'>
