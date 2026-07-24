@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Sparkles, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Sparkles, Loader2, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils"; // Standard shadcn utility for merging classes safely
+import { cn } from "@/lib/utils";
 
 type SummaryType = "announcement" | "assignment" | "chat";
 
@@ -23,8 +23,20 @@ export default function SummarizeButton({
   const [summary, setSummary] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    setSummary(null);
+    setError(null);
+    setIsOpen(false);
+  }, [type, classroomId, sourceId]);
 
   async function handleSummarize() {
+    if (summary) {
+      setIsOpen((prev) => !prev);
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
@@ -41,6 +53,7 @@ export default function SummarizeButton({
       }
 
       setSummary(data.summary);
+      setIsOpen(true);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
     } finally {
@@ -48,10 +61,6 @@ export default function SummarizeButton({
     }
   }
 
-  // NOTE: no wrapping div with margin here anymore — the button now sits
-  // exactly where its parent's flex layout places it, with zero extra
-  // offset. Spacing for the summary/error panel is applied to that panel
-  // itself (below), not to a shared wrapper around the button.
   return (
     <>
       <Button
@@ -69,17 +78,24 @@ export default function SummarizeButton({
             <Loader2 className="w-3 h-3 mr-1 animate-spin" />
             Summarizing...
           </>
+        ) : isOpen ? (
+          <>
+            <ChevronUp className="w-3 h-3 mr-1" />
+            Hide Summary
+          </>
         ) : (
           <>
             <Sparkles className="w-3 h-3 mr-1" />
-            Summarize
+            {summary ? "Show Summary" : "Summarize"}
           </>
         )}
       </Button>
 
-      {error && <p className="text-xs text-red-400 mt-2 w-full basis-full">{error}</p>}
+      {error && (
+        <p className="text-xs text-red-400 mt-2 w-full basis-full">{error}</p>
+      )}
 
-      {summary && (
+      {isOpen && summary && (
         <div className="mt-3 w-full p-3 rounded-lg bg-zinc-900/40 border border-zinc-800/80 text-xs text-zinc-300 leading-relaxed whitespace-pre-wrap animate-in fade-in-50 duration-200 basis-full">
           {summary}
         </div>

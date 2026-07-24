@@ -1,4 +1,3 @@
-
 import { NextRequest, NextResponse } from "next/server";
 import { summarizeContent, SummaryType } from "@/lib/ai";
 import { extractTextFromUrl } from "@/lib/extractText";
@@ -49,20 +48,17 @@ export async function POST(req: NextRequest) {
       });
       text = a?.description ?? "";
 
-      
       if (a?.fileUrl) {
         try {
           const fileText = await extractTextFromUrl(a.fileUrl);
           text += "\n\n" + fileText;
         } catch (err) {
           console.error("Failed to extract assignment file text:", err);
-
         }
       }
     }
 
     if (type === "chat") {
-    
       const messages = await prisma.chat.findMany({
         where: { classId: classroomId },
         orderBy: { created_at: "asc" },
@@ -82,16 +78,13 @@ export async function POST(req: NextRequest) {
 
     const summary = await summarizeContent(text, type);
 
-    const saved = await prisma.summary.create({
-      data: {
-        type,
-        sourceId: sourceId ?? classroomId,
-        classroomId,
-        summary,
-      },
+  
+    return NextResponse.json({
+      summary,
+      type,
+      sourceId: sourceId ?? classroomId,
+      classroomId,
     });
-
-    return NextResponse.json(saved);
   } catch (err) {
     console.error("Summarize route error:", err);
     return NextResponse.json(
